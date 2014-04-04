@@ -1,0 +1,22 @@
+{
+  "name": "leapin.it",
+  "version": "0.0.0",
+  "homepage": "https://github.com/FlamingTempura/leapinit",
+  "authors": [
+    "Peter West <peter.g.west@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "https://github.com/jquery/jquery.git#~2.1.0",
+    "angular": "~1.2.16",
+    "backbone": "~1.1.2",
+    "underscore": "~1.6.0"
+  }
+}
