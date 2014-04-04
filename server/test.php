@@ -25,4 +25,6 @@ R::store($avatar);
 $person->avatar=$avatar;
 R::store($person);
 
+
+ooooooooooooo
 ?>
