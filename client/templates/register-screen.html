@@ -1,0 +1,17 @@
+<h1>Register</h1>
+
+<form>
+	<label for="inputRegisterUsername">Username</label>
+	<input type="text" name="inputRegisterUsername" placeholder="Username">
+
+	<label for="inputRegisterPassword">Password</label>
+	<input type="password" name="inputRegisterPassword" placeholder="Password">
+
+	<label for="inputRegisterPassword2">Confirm password</label>
+	<input type="password" name="inputRegisterPassword2" placeholder="Password">
+
+	<div class="msg msg-error">{{ err.message }}</div>
+
+	<button>Cancel</button>
+	<button type="submit">Join</button>
+</form>

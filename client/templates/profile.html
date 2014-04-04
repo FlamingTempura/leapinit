@@ -1,0 +1,22 @@
+<button class="top-left-button">?</button>
+<button class="top-right-button">+</button>
+
+<div class="avatar avatar-medium">
+</div>
+<div class="user-info">
+	<div class="user-username">{{ user.username }}</div>
+	<div class="user-biography">{{ user.biography }}</div>
+</div>
+
+<div class="user-buttons">
+	<button>Add friend</button>
+	<button>Message</button>
+</div>
+
+<ul class="user-medias">
+	<li class="user-media" ng-repeat="media in medias">
+		<img src="img/placeholder.png" ng-class="rect-{{ media.size }}">
+	</li>
+</ul>
+
+<nav></nav>

@@ -1,0 +1,31 @@
+<button class="top-left-button">?</button>
+<button class="top-right-button">+</button>
+
+<div class="top-right-bubble-buttons">
+	<button>?</button>
+	<button>?</button>
+	<button>?</button>
+	<button>?</button>
+</div>
+
+<div class="room-info">
+	<h1>{{ room.name }}</h1>
+	<div class="room-origin">Origin: {{ room.link }}</div>
+</div>
+
+<ul class="posts">
+	<li class="post" ng-repeat="post in posts">
+		<div class="above">
+			<div class="avatar">
+			</div>
+			<div class="meta">
+				<span class="name">{{ post.person.username }}</span>
+				posted in
+				<span class="room">{{ post.room.name }}</span>
+			</div>
+		</div>
+		<img src="img/placeholder.png" class="rect-full">
+	</li>
+</ul>
+
+<nav></nav>
