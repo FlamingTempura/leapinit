@@ -236,8 +236,21 @@ nav {
 	left: 0;
 	right: 0;
 	background: #555;
-	color: white;
 	height: @nav-height;
+	font-size: 36px;
+
+	ul {
+		li {
+			display: inline-block;
+			width: 19%;
+			a {
+				width: 100%;
+				height: @nav-height;
+				line-height: @nav-height + 4px;
+				color: #ddd;
+			}
+		}
+	}
 }
 
 // Other
