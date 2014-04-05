@@ -1,7 +1,22 @@
 <!doctype html>
-<html>
+<html ng-app>
 <head>
+	<link rel="stylesheet" type="text/css" href="../bower_components/font-awesome/css/font-awesome.min.css" />
+	<link rel="stylesheet/less" type="text/css" href="../style/base.less" />
+	<script type="text/javascript" src="../bower_components/jquery/dist/jquery.min.js"></script>
+	<script type="text/javascript" src="../bower_components/angular/angular.min.js"></script>
+	<script type="text/javascript" src="../bower_components/less/dist/less-1.7.0.min.js"></script>
+	<script type="text/javascript" src="../bower_components/underscore/underscore.js"></script>
+	<script type="text/javascript" src="../bower_components/backbone/backbone.js"></script>
+	<script type="text/javascript" src="all-screens.js"></script>
 </head>
 <body>
+	<div ng-controller="AllScreens">
+		<div class="">
+			Screen size:
+			<select ng-model="size" ng-options="i.value as i.name for i in sizes"></select>
+		</div>
+		<div ng-repeat="screen in screens" class="screen" ng-include="'../templates/screens/' + screen + '.html'" style="width: {{size[0]}}px; height: {{size[1]}}px; "></div>
+	</div>
 </body>
 </html>
