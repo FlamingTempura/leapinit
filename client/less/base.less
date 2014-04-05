@@ -1,3 +1,5 @@
+@import "../bower_components/lesshat/build/lesshat.less";
+
 // variables
 
 @screen-padding: 18px;
@@ -8,7 +10,6 @@
 
 
 // Mixins
-
 
 // Fonts
 
@@ -78,6 +79,10 @@ button[type=submit], button.primary {
 	//background: @orange;
 }
 
+.button-danger {
+	background: @red !important;
+}
+
 label, input[type=text] {
 	display: block;
 }
@@ -127,6 +132,7 @@ body {
 	padding: 0;
 	background: black;
 	color: white;
+	.user-select(none);
 }
 
 .screen {
@@ -138,7 +144,7 @@ body {
 	color: #222;
 	overflow: hidden;
 	box-sizing: border-box;
-	overflow-y: auto;
+	//overflow-y: auto;
 }
 
 .bottom {
@@ -154,19 +160,27 @@ body {
 }
 
 .rect {
+	display: inline-block;
+	overflow: hidden;
 	&.rect-full {
 		width: 100%;
+		max-height: 40%;
 		margin: 3px 0;
 	}
 	&.rect-half {
 		width: 45%;
+		max-height: 20%;
 		margin: 3px;
 	}
 	&.rect-overflow {
 		position: relative;
 		left: -@screen-padding;
+		max-height: 60%;
 		width:  115%;
 		margin: 3px 0;
+	}
+	img {
+		max-width: 100%;
 	}
 }
 
@@ -179,6 +193,7 @@ body {
 	height: 60px;
 	font-size: 24px;
 	padding-top: 4px;
+	z-index: 50;
 }
 
 .top-left-button {
@@ -198,13 +213,13 @@ body {
 
 .top-right-bubble-buttons {
 	position: absolute;
+	z-index: 49;
 	top: 0;
 	right: 0;
 	width: 220px;
 	height: 220px;
 	background: rgba(0, 0, 0, 0.2);
 	border-radius: 0 0 0 100%;
-	display: none;
 	button {
 		position: absolute;
 		border-radius: 100%;
@@ -215,6 +230,22 @@ body {
 	button:nth-child(2) { right: 120px; top: 70px; }
 	button:nth-child(3) { right: 70px; top: 120px; }
 	button:nth-child(4) { right: 2px; top: 145px; }
+
+	&.ng-hide-add, 
+	&.ng-hide-remove {
+		.transition(transform 0.3s ease);
+		.transform-origin(100%, 0);
+		display: block !important;
+	}
+	&.ng-hide-add.ng-hide-add-active,
+	&.ng-hide-remove {
+		.scale(0);
+	}
+	 
+	&.ng-hide-add,
+	&.ng-hide-remove.ng-hide-remove-active {
+		.scale(1);
+	}
 }
 
 @header-height: 85px;
@@ -242,8 +273,17 @@ body {
 
 .post {
 	margin: 5px 0 15px;
+	display: inline;
 }
 
+
+.posts, .rooms {
+	overflow-y: auto;
+	overflow-x: hidden;
+	height: 100%;
+	margin: -@screen-padding;
+	padding: @screen-padding;
+}
 
 // Logo
 
