@@ -1,6 +1,6 @@
 // variables
 
-@screen-padding: 8px;
+@screen-padding: 18px;
 @nav-height: 60px;
 @orange: #e69138;
 @blue: #3c78d8;
@@ -9,25 +9,6 @@
 
 // Mixins
 
-.gradient-bg {
-		/* IE10 Consumer Preview */ 
-	background-image: -ms-linear-gradient(top, #FFFFFF 0%, #CCCCCC 100%);
-
-	/* Mozilla Firefox */ 
-	background-image: -moz-linear-gradient(top, #FFFFFF 0%, #CCCCCC 100%);
-
-	/* Opera */ 
-	background-image: -o-linear-gradient(top, #FFFFFF 0%, #CCCCCC 100%);
-
-	/* Webkit (Safari/Chrome 10) */ 
-	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #FFFFFF), color-stop(1, #CCCCCC));
-
-	/* Webkit (Chrome 11+) */ 
-	background-image: -webkit-linear-gradient(top, #FFFFFF 0%, #CCCCCC 100%);
-
-	/* W3C Markup, IE10 Release Preview */ 
-	background-image: linear-gradient(to bottom, #FFFFFF 0%, #CCCCCC 100%);
-}
 
 // Fonts
 
@@ -35,7 +16,13 @@
 @font-face {
 	font-family: Questrial;
 	src: url(Questrial-Regular.ttf);
-	font-weight: 300;
+	font-weight: 200;
+}
+
+@font-face {
+	font-family: FugazOne;
+	src: url(FugazOne-Regular.ttf);
+	font-weight: 400;
 }
 
 
@@ -45,28 +32,50 @@ body, p, input {
 
 h1 {
 	font-weight: normal;
+	font-family: FugazOne;
+	font-size: 24px;
+	margin: 3% 0 6%;
+}
+
+h2 {
+	font-weight: normal;
+	margin: 0 0 5%;
+}
+
+a {
+	text-decoration: none;
+	color: #666;
 }
 
 
 // Inputs
 
-button {
+.input-dimensions {
+	//display: inline-block;
+	display: block;
 	box-sizing: border-box;
-	background: #eee;
-	font-size: 18px;
-	background: #444;
+	margin: 5px auto 10px;
+	width: 100%;
+	max-width: 400px;
+}
+
+button {
+	.input-dimensions;
+	font-size: 20px;
+	line-height: 24px;
+	background: #777;
 	border: 0;
-	padding: 8px 0;
-	margin: 4px;
-	width: 47%;
 	color: white;
+	padding: 12px 0 8px 0;
 	font-weight: bold;
 	box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.3), 0px 1px 3px rgba(0, 0, 0, 0.2);
 	border-radius: 3px;
+	font-family: FugazOne;
+	text-transform: uppercase;
 }
 
 button[type=submit], button.primary {
-	background: @orange;
+	//background: @orange;
 }
 
 label, input[type=text] {
@@ -74,10 +83,8 @@ label, input[type=text] {
 }
 
 input[type=text], input[type=password] {
-	box-sizing: border-box;
-	width: 100%;
+	.input-dimensions;
 	height: 50px;
-	margin: 5px 0 20px;
 	font-size: 24px;
 	background: white;
 	color: #333;
@@ -130,6 +137,8 @@ body {
 	background: #f6f6f6;
 	color: #222;
 	overflow: hidden;
+	box-sizing: border-box;
+	overflow-y: auto;
 }
 
 .bottom {
@@ -147,11 +156,17 @@ body {
 .rect {
 	&.rect-full {
 		width: 100%;
-		padding: 3px 0;
+		margin: 3px 0;
 	}
 	&.rect-half {
 		width: 45%;
-		padding: 3px;
+		margin: 3px;
+	}
+	&.rect-overflow {
+		position: relative;
+		left: -@screen-padding;
+		width:  115%;
+		margin: 3px 0;
 	}
 }
 
@@ -202,6 +217,33 @@ body {
 	button:nth-child(4) { right: 2px; top: 145px; }
 }
 
+@header-height: 85px;
+
+.room-info {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	background: #fff;
+	box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.2);
+	height: @header-height;
+	text-align: left;
+	padding: @screen-padding @screen-padding 0 @screen-padding;
+	box-sizing: border-box;
+	h1 {
+		margin: 0 0 5px 0;
+		font-size: 20px;
+	}
+}
+
+.screen.screen-room {
+	padding-top: @header-height + 10px;
+}
+
+.post {
+	margin: 5px 0 15px;
+}
+
 
 // Logo
 
@@ -212,8 +254,9 @@ body {
 	height: 40px;
 	display: inline-block;
 	&.logo-large {
-		width: 300px;
-		height: 120px;
+		width: 270px;
+		height: 108px;
+		margin: 3% 0 4%;
 	}
 }
 
@@ -235,23 +278,46 @@ nav {
 	bottom: 0;
 	left: 0;
 	right: 0;
-	background: #555;
+	background: rgba(0, 0, 0, 0.7);
 	height: @nav-height;
-	font-size: 36px;
+	font-size: 32px;
 
 	ul {
+		width: 100%;
+		height: @nav-height - 3px;
+		line-height: @nav-height + 3px;
 		li {
 			display: inline-block;
 			width: 19%;
+			height: 100%;
 			a {
-				width: 100%;
-				height: @nav-height;
-				line-height: @nav-height + 4px;
+				display: block;
 				color: #ddd;
+				width: 100%;
+				height: 100%;
+				/*i {
+					//display: inline-block;
+					width: 100%;
+					height: 100%;
+					line-height: @nav-height + 4px;
+					
+				}*/
 			}
 		}
 	}
 }
+
+// Testing 
+.screen-toolbar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 30px;
+	background: #555;
+	z-index: 40;
+}
+
 
 // Other
 
@@ -266,5 +332,20 @@ nav {
 		.name, .room {
 			font-weight: bold;
 		}
+	}
+}
+
+.msg {
+	.input-dimensions;
+	background: fade(#111, 20%);
+	border: 1px solid fade(#111, 40%);
+	padding: 10px;
+	color: #111;
+	font-weight: bold;
+	border-radius: 3px;
+	&.msg-error {
+		background: fade(@red, 20%);
+		border-color: fade(@red, 40%);
+		color: @red;
 	}
 }

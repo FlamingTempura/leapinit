@@ -7,10 +7,11 @@
 	<label for="inputLoginPassword">Password</label>
 	<input type="password" name="inputLoginPassword" placeholder="Password">
 
-	<div class="msg msg-error">{{ err.message }}</div>
+	<button type="submit">Log in</button>
+	
+	<div class="msg msg-error">{{ error.message }}</div>
 
 	<div class="bottom bottom-no-nav">
-		<button type="submit">Log in</button>
-		<button class="primary">Join</button>
+		<a href="">Create an account</a>
 	</div>
 </form>

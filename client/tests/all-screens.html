@@ -13,11 +13,14 @@
 </head>
 <body>
 	<div ng-controller="AllScreens">
-		<div class="">
+		<div class="screen-toolbar">
 			Screen size:
 			<select ng-model="size" ng-options="i.value as i.name for i in sizes"></select>
 		</div>
-		<div ng-repeat="screen in screens" class="screen" ng-include="'../templates/screens/' + screen + '.html'" style="width: {{size[0]}}px; height: {{size[1]}}px; "></div>
+		<div ng-repeat="screen in screens">
+			<h1 style="color: white; margin-left: 20px;">{{ screen }}</h1>
+			<div class="screen screen-{{screen}}" ng-include="'../templates/screens/' + screen + '.html'" style="width: {{size[0]}}px; height: {{size[1]}}px; "></div>
+		</div>
 	</div>
 </body>
 </html>
