@@ -62,6 +62,7 @@ a {
 
 button {
 	.input-dimensions;
+	margin-bottom: 15px;
 	font-size: 20px;
 	line-height: 24px;
 	background: #777;
@@ -69,14 +70,10 @@ button {
 	color: white;
 	padding: 12px 0 8px 0;
 	font-weight: bold;
-	box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.3), 0px 1px 3px rgba(0, 0, 0, 0.2);
+	.box-shadow(0px 4px 1px -1px rgba(0, 0, 0, 0.68));
 	border-radius: 3px;
 	font-family: FugazOne;
 	text-transform: uppercase;
-}
-
-button[type=submit], button.primary {
-	//background: @orange;
 }
 
 .button-danger {
@@ -93,8 +90,8 @@ input[type=text], input[type=password] {
 	font-size: 24px;
 	background: white;
 	color: #333;
-	border: 1px solid #ddd;
-	box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.1);
+	border: 1px solid #d7d7d7;
+	.box-shadow(inset 0 1px 8px -3px rgba(0,0,0,0.3), inset 0px 2px 18px 1px rgba(0, 0, 0, 0.05));
 	text-indent: 10px;
 	border-radius: 3px;
 }
@@ -140,7 +137,7 @@ body {
 	margin: 18px;
 	padding: @screen-padding;
 	text-align: center;
-	background: #f6f6f6;
+	background: #f1f1f1;
 	color: #222;
 	overflow: hidden;
 	box-sizing: border-box;
@@ -194,6 +191,7 @@ body {
 	font-size: 24px;
 	padding-top: 4px;
 	z-index: 50;
+	.box-shadow(0px 0px 4px rgba(0, 0, 0, 0.5));
 }
 
 .top-left-button {
@@ -218,13 +216,15 @@ body {
 	right: 0;
 	width: 220px;
 	height: 220px;
-	background: rgba(0, 0, 0, 0.2);
+	background: rgba(255, 255, 255, 0.4);
 	border-radius: 0 0 0 100%;
 	button {
 		position: absolute;
 		border-radius: 100%;
 		width: 60px;
 		height: 60px;
+		background: #333;
+		.box-shadow(0px 0px 4px rgba(0, 0, 0, 0.5));
 	}
 	button:nth-child(1) { right: 145px; top: 2px; }
 	button:nth-child(2) { right: 120px; top: 70px; }
@@ -273,7 +273,9 @@ body {
 
 .post {
 	margin: 5px 0 15px;
-	display: inline;
+	display: inline-block;
+	background: white;
+	.box-shadow(0px 1px 3px rgba(0, 0, 0, 0.4));
 }
 
 
@@ -285,6 +287,19 @@ body {
 	padding: @screen-padding;
 }
 
+.interests {
+	height: 60%;
+	li {
+		display: inline;
+		a.rect.rect-half {
+			max-height: 30%;
+			&.selected {
+				outline: 3px solid @orange;
+			}
+		}
+	}
+}
+
 // Logo
 
 .logo {
@@ -294,8 +309,8 @@ body {
 	height: 40px;
 	display: inline-block;
 	&.logo-large {
-		width: 270px;
-		height: 108px;
+		width: 240px;
+		height: 96px;
 		margin: 3% 0 4%;
 	}
 }
@@ -318,30 +333,29 @@ nav {
 	bottom: 0;
 	left: 0;
 	right: 0;
-	background: rgba(0, 0, 0, 0.7);
+	background: rgba(50, 50, 50, 0.9);
 	height: @nav-height;
 	font-size: 32px;
 
 	ul {
 		width: 100%;
-		height: @nav-height - 3px;
+		height: @nav-height;
 		line-height: @nav-height + 3px;
 		li {
 			display: inline-block;
-			width: 19%;
+			width: 20%;
 			height: 100%;
 			a {
 				display: block;
 				color: #ddd;
 				width: 100%;
 				height: 100%;
-				/*i {
-					//display: inline-block;
-					width: 100%;
-					height: 100%;
-					line-height: @nav-height + 4px;
-					
-				}*/
+			}
+			&.nav-scan {
+				background: fade(@orange, 90%);
+			}
+			&.nav-active {
+				background: fade(#000000, 50%);
 			}
 		}
 	}
@@ -362,30 +376,39 @@ nav {
 // Other
 
 .above {
+	padding-left: 8px;
 	text-align: left;
+	margin: 10px 0 6px;
 	.avatar {
 		display: inline-block;
+		vertical-align: top;
 	}
 
 	.meta {
 		display: inline-block;
+		margin-left: 6px;
 		.name, .room {
 			font-weight: bold;
+		}
+		.date {
+			color: #ccc;
+			display: block;
 		}
 	}
 }
 
 .msg {
 	.input-dimensions;
+	margin-top: 25px;
 	background: fade(#111, 20%);
-	border: 1px solid fade(#111, 40%);
+	border: 1px solid fade(#111, 10%);
 	padding: 10px;
 	color: #111;
 	font-weight: bold;
 	border-radius: 3px;
 	&.msg-error {
-		background: fade(@red, 20%);
-		border-color: fade(@red, 40%);
+		background: fade(@red, 15%);
+		border-color: fade(@red, 18%);
 		color: @red;
 	}
 }

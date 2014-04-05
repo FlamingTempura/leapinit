@@ -1,17 +1,6 @@
 
 <ul class="posts">
-	<li class="post">
-		<div class="above">
-			<div class="avatar">
-			</div>
-			<div class="meta">
-				<span class="name">{{ post.person.username }}</span>
-				posted in
-				<span class="room">{{ post.room.name }}</span>
-			</div>
-		</div>
-		<div class="rect rect-overflow"><img placeholder></div>
-	</li>
+	<li class="post" ng-include="'../templates/post.html'"></li>
 </ul>
 
 <nav></nav>

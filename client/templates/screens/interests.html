@@ -1,11 +1,15 @@
 <h2>Tap things you're interested in</h2>
 
-<div class="rect rect-half"><img placeholder></div>
-<div class="rect rect-half"><img placeholder></div>
-<div class="rect rect-half"><img placeholder></div>
-<div class="rect rect-half"><img placeholder></div>
-<div class="rect rect-half"><img placeholder></div>
-<div class="rect rect-half"><img placeholder></div>
+<ul class="interests">
+	<li ng-repeat="suggestion in suggestions">
+		<a 	class="rect rect-half" 
+			href="" 
+			ng-click="suggestion.selected = !suggestion.selected" 
+			ng-class="{ selected: suggestion.selected }">
+				<img placeholder>
+		</a>
+	</li>
+</ul>
 
 <form>
 	<button type="submit">Continue</button>

@@ -39,18 +39,36 @@ angular.module('leapinit', ['navbar', 'ngAnimate'])
 		};
 
 		$scope.rooms = [
-			{ name: 'Careers' }
+			{ name: 'Careers' },
+			{ name: 'Germany' },
+			{ name: 'Inception' },
+			{ name: 'Frontier' },
+			{ name: 'University of Southampton' },
+			{ name: 'Cambridge book club' }
 		];
 
 		$scope.room = $scope.rooms[0];
 
-		$scope.user.rooms = [$scope.rooms[0]];
+		$scope.user.rooms = [
+			$scope.rooms[0],
+			$scope.rooms[3],
+			$scope.rooms[4]
+		];
 
 		$scope.posts = [
 			{ person: $scope.people[1], room: $scope.rooms[0] },
 			{ person: $scope.people[0], room: $scope.rooms[0] }
 		]
 		$scope.post = $scope.posts[0];
+
+		$scope.suggestions = [
+			$scope.rooms[0],
+			$scope.rooms[1],
+			$scope.rooms[2],
+			$scope.rooms[3],
+			$scope.rooms[4],
+			$scope.rooms[5]
+		];
 	})
 	.directive('placeholder', function () {
 		return {
