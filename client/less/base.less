@@ -34,7 +34,7 @@ body, p, input {
 h1 {
 	font-weight: normal;
 	font-family: FugazOne;
-	font-size: 24px;
+	font-size: 32px;
 	margin: 3% 0 6%;
 }
 
@@ -48,14 +48,16 @@ a {
 	color: #666;
 }
 
+.screen {
+	font-size: 22px;
+}
 
 // Inputs
 
 .input-dimensions {
-	//display: inline-block;
 	display: block;
 	box-sizing: border-box;
-	margin: 5px auto 10px;
+	margin: 8px auto 20px;
 	width: 100%;
 	max-width: 400px;
 }
@@ -68,12 +70,22 @@ button {
 	background: #777;
 	border: 0;
 	color: white;
-	padding: 12px 0 8px 0;
+	padding: 20px 0 16px 0;
 	font-weight: bold;
 	.box-shadow(0px 4px 1px -1px rgba(0, 0, 0, 0.68));
 	border-radius: 3px;
 	font-family: FugazOne;
 	text-transform: uppercase;
+	.transition(box-shadow 0.5s ease);
+	&.loading {
+		background-image: url('loading.gif');
+		background-repeat: no-repeat;
+		background-position: center; 
+		color: transparent;
+	}
+	&[disabled] {
+		.box-shadow(0px 2px 1px -1px rgba(0, 0, 0, 0.68));
+	}
 }
 
 .button-danger {
@@ -86,7 +98,7 @@ label, input[type=text] {
 
 input[type=text], input[type=password] {
 	.input-dimensions;
-	height: 50px;
+	height: 60px;
 	font-size: 24px;
 	background: white;
 	color: #333;
@@ -94,6 +106,11 @@ input[type=text], input[type=password] {
 	.box-shadow(inset 0 1px 8px -3px rgba(0,0,0,0.3), inset 0px 2px 18px 1px rgba(0, 0, 0, 0.05));
 	text-indent: 10px;
 	border-radius: 3px;
+	.transition(background-color 0.5s ease, box-shadow 0.5s ease);
+	&[disabled] {
+		background: #eee;
+		.box-shadow(inset 0 1px 8px -3px rgba(0,0,0,0.3));
+	}
 }
 
 label {
@@ -134,7 +151,6 @@ body {
 
 .screen {
 	position: relative;
-	margin: 18px;
 	padding: @screen-padding;
 	text-align: center;
 	background: #f1f1f1;
@@ -142,6 +158,22 @@ body {
 	overflow: hidden;
 	box-sizing: border-box;
 	//overflow-y: auto;
+	padding-bottom: @nav-height + @screen-padding;
+}
+
+.app .screen {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.all-screens {
+	background: black;
+	.screen {
+		margin: 18px;
+	}
 }
 
 .bottom {
@@ -149,7 +181,7 @@ body {
 	bottom: @nav-height;
 	left: 0;
 	right: 0;
-	padding: 0 @screen-padding @screen-padding @screen-padding;
+	padding: 0 @screen-padding @screen-padding + 10px @screen-padding;
 
 	&.bottom-no-nav {
 		bottom: 0;
@@ -159,25 +191,36 @@ body {
 .rect {
 	display: inline-block;
 	overflow: hidden;
+	white-space: nowrap;
+	background-size: 100% auto;
+	background-position: center;
 	&.rect-full {
 		width: 100%;
 		max-height: 40%;
-		margin: 3px 0;
+		min-height: 30%;
+		margin: 2px 0;
 	}
 	&.rect-half {
 		width: 45%;
-		max-height: 20%;
-		margin: 3px;
+		height: 28%;
+		margin: 2px;
 	}
 	&.rect-overflow {
 		position: relative;
 		left: -@screen-padding;
+		min-height: 50%;
 		max-height: 60%;
 		width:  115%;
-		margin: 3px 0;
+		margin: 2px 0;
 	}
-	img {
-		max-width: 100%;
+	&.rect-wide {
+		position: relative;
+		left: -@screen-padding;
+		width: 115%;
+		height: 20%;
+		img {
+			width: 100%;
+		}
 	}
 }
 
@@ -186,10 +229,10 @@ body {
 	top: 0;
 	margin: 0;
 	background: @orange;
-	width: 60px;
-	height: 60px;
-	font-size: 24px;
-	padding-top: 4px;
+	width: 80px;
+	height: 80px;
+	font-size: 30px;
+	padding-top: 6px;
 	z-index: 50;
 	.box-shadow(0px 0px 4px rgba(0, 0, 0, 0.5));
 }
@@ -197,14 +240,14 @@ body {
 .top-left-button {
 	left: 0;
 	border-radius: 0 0 100% 0;
-	padding-left: 14px;
+	padding-left: 16px;
 	text-align: left;
 	line-height: 10px;
 }
 
 .top-right-button {
 	right: 0;
-	padding-right: 14px;
+	padding-right: 16px;
 	text-align: right;
 	border-radius: 0 0 0 100%;
 }
@@ -250,32 +293,71 @@ body {
 
 @header-height: 85px;
 
-.room-info {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	background: #fff;
-	box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.2);
-	height: @header-height;
-	text-align: left;
-	padding: @screen-padding @screen-padding 0 @screen-padding;
-	box-sizing: border-box;
+.post.room-info {
+	.above {
+		margin-bottom: 20px;
+	}
 	h1 {
 		margin: 0 0 5px 0;
 		font-size: 20px;
 	}
 }
 
-.screen.screen-room {
-	padding-top: @header-height + 10px;
+.post {
+	display: inline;
+
+	.above, .below {
+		background: white;
+		.box-shadow(0px 1px 3px rgba(0, 0, 0, 0.4));
+	}
+
+	.above {
+		padding: 12px 12px 8px 12px;
+		text-align: left;
+		margin: 0 0 0 0;
+		white-space: nowrap;
+
+		.avatar {
+			display: inline-block;
+			vertical-align: top;
+		}
+
+		.meta {
+			white-space: normal;
+			display: inline-block;
+			margin-left: 6px;
+			margin-right: 12px;
+			.name, .room {
+				font-weight: bold;
+			}
+			.date {
+				color: #ccc;
+				display: block;
+			}
+		}
+	}
+
+	.below {
+		margin-top: -8px;
+		height: 15px;
+		margin-bottom: 20px;
+	}
+	.rect {
+		margin: 0;
+	}
 }
 
-.post {
-	margin: 5px 0 15px;
-	display: inline-block;
-	background: white;
-	.box-shadow(0px 1px 3px rgba(0, 0, 0, 0.4));
+.room {
+	display: inline;
+	.name {
+		position: absolute;
+		bottom: 0px;
+		color: white;
+		background: rgba(0, 0, 0, 0.5);
+		left: 0;
+		padding: 10px @screen-padding 10px;
+		font-size: 30px;
+	}
 }
 
 
@@ -375,27 +457,6 @@ nav {
 
 // Other
 
-.above {
-	padding-left: 8px;
-	text-align: left;
-	margin: 10px 0 6px;
-	.avatar {
-		display: inline-block;
-		vertical-align: top;
-	}
-
-	.meta {
-		display: inline-block;
-		margin-left: 6px;
-		.name, .room {
-			font-weight: bold;
-		}
-		.date {
-			color: #ccc;
-			display: block;
-		}
-	}
-}
 
 .msg {
 	.input-dimensions;
@@ -411,4 +472,30 @@ nav {
 		border-color: fade(@red, 18%);
 		color: @red;
 	}
+}
+
+
+.fade {
+	&.ng-hide-add, 
+	&.ng-hide-remove {
+		.transition(opacity 0.3s ease);
+		display: block !important;
+	}
+	&.ng-hide-add.ng-hide-add-active,
+	&.ng-hide-remove {
+		.opacity(0);
+	}
+	 
+	&.ng-hide-add,
+	&.ng-hide-remove.ng-hide-remove-active {
+		.opacity(1);
+	}
+}
+
+.fill-screen {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
 }

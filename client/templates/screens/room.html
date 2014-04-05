@@ -8,12 +8,15 @@
 	<button><i class="fa fa-font"></i></button>
 </div>
 
-<div class="room-info">
-	<h1>{{ room.name }}</h1>
-	<div class="room-origin">Origin: {{ room.link }}</div>
-</div>
+
 
 <ul class="posts">
+	<li class="post room-info">
+		<div class="above">
+			<h1>{{ room.name }}</h1>
+			<div class="room-origin">Origin: {{ room.link }}</div>
+		</div>
+	</li>
 	<li class="post" ng-repeat="post in posts" ng-include="'../templates/post.html'"></li>
 </ul>
 

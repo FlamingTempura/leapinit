@@ -2,10 +2,11 @@
 	<div class="avatar avatar-small">
 	</div>
 	<div class="meta">
-		<span class="name">{{ post.person.username }}</span>
+		<a class="name" href="#/person/{{ post.person.id }}">{{ post.person.username }}</a>
 		posted in
-		<span class="room">{{ post.room.name }}</span>
+		<a class="room" href="#/room/{{ post.room.id }}">{{ post.room.name }}</a>
 		<span class="date">13:00, 12-12-2014</span>
 	</div>
 </div>
-<div class="rect rect-overflow"><img placeholder></div>
+<div class="rect rect-overflow" imageplaceholder></div>
+<div class="below"></div>

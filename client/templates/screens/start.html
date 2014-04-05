@@ -1,17 +1,17 @@
 <div class="logo logo-large"></div>
 
-<form>
+<form ng-submit="login.submit()">
 	<label for="inputLoginUsername">Username</label>
-	<input type="text" name="inputLoginUsername" placeholder="Username">
+	<input ng-model="login.username" type="text" name="inputLoginUsername" placeholder="Username" ng-disabled="login.loading" required>
 
 	<label for="inputLoginPassword">Password</label>
-	<input type="password" name="inputLoginPassword" placeholder="Password">
+	<input ng-model="login.password" type="password" name="inputLoginPassword" placeholder="Password" ng-disabled="login.loading" required>
 
-	<button type="submit">Log in</button>
+	<button type="submit" ng-class="{ loading: login.loading }"  ng-disabled="login.loading">Log in</button>
 	
-	<div class="msg msg-error">{{ error.message }}</div>
+	<div class="msg msg-error" ng-if="login.error">{{ login.error.message }}</div>
 
-	<div class="bottom bottom-no-nav">
-		<a href="">Create an account</a>
+	<div class="bottom bottom-no-nav fade" ng-hide="login.loading">
+		<a href="#/register">Create an account</a>
 	</div>
 </form>

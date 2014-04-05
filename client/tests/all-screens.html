@@ -9,10 +9,12 @@
 	<script type="text/javascript" src="../bower_components/underscore/underscore.js"></script>
 	<script type="text/javascript" src="../bower_components/backbone/backbone.js"></script>
 	<script type="text/javascript" src="all-screens.js"></script>
+	<script type="text/javascript" src="fakedata.js"></script>
+	<script type="text/javascript" src="placeholder.js"></script>
 	<script type="text/javascript" src="../js/nav.js"></script>
 </head>
 <body>
-	<div ng-controller="AllScreens">
+	<div ng-controller="AllScreens" class="all-screens">
 		<div class="screen-toolbar">
 			Screen size:
 			<select ng-model="size" ng-options="i.value as i.name for i in sizes"></select>

@@ -1,12 +1,10 @@
+<h1>Rooms</h1>
 
 <ul class="rooms">
 	<li class="room" ng-repeat="room in user.rooms">
-		<div class="above">
-			<div class="meta">
-				<span class="name">{{ room.name }}</span>
-			</div>
-		</div>
-		<div class="rect rect-overflow"><img placeholder></div>
+		<a href="#/room/{{ room.id }}" class="rect rect-wide" imageplaceholder>
+			<span class="name">{{ room.name }}</span>
+		</a>
 	</li>
 </ul>
 

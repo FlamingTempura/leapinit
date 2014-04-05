@@ -1,20 +1,20 @@
 <h1>Register</h1>
 
-<form>
+<form ng-submit="register.submit()">
 	<label for="inputRegisterUsername">Username</label>
-	<input type="text" name="inputRegisterUsername" placeholder="Username">
+	<input ng-model="register.username" type="text" name="inputRegisterUsername" placeholder="Username" ng-disabled="register.loading" required>
 
 	<label for="inputRegisterPassword">Password</label>
-	<input type="password" name="inputRegisterPassword" placeholder="Password">
+	<input ng-model="register.password" type="password" name="inputRegisterPassword" placeholder="Password" ng-disabled="register.loading" required>
 
 	<label for="inputRegisterPassword2">Confirm password</label>
-	<input type="password" name="inputRegisterPassword2" placeholder="Confirm password">
+	<input ng-model="register.password2" type="password" name="inputRegisterPassword2" placeholder="Confirm password" ng-disabled="register.loading" required>
 
-	<button type="submit">Join</button>
+	<button type="submit" ng-class="{ loading: register.loading }" ng-disabled="register.loading">Join</button>
 	
-	<div class="msg msg-error">{{ error.message }}</div>
+	<div class="msg msg-error" ng-if="register.error">{{ register.error.message }}</div>
 
-	<div class="bottom bottom-no-nav">
-		<a href="">I already have an account</a>
+	<div class="bottom bottom-no-nav fade" ng-hide="register.loading">
+		<a href="#/start">I already have an account</a>
 	</div>
 </form>
