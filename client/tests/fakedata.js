@@ -1,8 +1,16 @@
 angular.module('leapinit')
 	.factory('FakeData', function () {
-		var data = {};
+		
+		var randBetween = function (min, max) {
+			return Math.floor(Math.random() * (max - min + 1)) + min
+		};
 
-		data.people = [
+		var randElement = function (array) {
+			var r = randBetween(0, array.length - 1);
+			return array[r];
+		};
+
+		var people = [
 			{
 				username: 'CoolPlum90',
 				biography: 'Ignorance is bliss.',
@@ -15,56 +23,82 @@ angular.module('leapinit')
 			{
 				username: 'UniSoton',
 				biography: 'Blah.'
+			},
+			{
+				username: 'Kate',
+				biography: 'Blah.'
+			},
+			{
+				username: 'jjfar90',
+				biography: 'Blah.'
+			},
+			{
+				username: 'ibeza1',
+				biography: 'Blah.'
+			},
+			{
+				username: 'leapinit_master',
+				biography: 'Blah.'
+			},
+			{
+				username: 'drevil101',
+				biography: 'Blah.'
+			},
+			{
+				username: 'kitten',
+				biography: 'Blah.'
 			}
 		];
 
-		_.each(data.people, function (person, i) {
-			person.id = i;
-			person.usernameLowercase = person.username.toLocaleLowerCase();
-		});
-
-		data.user = data.people[0];
-		data.user.friends = [data.people[1], data.people[2]];
-
-		/*data.error = {
-			message: 'Could not log you in.'
-		};*/
-
-		data.rooms = [
+		var rooms = [
 			{ name: 'Careers' },
 			{ name: 'Germany' },
 			{ name: 'Inception' },
 			{ name: 'Frontier' },
 			{ name: 'University of Southampton' },
-			{ name: 'Cambridge book club' }
+			{ name: 'Cambridge book club' },
+			{ name: 'hope' },
+			{ name: 'hammer' },
+			{ name: 'tinned beans' }
 		];
 
-		_.each(data.rooms, function (room, i) {
-			room.id = i;
+		var posts = _.times(50, function () {
+			return {
+				person: randElement(people),
+				room: randElement(rooms)
+			}
 		});
 
-		data.room = data.rooms[0];
+		_.each(people, function (person, i) {
+			person.id = i;
+			person.usernameLowercase = person.username.toLocaleLowerCase();
+			person.rooms = _.uniq(_.times(randBetween(0, 10), function () {
+				return randElement(rooms);
+			}));
+			person.friends = _.uniq(_.times(randBetween(0, 10), function () {
+				return randElement(people);
+			}));
+		});
 
-		data.user.rooms = [
-			data.rooms[0],
-			data.rooms[3],
-			data.rooms[4]
-		];
+		_.each(rooms, function (room, i) {
+			room.id = i;
+			room.posts = _.select(posts, function (post) {
+				return post.room === room;
+			})
+		});
 
-		data.posts = [
-			{ person: data.people[1], room: data.rooms[0] },
-			{ person: data.people[0], room: data.rooms[0] }
-		]
-		data.post = data.posts[0];
+		_.each(posts, function (post, i) {
+			post.id = i;
+		});
 
-		data.suggestions = [
-			data.rooms[0],
-			data.rooms[1],
-			data.rooms[2],
-			data.rooms[3],
-			data.rooms[4],
-			data.rooms[5]
-		];
+		var suggestions = _(rooms).sortBy(function () {
+			return Math.random();
+		}).slice(0, 6);
 
-		return data;
+		return {
+			people: people,
+			rooms: rooms,
+			posts: posts,
+			user: people[0]
+		};
 	});

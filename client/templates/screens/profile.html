@@ -1,16 +1,20 @@
-<button class="top-left-button"><i class="fa fa-edit"></i></button>
-<button class="top-right-button"><i class="fa fa-plus"></i></button>
+<button class="top-left-button" ng-if="own" ng-click="go('/avatar')"><i class="fa fa-edit"></i></button>
+<button class="top-right-button" ng-if="own"><i class="fa fa-plus"></i></button>
 
 <div class="avatar avatar-medium">
 </div>
 <div class="user-info">
-	<div class="user-username">{{ user.username }}</div>
-	<div class="user-biography">{{ user.biography }}</div>
+	<div class="user-username">{{ person.username }}</div>
+	<div class="user-biography">{{ person.biography }}</div>
 </div>
 
-<div class="user-buttons">
+<div class="user-buttons" ng-if="!own">
 	<button>Add friend</button>
 	<button>Message</button>
+</div>
+
+<div class="user-buttons" ng-if="own">
+	<button>Log out</button>
 </div>
 
 <ul class="user-medias">

@@ -1,11 +1,8 @@
 angular.module('navbar', [])
 	.directive('nav', function () {
-		/*$scope.;*/
-
 		return {
 			restrict: 'E',
 			templateUrl: '../templates/nav.html',
-			//scope: {},
 			link: function ($scope) {
 				$scope.navicons = [
 					{ screen: 'feed', icon: 'bars' },
