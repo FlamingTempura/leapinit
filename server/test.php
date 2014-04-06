@@ -11,9 +11,9 @@ $person=R::dispense('person');
 $person->username = 'peter';
 $person->password='33333333333';
 $person->biography='KKKKKKK';
-$friends= array();
-$friends[]=$person;
-//$person->friends=$friends;
+
+$person->sharedFriends[]=$person;
+$person->sharedBlocks[]=$person;
 
 
 
@@ -45,7 +45,7 @@ $room->color=2;
 $room->size=11;
 $room->owner=$person;
 
-//$person->roomList[] = $room;
+$person->ownRoom[] = $room;
 R::store($room);
 
 
@@ -59,13 +59,12 @@ $sponsor=R::dispense('sponsor');
 $sponsor->paypalEmail='mmmmm@yahoo.com';
 $sponsor->paypalAuthcode='jkfgk';
 
-
-
-$sponsored_room=R::dispense('sponsored_room');
-$sponsored_room->owner=$sponsor;
-
+$srooms=R::dispense('srooms');
+$srooms->owner=$sponsor;
+R::store($srooms);
+$sponsor->ownSrooms[]=$srooms;
 R::store($sponsor);
-R::store($sponsored_room);
+
 
 
 $media=R::dispense('media');
@@ -98,6 +97,7 @@ R::store($text);
 
 $timeline=R::dispense('timeline');
 $timeline->orderBy='kkkjhg';
+$timeline->ownMedia[]=$media;
 
 R::store($timeline);
 
