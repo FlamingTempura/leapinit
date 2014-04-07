@@ -12,8 +12,9 @@ $data = json_decode($datar);
 
 echo("Adding fake people\n");
 array_walk($data->people, function (&$o) {
+	echo("  k " . $o->username);
 	$person = R::dispense('person');
-	$person->id = $o->id;
+	//$person->id = $o->id;
 	$person->username = $o->username;
 	$person->biography = $o->biography;
 	R::store($person);
@@ -30,26 +31,25 @@ array_walk($data->people, function (&$o) {
 echo("Adding fake rooms\n");
 array_walk($data->rooms, function (&$o) {
 	$room = R::dispense('room');
-	$room->id = $o->id;
 	$room->name = $o->name;
-	$room->owner = R::load('person', $o->owner);
+	$room->owner = R::load('person', $o->owner + 1);
 	R::store($room);
 });
 
 
 echo("Adding fake friends, blocks and rooms\n");
 array_walk($data->people, function (&$o) {
-	$person = R::load('person', $o->id);
+	$person = R::load('person', $o->id + 1);
 	$person->sharedFriends = array_map(function ($id) {
-		return R::load('person', $id);
+		return R::load('person', $id + 1);
 	}, $o->friends);
 	if (property_exists($o, 'blocks')) {
 		$person->sharedBlocks = array_map(function ($id) {
-			return R::load('person', $id);
+			return R::load('person', $id + 1);
 		}, $o->blocks);
 	}
 	$person->sharedRooms = array_map(function ($id) {
-		return R::load('room', $id);
+		return R::load('room', $id + 1);
 	}, $o->rooms);
 	R::store($person);
 });
@@ -69,8 +69,8 @@ array_walk($data->posts, function (&$o) {
 	R::store($media);
 
 	$post = R::dispense('post');
-	$post->id = $o->id;
-	$post->person = R::load('person', $o->person);
+	//$post->id = $o->id;
+	$post->person = R::load('person', $o->person + 1);
 	$post->media = $media;
 	R::store($post);
 });
