@@ -81,18 +81,30 @@ R::store($message);
 
 $audio=R::dispense('audio');
 $audio->path='kkkkkkkkk';
+$audio->media=$media;
 R::store($audio);
+$media1=R::dispense('media');
+$media1->author='noura';
 
 $picture=R::dispense('picture');
 $picture->path='iuihgff';
+$picture->media=$media1;
 R::store($picture);
+
+$media2=R::dispense('media');
+$media2->author='noura';
 
 $video=R::dispense('video');
 $video->path='hjhggffghj';
+$video->media=$media2;
 R::store($video);
+
+$media3=R::dispense('media');
+$media3->author='noura';
 
 $text=R::dispense('text');
 $text->text='jhgkioop';
+$text->media=$media3;
 R::store($text);
 
 $timeline=R::dispense('timeline');
