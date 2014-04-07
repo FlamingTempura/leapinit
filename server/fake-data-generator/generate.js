@@ -4,6 +4,8 @@ FIXME:
 	Person A's rooms should include rooms they own
 */
 
+var dataSize = 1;
+
 var fs = require('fs'),
 	_ = require('underscore'),
 	chance = require('chance').Chance();
@@ -49,7 +51,7 @@ var people = [],
 	messages = [];
 
 // People
-_.times(1000, function (i) {
+_.times(dataSize * 10, function (i) {
 	var person = {
 		id: i,
 		username: chance.twitter().substr(1),
@@ -68,7 +70,7 @@ _.times(1000, function (i) {
 });
 
 // Rooms
-_.times(90, function (i) {
+_.times(dataSize * 10, function (i) {
 	var room = {
 		id: i,
 		name: chance.word(),
@@ -94,7 +96,7 @@ _.each(people, function (person) {
 });
 
 // Posts
-_.times(10000, function (i) {
+_.times(dataSize * 100, function (i) {
 	var person = chance.pick(people);
 	if (!person.rooms.length) { return; }
 	var post = {
@@ -107,7 +109,7 @@ _.times(10000, function (i) {
 });
 
 // Messages
-_.times(10000, function (i) {
+_.times(dataSize * 100, function (i) {
 	var person = chance.pick(people);
 	if (!person.rooms.friends) { return; }
 	var message = {
