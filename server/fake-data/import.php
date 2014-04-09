@@ -1,14 +1,16 @@
 <?php
 
-require 'lib/rb.phar';
+require_once('../../vendor/autoload.php');
+require_once('generate.php');
+
+use RedBean_Facade as R;
 
 R::setup('mysql:host=localhost;dbname=leapinit','root','');
 
 R::nuke();
 
-// load json
-$datar = file_get_contents('fake-data-generator/data.json');
-$data = json_decode($datar);
+// Generate some fake data
+$data = generateFakeData(10);
 
 echo("Adding fake people\n");
 array_walk($data->people, function (&$o) {
@@ -16,24 +18,33 @@ array_walk($data->people, function (&$o) {
 	$person = R::dispense('person');
 	//$person->id = $o->id;
 	$person->username = $o->username;
+	$person->password = $o->password;
 	$person->biography = $o->biography;
 	R::store($person);
 
-	/*if (property_exists($o, 'sponsor') && $o->sponsor) {
+	if (property_exists($o, 'sponsor') && $o->sponsor) {
 		$sponsor = R::dispense('sponsor');
 		$sponsor->person = $person;
-		//$sponsor->paypalEmail = $o->paypalEmail;
+		$sponsor->paypalEmail = $o->paypalEmail;
 		$sponsor->paypalCode = $o->paypalCode;
 		R::store($sponsor);
-	}*/
+	}
 });
 
 echo("Adding fake rooms\n");
 array_walk($data->rooms, function (&$o) {
+	$ownerId = $o->owner + 1;
 	$room = R::dispense('room');
 	$room->name = $o->name;
-	$room->owner = R::load('person', $o->owner + 1);
+	$room->owner = R::load('person', $ownerId);
 	R::store($room);
+
+	if (property_exists($o, 'sponsored') && $o->sponsored) {
+		$sponsoredroom = R::dispense('sponsoredroom');
+		$sponsoredroom->room = $room;
+		$sponsoredroom->sponsor = R::findOne('sponsor', ' person_id = ? ', array($ownerId));
+		R::store($sponsoredroom);
+	}
 });
 
 

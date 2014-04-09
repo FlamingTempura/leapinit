@@ -3,7 +3,7 @@ angular.module('leapinit', ['navbar', 'ngAnimate', 'ngRoute', 'ngTouch'])
 		$routeProvider.
 			when('/start', {
 				templateUrl: 'templates/screens/start.html',
-				controller: function ($rootScope, $scope, $location) {
+				controller: function ($rootScope, $scope, $location, models) {
 					$rootScope.name = 'start';
 					$rootScope.title = 'Start';
 
@@ -19,7 +19,14 @@ angular.module('leapinit', ['navbar', 'ngAnimate', 'ngRoute', 'ngTouch'])
 							if ($scope.login.error) {
 								$scope.login.loading = false;
 							} else {
-								var user = _($scope.people).findWhere({ usernameLowercase: $scope.login.username.toLocaleLowerCase() });
+								var auths = new models.Auths();
+								auths.create({
+									usernameLowercase: $scope.login.username.toLocaleLowerCase()
+									password: $scope.login.password 
+								}).always(function () {
+									console.log('BLAH', arguments)
+								});
+								/*var user = _($scope.people).findWhere({});
 								console.log('boo', user, $scope.login.username)
 								if (user) {
 									console.log('yrrp')
@@ -28,7 +35,7 @@ angular.module('leapinit', ['navbar', 'ngAnimate', 'ngRoute', 'ngTouch'])
 								} else {
 									$scope.login.error = { message: 'Username or password incorrect.' };
 									$scope.login.loading = false;
-								}
+								}*/
 							}
 						}
 					};
@@ -140,14 +147,11 @@ angular.module('leapinit', ['navbar', 'ngAnimate', 'ngRoute', 'ngTouch'])
 			}).
 			otherwise({ redirectTo: '/start' });
 	})
-	.controller('App', function ($scope, $rootScope, $location, FakeData) {
-		_.extend($rootScope, FakeData);
-
+	.controller('App', function ($scope, $rootScope, $location, models) {
 		$rootScope.go = function (path) {
 			$location.path(path);
 		};
 		$rootScope.back = function () {
 			history.back();
 		};
-		window.data = FakeData;
 	});
