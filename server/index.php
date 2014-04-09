@@ -94,80 +94,99 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		$app->render(410, array());
 	});
 
-	$app->get('/person/:id', $requestJSON, function($id){
-		//echo "person $id";
+	$app->get('/person/:id', $requestJSON, $validateToken, function ($id) use (&$app) {
+		$person = R::load('person', intval($id));
+		$app->render(200, [
+			'response' => $person->export()
+		]);
+	});
+
+	$app->put('/person/:id', $requestJSON, $validateToken, function ($id) use (&$app) {
+		$person = R::load('person', intval($id));
+		echo json_encode($user->export());
+	});
+
+	$app->delete('/person/:id', $requestJSON, $validateToken, function ($id) use (&$app) {
+		$person = R::load('person', intval($id));
+		echo json_encode($user->export());
+	});
+
+	$app->post('/person', $requestJSON, $validateToken, function ($id) use (&$app) {
+		$person = R::load('person', intval($id));
+		echo json_encode($user->export());
+	}); 
+
+	$app->get('/person/:id/friend', $requestJSON, $validateToken, function ($id) use (&$app) {
+		$person = R::load('person', intval($id));
+		$app->render(200, [
+			'result' => array_map(function ($friend) {
+				return R::load('person', $friend->id)->export();
+			}, array_values($person->ownFriendship))
+		]);
+	});
+
+	$app->post('/person/:id/friend', $requestJSON, $validateToken, function ($id) use (&$app) {
 		$user=R::load("person",intval($id));
 		echo json_encode($user->export());
 	});
 
-	$app->put('/person/:id', $requestJSON, function($id){
-		$user=R::load("person",intval($id));
-		echo json_encode($user->export());
-	});
-
-	$app->delete('/person/:id', $requestJSON, function($id){
-		$user=R::load("person",intval($id));
-		echo json_encode($user->export());
-	});
-
-	$app->post('/person', $requestJSON, function($id){
-		$user=R::load("person",intval($id));
-		echo json_encode($user->export());
-	});
-
-	$app->get('/person/:id/friend', $requestJSON, function($id){
-		$user=R::load("person",intval($id));
-		echo json_encode($user->export());
-	});
-
-	$app->post('/person/:id/friend', $requestJSON, function($id){
-		$user=R::load("person",intval($id));
-		echo json_encode($user->export());
-	});
-
-	$app->delete('/person/:id/friend/:fid', $requestJSON, function($id,$fid){
+	$app->delete('/person/:id/friend/:fid', $requestJSON, $validateToken, function($id,$fid){
 		$user=R::load("person",intval($id));
 		$friend=R::load("person",intval($fid));
 		echo json_encode($user->export());
 	});
 
-	$app->get('/person/:id/room', $requestJSON, function($id){
+
+	$app->get('/person/:id/block', $requestJSON, $validateToken, function ($id) use (&$app) {
+		$person = R::load('person', intval($id));
+		$app->render(200, [
+			'result' => array_map(function ($friend) {
+				return R::load('person', $friend->id)->export();
+			}, array_values($person->ownBlock))
+		]);
+	});
+
+	$app->get('/person/:id/room', $requestJSON, $validateToken, function ($id) use (&$app) {
+		$person = R::load('person', intval($id));
+		$app->render(200, [
+			'result' => array_map(function ($residence) {
+				return R::load('room', $residence->id)->export();
+			}, array_values($person->ownResidence))
+		]);
+	});
+
+	$app->post('/person/:id/room', $requestJSON, $validateToken, function($id){
 		$user=R::load("person",intval($id));
 		echo json_encode($user->export());
 	});
 
-	$app->post('/person/:id/room', $requestJSON, function($id){
-		$user=R::load("person",intval($id));
-		echo json_encode($user->export());
-	});
-
-	$app->delete('/person/:id/room/:rid', $requestJSON, function($id){
+	$app->delete('/person/:id/room/:rid', $requestJSON, $validateToken, function($id){
 		$user=R::load("person",intval($id));
 		$room=R::load("person",intval($rid));
 		echo json_encode($user->export());
 	});
 
-	$app->get('/person/:id/feed', $requestJSON, function($id){
+	$app->get('/person/:id/feed', $requestJSON, $validateToken, function($id){
 		$user=R::load("person",intval($id));
 		echo json_encode($user->export());
 	});
 
-	$app->get('/room/:id', $requestJSON, function($id){
+	$app->get('/room/:id', $requestJSON, $validateToken, function($id){
 		$user=R::load("person",intval($id));
 		echo json_encode($user->export());
 	});
 
-	$app->put('/room/:id', $requestJSON, function($id){
+	$app->put('/room/:id', $requestJSON, $validateToken, function($id){
 		$user=R::load("person",intval($id));
 		echo json_encode($user->export());
 	});
 
-	$app->post('/room', $requestJSON, function($id){
+	$app->post('/room', $requestJSON, $validateToken, function($id){
 		$user=R::load("person",intval($id));
 		echo json_encode($user->export());
 	});
 
-	$app->get('/room/:id/feed', $requestJSON, function($id){
+	$app->get('/room/:id/feed', $requestJSON, $validateToken, function($id){
 		$user=R::load("person",intval($id));
 		echo json_encode($user->export());
 	});

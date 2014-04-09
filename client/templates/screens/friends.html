@@ -1,11 +1,10 @@
-
 <ul class="people">
-	<li class="person" ng-repeat="person in user.friends">
+	<li class="person" ng-repeat="person in user.friends.models">
 		<a href="#/profile/{{ person.id }}">
 			<div class="above">
 				<div class="meta">
 					<div class="avatar avatar-small"></div>
-					<span class="name">{{ person.username }}</span>
+					<span class="name">{{ person.attributes.username }}</span>
 				</div>
 			</div>
 		</a>

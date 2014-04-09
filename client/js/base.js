@@ -130,16 +130,27 @@ angular.module('leapinit', ['navbar', 'ngAnimate', 'ngRoute', 'ngTouch'])
 			}).
 			when('/friends', {
 				templateUrl: 'templates/screens/friends.html',
-				controller: function ($rootScope) {
+				controller: function ($rootScope, $scope) {
 					$rootScope.name = 'friends';
 					$rootScope.title = 'Friends';
+					$rootScope.user.friends.fetch().fail(function () {
+						$scope.error = { message: 'Failed to load friend list.' }
+					}).always(function () {
+						$scope.$apply();
+						console.log($rootScope.user.friends)
+					});
 				}
 			}).
 			when('/rooms', {
 				templateUrl: 'templates/screens/rooms.html',
-				controller: function ($rootScope) {
+				controller: function ($rootScope, $scope) {
 					$rootScope.name = 'rooms';
 					$rootScope.title = 'Rooms';
+					$rootScope.user.rooms.fetch().fail(function () {
+						$scope.error = { message: 'Failed to load room list.' }
+					}).always(function () {
+						$scope.$apply();
+					});
 				}
 			}).
 			otherwise({ redirectTo: '/start' });

@@ -1,8 +1,8 @@
 <ul class="rooms">
 	<li><h2>Rooms</h2></li>
-	<li class="room" ng-repeat="room in user.rooms">
+	<li class="room" ng-repeat="room in user.rooms.models">
 		<a href="#/room/{{ room.id }}" class="rect rect-wide" imageplaceholder>
-			<span class="name">{{ room.name }}</span>
+			<span class="name">{{ room.attributes.name }}</span>
 		</a>
 	</li>
 </ul>

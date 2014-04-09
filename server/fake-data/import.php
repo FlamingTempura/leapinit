@@ -10,7 +10,7 @@ R::setup('mysql:host=localhost;dbname=leapinit','root','');
 R::nuke();
 
 // Generate some fake data
-$data = generateFakeData(10);
+$data = generateFakeData(1);
 
 echo("Adding fake people\n");
 array_walk($data->people, function (&$o) {
@@ -51,17 +51,27 @@ array_walk($data->rooms, function (&$o) {
 echo("Adding fake friends, blocks and rooms\n");
 array_walk($data->people, function (&$o) {
 	$person = R::load('person', $o->id + 1);
-	$person->sharedFriends = array_map(function ($id) {
-		return R::load('person', $id + 1);
-	}, $o->friends);
+	array_walk($o->friends, function ($id) use (&$person) {
+		$friendship = R::dispense('friendship');
+		$friendship->person = $person;
+		$friendship->person2 = R::load('person', $id + 1);
+		R::store($friendship);
+	});
+	$person->via('friendship')->sharedFriendshipList;
 	if (property_exists($o, 'blocks')) {
-		$person->sharedBlocks = array_map(function ($id) {
-			return R::load('person', $id + 1);
-		}, $o->blocks);
+		array_walk($o->blocks, function ($id) use (&$person) {
+			$block = R::dispense('block');
+			$block->person = $person;
+			$block->person2 = R::load('person', $id + 1);
+			R::store($block);
+		});
 	}
-	$person->sharedRooms = array_map(function ($id) {
-		return R::load('room', $id + 1);
-	}, $o->rooms);
+	array_walk($o->rooms, function ($id) use (&$person) {
+		$residence = R::dispense('residence');
+		$residence->person = $person;
+		$residence->room = R::load('room', $id + 1);
+		R::store($residence);
+	});
 	R::store($person);
 });
 
