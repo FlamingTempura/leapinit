@@ -7,6 +7,7 @@
 		"tuupola/slim-fake-mcrypt": "dev-master",
 		"slim/slim": "2.3.*",
 		"entomb/slim-json-api": "dev-master",
-		"gabordemooij/redbean": "3.*"
+		"gabordemooij/redbean": "3.*",
+		"fzaninotto/faker": "1.4.*@dev"
 	}
 }

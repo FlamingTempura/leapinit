@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "ad7c92f69a8a5d61501b3f665e452344",
+    "hash": "400da42b0887896ecf7034246d247e12",
     "packages": [
         {
             "name": "entomb/slim-json-api",
@@ -50,6 +50,52 @@
                 "view"
             ],
             "time": "2014-03-19 15:51:59"
+        },
+        {
+            "name": "fzaninotto/faker",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fzaninotto/Faker.git",
+                "reference": "a277bf23f9346e9edd704e01571fecd37af537d0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/a277bf23f9346e9edd704e01571fecd37af537d0",
+                "reference": "a277bf23f9346e9edd704e01571fecd37af537d0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.4.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Faker": "src/",
+                    "Faker\\PHPUnit": "test/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "François Zaninotto"
+                }
+            ],
+            "description": "Faker is a PHP library that generates fake data for you.",
+            "keywords": [
+                "data",
+                "faker",
+                "fixtures"
+            ],
+            "time": "2014-04-04 08:07:01"
         },
         {
             "name": "gabordemooij/redbean",
@@ -190,7 +236,8 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "tuupola/slim-fake-mcrypt": 20,
-        "entomb/slim-json-api": 20
+        "entomb/slim-json-api": 20,
+        "fzaninotto/faker": 20
     },
     "platform": [
 
