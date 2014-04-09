@@ -3,8 +3,6 @@
 require_once('../vendor/autoload.php');
 require_once('models.php');
 
-
-
 use RedBean_Facade as R;
 
 // Connect to the database
@@ -15,13 +13,15 @@ $app = new \Slim\Slim();
 
 $params = json_decode($app->request->getBody());
 
+//error_log(var_dump($$app->request->getBody()));
+
 if (isset($_SERVER['HTTP_ORIGIN'])) {
 	$app->response->headers->set('Access-Control-Allow-Origin', '*'); //$_SERVER['HTTP_ORIGIN']);
 	$app->response->headers->set('Access-Control-Allow-Credentials', true);
 	$app->response->headers->set('Access-Control-Max-Age', 86400);    // cache for 1 day
 }
 // Access-Control headers are received during OPTIONS requests
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 	if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'])) {
 		$app->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
 		$app->response->headers->set('Access-Control-Allow-Headers', $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']);
@@ -38,9 +38,12 @@ $validateToken = function () use ($app) {
 	error_log('checking token ' . $tokenKey);
 	$token = R::findOne('token', ' `key` = ? ', array($tokenKey));
 	error_log('ok');
-	if ($token != null) {
-		error_log('found user', $token->person_id);
-		$app->user = R::load('person', $token->person_id);
+	if ($token !== null) {
+		error_log('found token with user', $token->person_id);
+		$user = R::load('person', $token->person_id);
+	}
+	if (isset($user) && $user->id !== 0) {
+		$app->user = $user;
 	} else {
 		error_log('no user');
 		$app->render(401, [
@@ -62,10 +65,10 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		$username = $params->username;
 		$password = sha1($params->password);
 		$user = R::findOne('person', ' LOWER(username) = ? AND password = ? ', array($username, $password));
-		if ($user != null) {
+		if ($user !== null) {
 			$token = R::dispense('token');
-			$token->key = '1';
-			$token->user = $user;
+			$token->key = bin2hex(openssl_random_pseudo_bytes(32));
+			$token->person = $user;
 			// TODO: expires
 			R::store($token);
 			$app->render(200, [ 'result' => [ 
@@ -85,15 +88,10 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		$app->render(200, [ 'result' => [ 'id' => 'user', 'user' => $app->user->export() ] ]);
 	});
 
-	$app->delete('/auth/user', $requestJSON, function () use (&$app) {
-		if (isset($_SESSION['user_id'])) {
-			unset($_SESSION['user_id']);
-			$app->render(410, array());
-		} else {
-			$app->render(404, array(
-				'msg' => 'Not found.'
-			));
-		}
+	$app->delete('/auth/user', $requestJSON, $validateToken, function () use (&$app) {
+		$tokens = R::find('token', ' person_id = ? ', array($app->user->id));
+		R::trashAll($tokens);
+		$app->render(410, array());
 	});
 
 	$app->get('/person/:id', $requestJSON, function($id){

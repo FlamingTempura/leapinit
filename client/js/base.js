@@ -19,17 +19,15 @@ angular.module('leapinit', ['navbar', 'ngAnimate', 'ngRoute', 'ngTouch'])
 							if ($scope.login.error) {
 								$scope.login.loading = false;
 							} else {
-								var auths = new models.Auths({
-										username: $scope.login.username,
-										password: $scope.login.password 
-									}),
-									auth = auths.at(0);
-								auth.save().then(function () {
-									$rootScope.user = auth.user;
-									$location.path('/feed');
-								}).fail(function (response) {
-									console.log(response.responseJSON)
+								$rootScope.auths.reset();
+								$rootScope.auths.add({
+									username: $scope.login.username,
+									password: $scope.login.password 
+								});
+								var auth = $rootScope.auths.at(0);
+								auth.save().fail(function (response) {
 									$scope.login.error = { message: response.responseJSON.msg };
+									auth.trigger('destroy');
 								}).always(function () {
 									$scope.login.loading = false;
 									$scope.$apply();
@@ -92,6 +90,7 @@ angular.module('leapinit', ['navbar', 'ngAnimate', 'ngRoute', 'ngTouch'])
 				controller: function ($rootScope, $scope, $routeParams) {
 					$rootScope.name = 'profile';
 					$rootScope.title = 'Profile';
+					console.log($rootScope.user)
 					var id = Number($routeParams.person);
 					if (isNaN(id)) {
 						$scope.person = $rootScope.user;
@@ -146,13 +145,31 @@ angular.module('leapinit', ['navbar', 'ngAnimate', 'ngRoute', 'ngTouch'])
 			otherwise({ redirectTo: '/start' });
 	})
 	.controller('App', function ($scope, $rootScope, $location, models) {
-		var auths = new models.Auths({ id: 'user' });
-		$rootScope.auth = auths.get('user');
+		$rootScope.auths = new models.Auths();
 
-		$rootScope.auth.fetch().then(function () {
-			$location.path('/feed');
-		}).fail(function () {
-			$location.path('/start');
+		$rootScope.auths.on('add', function (auth) {
+			console.log('add', auth)
+			auth.on('change', function () {
+				console.log('change', auth)
+				if (auth.has('token')) {
+					localStorage.setItem('token', auth.get('token'));
+				}
+				if (auth.user) {
+					$rootScope.user = auth.user;
+					console.log('user', auth.user)
+					$location.path('/feed');
+				}
+			}).on('destroy', function () {
+				console.log('die')
+				localStorage.removeItem('token');
+				delete $rootScope.user;
+				$location.path('/start');
+			});
+		})
+		$rootScope.auths.add({ id: 'user' });
+		$rootScope.auth = $rootScope.auths.get('user');
+		$rootScope.auth.fetch().fail(function () {
+			$rootScope.auth.trigger('destroy');
 		});
 
 		$rootScope.go = function (path) {

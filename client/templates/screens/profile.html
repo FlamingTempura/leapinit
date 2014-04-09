@@ -4,8 +4,8 @@
 <div class="avatar avatar-medium">
 </div>
 <div class="user-info">
-	<div class="user-username">{{ person.username }}</div>
-	<div class="user-biography">{{ person.biography }}</div>
+	<div class="user-username">{{ person.attributes.username }}</div>
+	<div class="user-biography">{{ person.attributes.biography }}</div>
 </div>
 
 <div class="user-buttons" ng-if="!own">
@@ -14,7 +14,7 @@
 </div>
 
 <div class="user-buttons" ng-if="own">
-	<button>Log out</button>
+	<button ng-click="person.auth.destroy()">Log out</button>
 </div>
 
 <ul class="user-medias">
