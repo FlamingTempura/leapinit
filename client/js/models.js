@@ -1,104 +1,61 @@
 angular.module('leapinit')
-	.factory('models', function () {
-		
-		var randBetween = function (min, max) {
-			return Math.floor(Math.random() * (max - min + 1)) + min
-		};
+	.factory('models', function ($rootScope) {
+		var server = 'http://localhost/leapinit';
 
-		var randElement = function (array) {
-			var r = randBetween(0, array.length - 1);
-			return array[r];
-		};
 
-		var people = [
-			{
-				username: 'CoolPlum90',
-				biography: 'Ignorance is bliss.',
-				medias: [ { size: 'half' }, { size: 'half' }, { size: 'full' }]
-			},
-			{
-				username: 'Dave',
-				biography: 'Blah.'
-			},
-			{
-				username: 'UniSoton',
-				biography: 'Blah.'
-			},
-			{
-				username: 'Kate',
-				biography: 'Blah.'
-			},
-			{
-				username: 'jjfar90',
-				biography: 'Blah.'
-			},
-			{
-				username: 'ibeza1',
-				biography: 'Blah.'
-			},
-			{
-				username: 'leapinit_master',
-				biography: 'Blah.'
-			},
-			{
-				username: 'drevil101',
-				biography: 'Blah.'
-			},
-			{
-				username: 'kitten',
-				biography: 'Blah.'
+		var _sync = Backbone.sync;
+		Backbone.sync = function(method, model, options) {
+
+			options = _.extend({
+				url: _.result(model, 'url')
+			}, options);
+
+			var token = localStorage.getItem('token');
+			if (token) {
+				options.url += ((options.url.indexOf('?') > -1) ? '&' : '?') + 'token=' + token;
 			}
-		];
 
-		var rooms = [
-			{ name: 'Careers' },
-			{ name: 'Germany' },
-			{ name: 'Inception' },
-			{ name: 'Frontier' },
-			{ name: 'University of Southampton' },
-			{ name: 'Cambridge book club' },
-			{ name: 'hope' },
-			{ name: 'hammer' },
-			{ name: 'tinned beans' }
-		];
+			return _sync.call(this, method, model, options);
+		}
 
-		var posts = _.times(50, function () {
-			return {
-				person: randElement(people),
-				room: randElement(rooms)
-			}
-		});
+		var Model = Backbone.Model.extend({
+				parse: function (response) {
+					return response.result;
+				}
+			}),
+			Collection = Backbone.Collection.extend({
+				parse: function (response) {
+					return response.result;
+				}
+			});
 
-		_.each(people, function (person, i) {
-			person.id = i;
-			person.usernameLowercase = person.username.toLocaleLowerCase();
-			person.rooms = _.uniq(_.times(randBetween(0, 10), function () {
-				return randElement(rooms);
-			}));
-			person.friends = _.uniq(_.times(randBetween(0, 10), function () {
-				return randElement(people);
-			}));
-		});
+		var Auth = Model.extend({
+				initialize: function () {
+					var that = this;
+					this.on('change', function () {
+						console.log(this.toJSON(), that.get('user'));
+						var users = new Users(that.get('user'));
+						that.user = users.at(0);
+						that.user.auth = that;
+						if (that.has('token')) {
+							localStorage.setItem('token', that.get('token'));
+						}
+					});
+				}
+			}),
+			Auths = Collection.extend({
+				model: Auth,
+				url: server + '/api/auth'
+			});
 
-		_.each(rooms, function (room, i) {
-			room.id = i;
-			room.posts = _.select(posts, function (post) {
-				return post.room === room;
-			})
-		});
-
-		_.each(posts, function (post, i) {
-			post.id = i;
-		});
-
-		var suggestions = _(rooms).sortBy(function () {
-			return Math.random();
-		}).slice(0, 6);
+		var User = Backbone.Model.extend({}),
+			Users = Backbone.Collection.extend({
+				model: Auth,
+				url: server + '/api/auth'
+			});
 
 		return {
-			people: people,
-			rooms: rooms,
-			posts: posts,
-			user: people[0]
+			Auths: Auths,
+			Users: Users
 		};
 	});

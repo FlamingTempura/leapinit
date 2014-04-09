@@ -1,9 +1,9 @@
 <?php
 
-require '../vendor/autoload.php';
+require_once('../vendor/autoload.php');
+require_once('models.php');
 
-// Sessions will be used for authentication
-session_start();
+
 
 use RedBean_Facade as R;
 
@@ -13,43 +13,66 @@ R::setup('mysql:host=localhost;dbname=leapinit','root','');
 // Slim is used for creating a REST endpoint
 $app = new \Slim\Slim();
 
-$app->view(new \JsonApiView());
-$app->add(new \JsonApiMiddleware());
-
 $params = json_decode($app->request->getBody());
 
 if (isset($_SERVER['HTTP_ORIGIN'])) {
-	header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
-	header('Access-Control-Allow-Credentials: true');
-	header('Access-Control-Max-Age: 86400');    // cache for 1 day
+	$app->response->headers->set('Access-Control-Allow-Origin', '*'); //$_SERVER['HTTP_ORIGIN']);
+	$app->response->headers->set('Access-Control-Allow-Credentials', true);
+	$app->response->headers->set('Access-Control-Max-Age', 86400);    // cache for 1 day
 }
 // Access-Control headers are received during OPTIONS requests
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 	if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'])) {
-		header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");         
-	}
-	if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'])) {
-		header("Access-Control-Allow-Headers: {$_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']}");
+		$app->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+		$app->response->headers->set('Access-Control-Allow-Headers', $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']);
 	}
 }
 
-// All URI's should begin /api (e.g. /api/user/102)
-$app->group('/api', function () use (&$app, &$params) {
+$requestJSON = function () use (&$app) {
+	$app->view(new \JsonApiView());
+	$app->add(new \JsonApiMiddleware());
+};
 
-	$app->map('/:x+', function ($x) {
-	    http_response_code(200);
-	})->via('OPTIONS');
+$validateToken = function () use ($app) {
+	$tokenKey = $app->request()->params('token');
+	error_log('checking token ' . $tokenKey);
+	$token = R::findOne('token', ' `key` = ? ', array($tokenKey));
+	error_log('ok');
+	if ($token != null) {
+		error_log('found user', $token->person_id);
+		$app->user = R::load('person', $token->person_id);
+	} else {
+		error_log('no user');
+		$app->render(401, [
+			'msg' => 'Unauthorized.'
+		]);
+	}
+};
+
+
+// All URI's should begin /api (e.g. /api/user/102)
+$app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateToken) {
+
+	$app->options('/:x+', function ($x) use (&$app) {
+		$app->response->setStatus(200);
+	});
 
 	// Log in
-	$app->post('/auth', function () use (&$app, &$params) {
+	$app->post('/auth', $requestJSON, function () use (&$app, &$params) {
 		$username = $params->username;
-		$password = $params->password;
-		$user = R::findOne('person', ' username = ? AND password = ? ', array($username, $password));
+		$password = sha1($params->password);
+		$user = R::findOne('person', ' LOWER(username) = ? AND password = ? ', array($username, $password));
 		if ($user != null) {
-			$_SESSION['user_id'] = $user->id;
-			$app->render(200, array(
-				'msg' => 'attempting login with ' . $username . ' ' . $password
-			));
+			$token = R::dispense('token');
+			$token->key = '1';
+			$token->user = $user;
+			// TODO: expires
+			R::store($token);
+			$app->render(200, [ 'result' => [ 
+				'id' => 'user',
+				'token' => $token->key,
+				'user' => $user->export()
+			] ]);
 		} else {
 			$app->render(401, array(
 				'msg' => 'Username or password not found'
@@ -58,99 +81,95 @@ $app->group('/api', function () use (&$app, &$params) {
 	});
 
 	// Get user that is logged in
-	$app->get('/auth', function () use (&$app) {
-		if (isset($_SESSION['user_id'])) {
-		} else {
-			$app->render(401, array(
-				'msg' => 'Unauthorized'
-			));
-		}
+	$app->get('/auth/user', $requestJSON, $validateToken, function () use (&$app) {
+		$app->render(200, [ 'result' => [ 'id' => 'user', 'user' => $app->user->export() ] ]);
 	});
 
-	$app->delete('/auth', function () use (&$app) {
+	$app->delete('/auth/user', $requestJSON, function () use (&$app) {
 		if (isset($_SESSION['user_id'])) {
 			unset($_SESSION['user_id']);
+			$app->render(410, array());
 		} else {
-			$app->render(403, array(
-				'msg' => 'Forbidden'
+			$app->render(404, array(
+				'msg' => 'Not found.'
 			));
 		}
 	});
 
-	$app->get('/person/:id',function($id){
+	$app->get('/person/:id', $requestJSON, function($id){
 		//echo "person $id";
 		$user=R::load("person",intval($id));
 		echo json_encode($user->export());
 	});
 
-	$app->put('/person/:id',function($id){
+	$app->put('/person/:id', $requestJSON, function($id){
 		$user=R::load("person",intval($id));
 		echo json_encode($user->export());
 	});
 
-	$app->delete('/person/:id',function($id){
+	$app->delete('/person/:id', $requestJSON, function($id){
 		$user=R::load("person",intval($id));
 		echo json_encode($user->export());
 	});
 
-	$app->post('/person',function($id){
+	$app->post('/person', $requestJSON, function($id){
 		$user=R::load("person",intval($id));
 		echo json_encode($user->export());
 	});
 
-	$app->get('/person/:id/friend',function($id){
+	$app->get('/person/:id/friend', $requestJSON, function($id){
 		$user=R::load("person",intval($id));
 		echo json_encode($user->export());
 	});
 
-	$app->post('/person/:id/friend',function($id){
+	$app->post('/person/:id/friend', $requestJSON, function($id){
 		$user=R::load("person",intval($id));
 		echo json_encode($user->export());
 	});
 
-	$app->delete('/person/:id/friend/:fid',function($id,$fid){
+	$app->delete('/person/:id/friend/:fid', $requestJSON, function($id,$fid){
 		$user=R::load("person",intval($id));
 		$friend=R::load("person",intval($fid));
 		echo json_encode($user->export());
 	});
 
-	$app->get('/person/:id/room',function($id){
+	$app->get('/person/:id/room', $requestJSON, function($id){
 		$user=R::load("person",intval($id));
 		echo json_encode($user->export());
 	});
 
-	$app->post('/person/:id/room',function($id){
+	$app->post('/person/:id/room', $requestJSON, function($id){
 		$user=R::load("person",intval($id));
 		echo json_encode($user->export());
 	});
 
-	$app->delete('/person/:id/room/:rid',function($id){
+	$app->delete('/person/:id/room/:rid', $requestJSON, function($id){
 		$user=R::load("person",intval($id));
 		$room=R::load("person",intval($rid));
 		echo json_encode($user->export());
 	});
 
-	$app->get('/person/:id/feed',function($id){
+	$app->get('/person/:id/feed', $requestJSON, function($id){
 		$user=R::load("person",intval($id));
 		echo json_encode($user->export());
 	});
 
-	$app->get('/room/:id',function($id){
+	$app->get('/room/:id', $requestJSON, function($id){
 		$user=R::load("person",intval($id));
 		echo json_encode($user->export());
 	});
 
-	$app->put('/room/:id',function($id){
+	$app->put('/room/:id', $requestJSON, function($id){
 		$user=R::load("person",intval($id));
 		echo json_encode($user->export());
 	});
 
-	$app->post('/room',function($id){
+	$app->post('/room', $requestJSON, function($id){
 		$user=R::load("person",intval($id));
 		echo json_encode($user->export());
 	});
 
-	$app->get('/room/:id/feed',function($id){
+	$app->get('/room/:id/feed', $requestJSON, function($id){
 		$user=R::load("person",intval($id));
 		echo json_encode($user->export());
 	});

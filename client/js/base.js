@@ -19,23 +19,21 @@ angular.module('leapinit', ['navbar', 'ngAnimate', 'ngRoute', 'ngTouch'])
 							if ($scope.login.error) {
 								$scope.login.loading = false;
 							} else {
-								var auths = new models.Auths();
-								auths.create({
-									usernameLowercase: $scope.login.username.toLocaleLowerCase()
-									password: $scope.login.password 
-								}).always(function () {
-									console.log('BLAH', arguments)
-								});
-								/*var user = _($scope.people).findWhere({});
-								console.log('boo', user, $scope.login.username)
-								if (user) {
-									console.log('yrrp')
-									$rootScope.user = user;
+								var auths = new models.Auths({
+										username: $scope.login.username,
+										password: $scope.login.password 
+									}),
+									auth = auths.at(0);
+								auth.save().then(function () {
+									$rootScope.user = auth.user;
 									$location.path('/feed');
-								} else {
-									$scope.login.error = { message: 'Username or password incorrect.' };
+								}).fail(function (response) {
+									console.log(response.responseJSON)
+									$scope.login.error = { message: response.responseJSON.msg };
+								}).always(function () {
 									$scope.login.loading = false;
-								}*/
+									$scope.$apply();
+								});
 							}
 						}
 					};
@@ -148,6 +146,15 @@ angular.module('leapinit', ['navbar', 'ngAnimate', 'ngRoute', 'ngTouch'])
 			otherwise({ redirectTo: '/start' });
 	})
 	.controller('App', function ($scope, $rootScope, $location, models) {
+		var auths = new models.Auths({ id: 'user' });
+		$rootScope.auth = auths.get('user');
+
+		$rootScope.auth.fetch().then(function () {
+			$location.path('/feed');
+		}).fail(function () {
+			$location.path('/start');
+		});
+
 		$rootScope.go = function (path) {
 			$location.path(path);
 		};
