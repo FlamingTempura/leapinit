@@ -1,0 +1,12 @@
+{
+	"repositories": [{
+		"type": "vcs",
+		"url": "https://github.com/tuupola/slim-fake-mcrypt.git"
+	}],
+	"require": {
+		"tuupola/slim-fake-mcrypt": "dev-master",
+		"slim/slim": "2.3.*",
+		"entomb/slim-json-api": "dev-master",
+		"gabordemooij/redbean": "3.*"
+	}
+}
