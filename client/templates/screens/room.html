@@ -8,7 +8,7 @@
 	<button><i class="fa fa-font"></i></button>
 </div>
 
-<ul class="posts">
+<!-- <ul class="posts">
 	<li class="post room-info">
 		<div class="above">
 			<h1>{{ room.attributes.name }}</h1>
@@ -16,6 +16,8 @@
 		</div>
 	</li>
 	<li class="post" ng-repeat="post in room.posts.models" ng-include="'../templates/post.html'"></li>
-</ul>
+</ul> -->
+
+<div ng-include="'templates/posts.html'" class="inline-container"></div>
 
 <nav></nav>

@@ -5,9 +5,9 @@
 
 <ul class="honeycomb" ng-if="!noHoneycomb">
 	<li class="hexagon" ng-repeat="post in posts.models"
-		style="left: {{ post.attributes.offset * 67 + post.attributes.col * 135 }}px; top: {{ post.attributes.row * 39 }}px;">
+		style="left: {{ post.attributes.offset * 0.45 * 200 + post.attributes.col * 0.9 * 200 }}px; top: {{ post.attributes.row * 0.26 * 200 }}px;">
 		<div class="hexagon-p1">
-			<div class="hexagon-p2"></div>
+			<div class="hexagon-p2" style="background-image: url({{ post.attributes.media.url }})"></div>
 		</div>
 	</li>
 </ul>

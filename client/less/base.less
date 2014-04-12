@@ -167,6 +167,7 @@ body {
 	left: 0;
 	right: 0;
 	bottom: 0;
+	//overflow: auto;
 }
 
 .all-screens {
@@ -511,17 +512,25 @@ nav {
 	display: inline;
 }
 
-
+/*.honeycomb {
+	position: absolute;
+	overflow: auto;
+	height: 100%;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+}
+*/
 .hexagon {
 	position: absolute;
-	@size: 150px;
+	@size: 200px;
 	width: @size;
 	height: @size/2;
-	//margin: -8px 0 0 -80px;
+	margin: 0 0 0 -(0.21 * @size);
 	overflow: hidden;
-	visibility: hidden;
+	//visibility: hidden;
 	display: inline-block;
-	text-indent: 80px;
 	.transform(rotate(120deg));
 	.hexagon-p1 {
 		overflow: hidden;
@@ -532,8 +541,20 @@ nav {
 	.hexagon-p2 {
 		width: 100%;
 		height: 100%;
-		visibility: visible;
+		//visibility: visible;
 		.transform(rotate(-60deg));
-		background: red;
+		background: #ddd;
+		background-size: cover;
+		background-repeat: no-repeat;
+		background-position: 50% 50%;
 	}
+}
+
+.scroller {
+	overflow: auto;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	left: 0;
 }
