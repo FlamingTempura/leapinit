@@ -52,6 +52,17 @@ $validateToken = function () use ($app) {
 	}
 };
 
+function exportPosts (&$posts) {
+	return array_map(function ($postid) {
+		$post = R::load('post', $postid);
+		return array_merge($post->export(), [
+			'media' => R::load('media', $post->media_id)->export(),
+			'person' => R::load('person', $post->person_id)->export(),
+			'room' => R::load('room', $post->room_id)->export()
+		]);
+	}, array_keys($posts));
+};
+
 
 // All URI's should begin /api (e.g. /api/user/102)
 $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateToken) {
@@ -160,14 +171,18 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		echo json_encode($user->export());
 	});
 
-	$app->delete('/person/:id/room/:rid', $requestJSON, $validateToken, function($id){
+	$app->delete('/person/:id/room/:rid', $requestJSON, $validateToken, function ($id) use (&$app) {
 		$user=R::load("person",intval($id));
 		$room=R::load("person",intval($rid));
 		echo json_encode($user->export());
 	});
 
-	$app->get('/person/:id/feed', $requestJSON, $validateToken, function($id){
-		$user=R::load("person",intval($id));
+	$app->get('/person/:id/feed', $requestJSON, $validateToken, function ($id) use (&$app) {
+		$user=R::load("person", intval($id));
+		$posts = R::findAll('post');
+		$app->render(200, [
+			'result' => exportPosts($posts)
+		]);
 		echo json_encode($user->export());
 	});
 
@@ -186,9 +201,11 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		echo json_encode($user->export());
 	});
 
-	$app->get('/room/:id/feed', $requestJSON, $validateToken, function($id){
-		$user=R::load("person",intval($id));
-		echo json_encode($user->export());
+	$app->get('/room/:id/post', $requestJSON, $validateToken, function ($id) use (&$app) {
+		$room = R::load('room', intval($id));
+		$app->render(200, [
+			'result' => exportPosts($room->ownPost)
+		]);
 	});
 });
 

@@ -11,11 +11,11 @@
 <ul class="posts">
 	<li class="post room-info">
 		<div class="above">
-			<h1>{{ room.name }}</h1>
+			<h1>{{ room.attributes.name }}</h1>
 			<div class="room-origin">Origin: {{ room.link }}</div>
 		</div>
 	</li>
-	<li class="post" ng-repeat="post in room.posts" ng-include="'../templates/post.html'"></li>
+	<li class="post" ng-repeat="post in room.posts.models" ng-include="'../templates/post.html'"></li>
 </ul>
 
 <nav></nav>

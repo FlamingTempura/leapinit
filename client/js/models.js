@@ -50,6 +50,7 @@ angular.module('leapinit')
 						that.user.rooms = new Rooms(undefined, { url: that.user.url() + '/room' });
 						that.user.friends = new People(undefined, { url: that.user.url() + '/friend' });
 						that.user.blocks = new People(undefined, { url: that.user.url() + '/block' });
+						that.user.feed = new Posts(undefined, { url: that.user.url() + '/feed' });
 
 						if (that.has('token')) {
 							localStorage.setItem('token', that.get('token'));
@@ -68,10 +69,24 @@ angular.module('leapinit')
 				url: server + '/api/person'
 			});
 
-		var Room = Model.extend({}),
+		var Room = Model.extend({
+				url: function () {
+					return server + '/api/room/' + this.id;
+				},
+				initialize: function () {
+					Model.prototype.initialize.apply(this, arguments);
+					this.posts = new Posts(undefined, { url: _.result(this, 'url') + '/post' });
+				}
+			}),
 			Rooms = Collection.extend({
 				model: Room,
 				url: server + '/api/room'
+			});
+
+		var Post = Model.extend({}),
+			Posts = Collection.extend({
+				model: Post,
+				url: server + '/api/post'
 			});
 
 		return {
