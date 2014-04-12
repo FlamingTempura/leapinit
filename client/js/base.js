@@ -81,22 +81,6 @@ angular.module('leapinit', ['navbar', 'ngAnimate', 'ngRoute', 'ngTouch'])
 					var posts = $rootScope.user.feed;
 
 					$rootScope.user.feed.fetch().then(function () {
-						posts.each(function (post, i) {
-							var row = Math.floor(i / 4);
-							console.log(i, row)
-							post.set({
-								row: row,
-								col: i - (row * 4),
-								offset: (row % 2) === 0 ? 1 : 0
-							});
-							//var url = post.get('media').url;
-							//if (url) {
-								post.set('media', _.extend({}, post.get('media'), {
-									//url: url + '?' + Math.random()
-									url: 'http://lorempixel.com/400/300/?' + Math.random()
-								}));
-							//}
-						})
 						$scope.$apply();
 					});
 				}
@@ -225,4 +209,15 @@ angular.module('leapinit', ['navbar', 'ngAnimate', 'ngRoute', 'ngTouch'])
 		$rootScope.back = function () {
 			history.back();
 		};
+	})
+	.directive('ngXlinkHref', function () {
+		return {
+			priority: 99,
+			link: function ($scope, element, attrs) {
+				attrs.$observe('ngXlinkHref', function (value) {
+					if (!value) return;
+					attrs.$set('xlink:href', value);
+				});
+			}
+		}
 	});

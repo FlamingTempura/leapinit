@@ -86,7 +86,71 @@ angular.module('leapinit')
 		var Post = Model.extend({}),
 			Posts = Collection.extend({
 				model: Post,
-				url: server + '/api/post'
+				url: server + '/api/post',
+				initialize: function () {
+					Collection.prototype.initialize.apply(this, arguments);
+					this.generateHoneycomb();
+					this.on('change add remove reset', this.generateHoneycomb, this);
+				},
+				generateHoneycomb: function () {
+					var posts = _.clone(this.models),
+						cells = [],
+						radius = 50,
+						maxCols = 4,
+						row = -1,
+						col = -1,
+
+						post, even, cell, x, y, c, b, a;
+
+					while (posts.length > 0) {
+						cell = { id: 'r' + row + 'c' + col };
+
+						even = (row % 2) === 0;
+
+						x = (even ? 0.916 : 0) * radius + col * 1.86 * radius;
+						y = row * 1.6 * radius;
+
+						c = radius;
+						b = Math.sin(1.05) * c;
+						a = c / 2;
+
+						cell.path = [
+							'M', x, y + a + c,
+							'L', x, y + a,
+							'L', x + b, y,
+							'L', x + 2 * b, y + a,
+							'L', x + 2 * b, y + a + c,
+							'L', x + b, y + 2 * c
+						].join(' ');
+
+
+						cell.visible = even ? 
+							(row > -1 && col > -1 && col < maxCols - 1) : 
+							(row > -1 && col > -1 && col < maxCols);
+
+						// If cell is on screen
+						if (cell.visible) {
+							cell.post = posts.shift();
+							//cell.url = cell.post.media.
+							cell.url = 'http://lorempixel.com/400/300/?' + Math.random();
+						}
+						
+						col++;
+
+						if (even && col === maxCols || 
+								!even && col === maxCols + 1) {
+							row++;
+							col = -1;
+							even = (row % 2) === 0;
+						}
+
+						cells.push(cell);
+					}
+
+					console.log('cells', cells);
+					this.honeycomb = cells;
+				}
+
 			});
 
 		return {
