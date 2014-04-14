@@ -102,7 +102,7 @@ angular.module('leapinit')
 
 						post, even, cell, x, y, c, b, a;
 
-					while (posts.length > 0) {
+					while (posts.length > 0 || col >= 0) {
 						cell = { id: 'r' + row + 'c' + col };
 
 						even = (row % 2) === 0;
@@ -133,6 +133,9 @@ angular.module('leapinit')
 							cell.post = posts.shift();
 							//cell.url = cell.post.media.
 							cell.url = 'http://lorempixel.com/400/300/?' + Math.random();
+							cell.fill = 'url(#img-' + cell.id + ')';
+						} else {
+							cell.fill = '#ddd';
 						}
 						
 						col++;
@@ -147,8 +150,10 @@ angular.module('leapinit')
 						cells.push(cell);
 					}
 
-					console.log('cells', cells);
-					this.honeycomb = cells;
+					this.honeycomb = {
+						cells: cells,
+						rowCount: row + 1
+					};
 				}
 
 			});

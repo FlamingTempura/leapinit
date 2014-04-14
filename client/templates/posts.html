@@ -16,20 +16,16 @@
 	<svg	xmlns="http://www.w3.org/2000/svg"
 			xmlns:xlink="http://www.w3.org/1999/xlink"
 			width="100%"
-			height="100%">
+			ng-attr-height="{{ posts.honeycomb.rowCount * 83 }}">
 		<defs>
-			<pattern ng-attr-id="img-{{ cell.id }}" width="1" height="1" ng-repeat="cell in posts.honeycomb">
+			<pattern ng-attr-id="img-{{ cell.id }}" width="1" height="1" ng-repeat="cell in posts.honeycomb.cells">
 				<image xlink:href="img/empty.png" ng-xlink-href="{{ cell.url }}" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid slice" />
 			</pattern>
 		</defs>
-		<path 	class="hexagon" 
-				ng-if="cell.visible"
-				ng-repeat="cell in posts.honeycomb"
+		<path 	class="hexagon"
+				ng-repeat="cell in posts.honeycomb.cells"
 				ng-attr-d="{{ cell.path }}"
-				ng-attr-fill="url(#img-{{ cell.id }})"></path>
-		<path 	class="hexagon hexagon-part" 
-				ng-if="!cell.visible"
-				ng-repeat="cell in posts.honeycomb"
-				ng-attr-d="{{ cell.path }}"></path>
+				ng-attr-fill="{{ cell.fill }}"
+				ng-click="go('/post/' + cell.post.id)"></path>
 	</svg>
 </image>
