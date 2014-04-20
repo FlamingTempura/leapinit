@@ -12,15 +12,21 @@
 	<script type="text/javascript" src="bower_components/angular-touch/angular-touch.min.js"></script>
 	<script type="text/javascript" src="bower_components/underscore/underscore.js"></script>
 	<script type="text/javascript" src="bower_components/backbone/backbone.js"></script>
-	<script type="text/javascript" src="bower_components/raphael/raphael-min.js"></script>
 	<script type="text/javascript" src="js/base.js"></script>
 	<script type="text/javascript" src="js/models.js"></script>
 	<script type="text/javascript" src="js/nav.js"></script>
+	<script type="text/javascript" src="js/screens/feed.js"></script>
+	<script type="text/javascript" src="js/screens/friends.js"></script>
+	<script type="text/javascript" src="js/screens/profile.js"></script>
+	<script type="text/javascript" src="js/screens/register.js"></script>
+	<script type="text/javascript" src="js/screens/room.js"></script>
+	<script type="text/javascript" src="js/screens/rooms.js"></script>
+	<script type="text/javascript" src="js/screens/start.js"></script>
 </head>
 <body>
 	<div class="app">
-		{{ name }}
 		<div class="screen screen-{{ name }}" ng-view></div>
+		<nav ng-if="navbars"></nav>
 	</div>
 </body>
 </html>

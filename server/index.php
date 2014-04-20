@@ -105,7 +105,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		$app->render(410, array());
 	});
 
-	$app->get('/person/:id', $requestJSON, $validateToken, function ($id) use (&$app) {
+	$app->get('/person/:id', $requestJSON, $validateToken, function ($id) use (&$app, &$params) {
 		$person = R::load('person', intval($id));
 		$app->render(200, [
 			'response' => $person->export()
@@ -122,9 +122,22 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		echo json_encode($user->export());
 	});
 
-	$app->post('/person', $requestJSON, $validateToken, function ($id) use (&$app) {
-		$person = R::load('person', intval($id));
-		echo json_encode($user->export());
+	$app->post('/person', $requestJSON, function () use (&$app, &$params) {
+		if (R::findOne('person', ' username = ? ', array($params->username))) {
+			$app->render(401, [
+				'msg' => 'Username already in use.'
+			]);
+		} else {
+
+			$person = R::dispense('person');
+			$person->username = $params->username;
+			$person->password = sha1($params->password);
+			R::store($person);
+
+			$app->render(200, [
+				'response' => $person->export()
+			]);
+		}
 	}); 
 
 	$app->get('/person/:id/friend', $requestJSON, $validateToken, function ($id) use (&$app) {
@@ -178,12 +191,15 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 	});
 
 	$app->get('/person/:id/feed', $requestJSON, $validateToken, function ($id) use (&$app) {
-		$user=R::load("person", intval($id));
-		$posts = R::findAll('post');
+		$person = R::load('person', intval($id));
+		$posts = [];
+		array_map(function ($residence) use (&$posts) {
+			$ps = R::find('post', ' room_id = ? ', array($residence->id));
+			$posts = array_merge($posts, exportPosts($ps));
+		}, array_values($person->ownResidence));
 		$app->render(200, [
-			'result' => exportPosts($posts)
+			'result' =>  $posts
 		]);
-		echo json_encode($user->export());
 	});
 
 	$app->get('/room/:id', $requestJSON, $validateToken, function($id){

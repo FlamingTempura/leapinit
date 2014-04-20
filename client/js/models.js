@@ -1,6 +1,56 @@
+var server = 'http://192.168.1.66/leapinit';
+
 angular.module('leapinit')
+	.factory('auth', function (models) {
+
+		var ajax = function (url, method, data) {
+			return $.ajax({
+				url: server + url + '?token=' + (auth.token || ''),
+				method: method,
+				dataType: 'json',
+				data: JSON.stringify(data),
+				contentType: 'application/json; charset=utf-8',
+			});
+		};
+
+		var auth = _.extend({}, Backbone.Events, {
+
+			token: localStorage.getItem('token'),
+
+			check: function () {
+				return ajax('/api/auth/user', 'GET').then(function (response) {
+					auth.user = models.People.prototype.makeUser(response.result.user, auth);
+					auth.trigger('login');
+				}).fail(function () {
+					localStorage.removeItem('token');
+				});
+			},
+
+			login: function (o) {
+				return ajax('/api/auth', 'POST', {
+					username: o.username,
+					password: o.password 
+				}).then(function (response) {
+					console.log(response)
+					auth.token = response.result.token;
+					auth.user = models.People.prototype.makeUser(response.result.user, auth);
+					localStorage.setItem('token', auth.token);
+					auth.trigger('login');
+				});
+			},
+
+			logout: function () {
+				return ajax('/api/auth/user', 'DELETE').always(function () {
+					localStorage.removeItem('token');
+					auth.trigger('logout');
+				});
+			}
+		});
+
+		return auth;
+	})
 	.factory('models', function ($rootScope) {
-		var server = 'http://localhost/leapinit';
+		
 
 
 		var _sync = Backbone.sync;
@@ -10,7 +60,7 @@ angular.module('leapinit')
 				url: _.result(model, 'url')
 			}, options);
 
-			var token = localStorage.getItem('token');
+			var token = $rootScope.auth && $rootScope.auth.token;
 			if (token) {
 				options.url += ((options.url.indexOf('?') > -1) ? '&' : '?') + 'token=' + token;
 			}
@@ -39,34 +89,21 @@ angular.module('leapinit')
 				}
 			});
 
-		var Auth = Model.extend({
-				initialize: function () {
-					var that = this;
-					this.on('change', function () {
-						console.log(this.toJSON(), that.get('user'));
-						var users = new People(that.get('user'));
-						that.user = users.at(0);
-						that.user.auth = that;
-						that.user.rooms = new Rooms(undefined, { url: that.user.url() + '/room' });
-						that.user.friends = new People(undefined, { url: that.user.url() + '/friend' });
-						that.user.blocks = new People(undefined, { url: that.user.url() + '/block' });
-						that.user.feed = new Posts(undefined, { url: that.user.url() + '/feed' });
-
-						if (that.has('token')) {
-							localStorage.setItem('token', that.get('token'));
-						}
-					});
-				}
-			}),
-			Auths = Collection.extend({
-				model: Auth,
-				url: server + '/api/auth'
-			});
 
 		var Person = Model.extend({}),
 			People = Collection.extend({
 				model: Person,
-				url: server + '/api/person'
+				url: server + '/api/person',
+				makeUser: function (user, auth) {
+					var users = new People(user),
+						user = users.at(0);
+					user.auth = auth;
+					user.rooms = new Rooms(undefined, { url: user.url() + '/room' });
+					user.friends = new People(undefined, { url: user.url() + '/friend' });
+					user.blocks = new People(undefined, { url: user.url() + '/block' });
+					user.feed = new Posts(undefined, { url: user.url() + '/feed' });
+					return user;
+				}
 			});
 
 		var Room = Model.extend({
@@ -159,7 +196,6 @@ angular.module('leapinit')
 			});
 
 		return {
-			Auths: Auths,
 			People: People,
 			Rooms: Rooms
 		};

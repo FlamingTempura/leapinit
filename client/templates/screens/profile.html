@@ -1,11 +1,15 @@
-<button class="top-left-button" ng-if="own" ng-click="go('/avatar')"><i class="fa fa-edit"></i></button>
 <button class="top-right-button" ng-if="own"><i class="fa fa-plus"></i></button>
 
-<div class="avatar avatar-medium">
+<div class="avatar avatar-medium" ng-click="go('/avatar')">
 </div>
 <div class="user-info">
 	<div class="user-username">{{ person.attributes.username }}</div>
 	<div class="user-biography">{{ person.attributes.biography }}</div>
+</div>
+
+<div class="user-info">
+	<input type="text" ng-model="user.attributes.username" class="user-username">
+	<input type="text" ng-model="user.attributes.biography" class="user-biography">
 </div>
 
 <div class="user-buttons" ng-if="!own">
@@ -14,7 +18,7 @@
 </div>
 
 <div class="user-buttons" ng-if="own">
-	<button ng-click="person.auth.destroy()">Log out</button>
+	<button ng-click="person.auth.logout()">Log out</button>
 </div>
 
 <ul class="user-medias">
@@ -22,5 +26,3 @@
 		<img placeholder ng-class="rect rect-{{ media.size }}">
 	</li>
 </ul>
-
-<nav></nav>
