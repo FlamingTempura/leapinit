@@ -72,9 +72,26 @@ angular.module('leapinit', ['navbar', 'ngAnimate', 'ngRoute', 'ngTouch'])
 			}).
 			when('/feed', {
 				templateUrl: 'templates/screens/feed.html',
-				controller: function ($rootScope) {
+				controller: function ($rootScope, $scope) {
 					$rootScope.name = 'feed';
 					$rootScope.title = 'Feed';
+
+					$scope.posts = $rootScope.user.feed;
+
+					var posts = $rootScope.user.feed;
+
+					$rootScope.user.feed.fetch().then(function () {
+						posts.each(function (post, i) {
+							var row = Math.floor(i / 6);
+							console.log(i, row)
+							post.set({
+								row: row,
+								col: i - (row * 6),
+								offset: (row % 2) === 0 ? 1 : 0
+							});
+						})
+						$scope.$apply();
+					});
 				}
 			}).
 			when('/room/:room', {
@@ -82,7 +99,16 @@ angular.module('leapinit', ['navbar', 'ngAnimate', 'ngRoute', 'ngTouch'])
 				controller: function ($rootScope, $scope, $routeParams) {
 					$rootScope.name = 'room';
 					$rootScope.title = 'Room';
-					$scope.room = _($rootScope.rooms).findWhere({ id: Number($routeParams.room) });
+					var room = $rootScope.user.rooms.get(Number($routeParams.room));
+					$scope.room = room;
+					if (room) {
+						room.posts.fetch().then(function () {
+							$scope.$apply();
+						});
+					} else {
+						// TODO
+						console.error('hmm')
+					}
 				}
 			}).
 			when('/profile/:person?', {
@@ -156,6 +182,8 @@ angular.module('leapinit', ['navbar', 'ngAnimate', 'ngRoute', 'ngTouch'])
 			otherwise({ redirectTo: '/start' });
 	})
 	.controller('App', function ($scope, $rootScope, $location, models) {
+		//$rootScope.noHoneycomb = true;
+
 		$rootScope.auths = new models.Auths();
 
 		$rootScope.auths.on('add', function (auth) {

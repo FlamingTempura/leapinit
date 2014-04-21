@@ -79,20 +79,21 @@ array_walk($data->people, function (&$o) {
 echo("Adding fake posts\n");
 array_walk($data->posts, function (&$o) {
 	$media = R::dispense('media');
-	if (property_exists($o, 'type')) {
-		$media->type = $o->type;
+	if (property_exists($o->media, 'type')) {
+		$media->type = $o->media->type;
 	}
-	if (property_exists($o, 'text')) {
-		$media->text = $o->text;
+	if (property_exists($o->media, 'text')) {
+		$media->text = $o->media->text;
 	}
-	if (property_exists($o, 'url')) {
-		$media->url = $o->url;
+	if (property_exists($o->media, 'url')) {
+		$media->url = $o->media->url;
 	}
 	R::store($media);
 
 	$post = R::dispense('post');
 	//$post->id = $o->id;
 	$post->person = R::load('person', $o->person + 1);
+	$post->room = R::load('room', $o->room + 1);
 	$post->media = $media;
 	R::store($post);
 });
