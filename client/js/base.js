@@ -102,9 +102,10 @@ angular.module('leapinit', ['navbar', 'ngAnimate', 'ngRoute', 'ngTouch'])
 					var room = $rootScope.user.rooms.get(Number($routeParams.room));
 					$scope.room = room;
 					if (room) {
-						room.posts.fetch().then(function () {
+						/*room.posts.fetch().then(function () {
 							$scope.$apply();
-						});
+						});*/
+						room.posts = $rootScope.user.feed;
 					} else {
 						// TODO
 						console.error('hmm')
@@ -182,7 +183,7 @@ angular.module('leapinit', ['navbar', 'ngAnimate', 'ngRoute', 'ngTouch'])
 			otherwise({ redirectTo: '/start' });
 	})
 	.controller('App', function ($scope, $rootScope, $location, models) {
-		//$rootScope.noHoneycomb = true;
+		$rootScope.noHoneycomb = true;
 
 		$rootScope.auths = new models.Auths();
 
