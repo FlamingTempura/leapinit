@@ -2,11 +2,12 @@
 
 require_once('../vendor/autoload.php');
 require_once('models.php');
+require_once('config.php');
 
 use RedBean_Facade as R;
 
 // Connect to the database
-R::setup('mysql:host=localhost;dbname=leapinit','root','');
+R::setup('mysql:host=' . $dbhost . ';dbname=' . $dbname . ($dbport !== null ? ';port=' . $dbport : ''), $dbuser, $dbpass);
 
 // Slim is used for creating a REST endpoint
 $app = new \Slim\Slim();
