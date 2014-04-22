@@ -128,7 +128,6 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 				'msg' => 'Username already in use.'
 			]);
 		} else {
-
 			$person = R::dispense('person');
 			$person->username = $params->username;
 			$person->password = sha1($params->password);
@@ -179,16 +178,16 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		]);
 	});
 
-	$app->post('/person/:id/room', $requestJSON, $validateToken, function($id){
+	/*$app->post('/person/:id/room', $requestJSON, $validateToken, function($id){
 		$user=R::load("person",intval($id));
 		echo json_encode($user->export());
-	});
+	});*/
 
-	$app->delete('/person/:id/room/:rid', $requestJSON, $validateToken, function ($id) use (&$app) {
+	/*$app->delete('/person/:id/room/:rid', $requestJSON, $validateToken, function ($id) use (&$app) {
 		$user=R::load("person",intval($id));
 		$room=R::load("person",intval($rid));
 		echo json_encode($user->export());
-	});
+	});*/
 
 	$app->get('/person/:id/feed', $requestJSON, $validateToken, function ($id) use (&$app) {
 		$person = R::load('person', intval($id));
@@ -202,20 +201,20 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		]);
 	});
 
-	$app->get('/room/:id', $requestJSON, $validateToken, function($id){
+	/*$app->get('/room/:id', $requestJSON, $validateToken, function($id){
 		$user=R::load("person",intval($id));
 		echo json_encode($user->export());
+	});*/
+
+	$app->get('/room/', $requestJSON, $validateToken, function () use (&$app) {
+		//$code = 
+		//$room = R::load('room', ' code = ? ', array($code));
 	});
 
-	$app->put('/room/:id', $requestJSON, $validateToken, function($id){
+	/*$app->put('/room/:id', $requestJSON, $validateToken, function($id){
 		$user=R::load("person",intval($id));
 		echo json_encode($user->export());
-	});
-
-	$app->post('/room', $requestJSON, $validateToken, function($id){
-		$user=R::load("person",intval($id));
-		echo json_encode($user->export());
-	});
+	});*/
 
 	$app->get('/room/:id/post', $requestJSON, $validateToken, function ($id) use (&$app) {
 		$room = R::load('room', intval($id));
