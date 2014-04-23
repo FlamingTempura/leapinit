@@ -9,6 +9,7 @@
 		"entomb/slim-json-api": "dev-master",
 		"gabordemooij/redbean": "3.*",
 		"fzaninotto/faker": "1.4.*@dev",
-		"blueimp/jquery-file-upload": "9.5.7"
+		"blueimp/jquery-file-upload": "9.5.7",
+		"sybio/image-workshop": "2.0.5"
 	}
 }

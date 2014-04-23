@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "99049c5aa4d30a63a5e0608001f86cc4",
+    "hash": "5673bcdd01dc50474d90d481386c450e",
     "packages": [
         {
             "name": "blueimp/jquery-file-upload",
@@ -238,6 +238,55 @@
                 "router"
             ],
             "time": "2013-10-31 02:05:09"
+        },
+        {
+            "name": "sybio/image-workshop",
+            "version": "2.0.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Sybio/ImageWorkshop.git",
+                "reference": "2b58bcde5205956e4b439cfaa86fb88113442d72"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Sybio/ImageWorkshop/zipball/2b58bcde5205956e4b439cfaa86fb88113442d72",
+                "reference": "2b58bcde5205956e4b439cfaa86fb88113442d72",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "PHPImageWorkshop": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Clément Guillemain",
+                    "homepage": "http://clementguillemain.fr",
+                    "role": "Developer / Freelancer"
+                }
+            ],
+            "description": "Powerful PHP class using GD library to work easily with images including layer notion (like Photoshop or GIMP)",
+            "homepage": "http://phpimageworkshop.com",
+            "keywords": [
+                "class",
+                "crop",
+                "gd",
+                "image",
+                "library",
+                "resize",
+                "rotate",
+                "thumbnail",
+                "watermark"
+            ],
+            "time": "2013-11-12 22:29:20"
         },
         {
             "name": "tuupola/slim-fake-mcrypt",
