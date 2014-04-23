@@ -75,6 +75,47 @@ function exportPost (&$post) {
 }
 
 
+function generateCell ($source, $size) {
+
+	// http://stackoverflow.com/questions/8778864/cropping-an-image-into-hexagon-shape-in-a-web-page
+	$points = array(
+		.25 * $size, .067  * $size, // A 
+		0, .5   * $size, // B
+		.25 * $size, .933  * $size, // C
+		.75 * $size, .933  * $size, // D
+		$size, .5  * $size, // E
+		.75 * $size, .067  * $size  // F
+	);
+
+	// Create the mask
+	$mask = imagecreatetruecolor($size, $size);
+	imagefilledpolygon($mask, $points, 6, imagecolorallocate($mask, 255, 0, 0));
+
+	// Create the new image with a transparent bg
+	$image = imagecreatetruecolor($size, $size);
+	$transparent = imagecolorallocatealpha($image, 0, 0, 0, 127);
+	imagealphablending($image, false);
+	imagesavealpha($image, true);
+	imagefill($image, 0, 0, $transparent);
+
+	// Iterate over the mask's pixels, only copy them when its red.
+	// Note that you could have semi-transparent colors by simply using the mask's 
+	// red channel as the original color's alpha.
+	for($x = 0; $x < $size; $x++) {
+		for ($y=0; $y < $size; $y++) { 
+			$m = imagecolorsforindex($mask, imagecolorat($mask, $x, $y));
+			if($m['red']) {
+				$color = imagecolorsforindex($source, imagecolorat($source, $x, $y));
+				imagesetpixel($image, $x, $y, imagecolorallocatealpha($image,
+						$color['red'], $color['green'], 
+						$color['blue'], $color['alpha']));
+			}
+		}
+	}
+	
+	return $image;
+}
+
 // All URI's should begin /api (e.g. /api/user/102)
 $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateToken) {
 
@@ -268,67 +309,52 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 	});
 
 
-	$app->get('/room/:id/post/:pid/thumbnail', function ($id, $pid) use (&$app) {
+	$app->get('/room/:id/post/:pid/data', function ($id, $pid) use (&$app) {
+		$preview = $app->request()->params('preview');
 		$size = $app->request()->params('size');
-		$cell = $app->request()->params('cell');
-
-		if (!isset($size)) { $size = 100; }
-		$size = intval($size);
+		$cell = $app->request()->params('cell'); // honeycomb cell
 
 		$post = R::load('post', intval($pid));
 		// TODO: check post exists + check post in room + user permission 
-		$file = __DIR__ . '/media/files/' . pathinfo(urldecode($post->url), PATHINFO_BASENAME);
 
-		$layer = ImageWorkshop::initFromPath($file);
-
-		$layer->resizeInPixel($size, $size);
-
-		$thumbnail = $layer->getResult();
-
-		if ($cell) {
-
-			// http://stackoverflow.com/questions/8778864/cropping-an-image-into-hexagon-shape-in-a-web-page
-			$points = array(
-				.25 * $size, .067  * $size, // A 
-				0, .5   * $size, // B
-				.25 * $size, .933  * $size, // C
-				.75 * $size, .933  * $size, // D
-				$size, .5  * $size, // E
-				.75 * $size, .067  * $size  // F
-			);
-
-			// Create the mask
-			$mask = imagecreatetruecolor($size, $size);
-			imagefilledpolygon($mask, $points, 6, imagecolorallocate($mask, 255, 0, 0));
-
-			// Create the new image with a transparent bg
-			$image = imagecreatetruecolor($size, $size);
-			$transparent = imagecolorallocatealpha($image, 0, 0, 0, 127);
-			imagealphablending($image, false);
-			imagesavealpha($image, true);
-			imagefill($image, 0, 0, $transparent);
-
-			// Iterate over the mask's pixels, only copy them when its red.
-			// Note that you could have semi-transparent colors by simply using the mask's 
-			// red channel as the original color's alpha.
-			for($x = 0; $x < $size; $x++) {
-				for ($y=0; $y < $size; $y++) { 
-					$m = imagecolorsforindex($mask, imagecolorat($mask, $x, $y));
-					if($m['red']) {
-						$color = imagecolorsforindex($thumbnail, imagecolorat($thumbnail, $x, $y));
-						imagesetpixel($image, $x, $y, imagecolorallocatealpha($image,
-								$color['red'], $color['green'], 
-								$color['blue'], $color['alpha']));
-					}
-				}
+		if (!$preview) {
+			if (!$post->url) {
+				$app->response->write($post->text);
+			} else {
+				$app->response->redirect($post->url, 303);
 			}
-			$thumbnail = $image;
-		}
+		} else {
+			$file = __DIR__ . '/media/files/' . pathinfo(urldecode($post->url), PATHINFO_BASENAME);
+			if (!isset($size)) { $size = 100; }
+			$size = intval($size);
 
-		// Display the result
-		$app->response->headers->set('Content-type', 'image/png');
-		imagepng($thumbnail);
-		imagedestroy($thumbnail);
+			//var_dump($post->type);
+
+			if ($post->type === 'picture') {
+				$layer = ImageWorkshop::initFromPath($file);
+			} else if ($post->type === 'video') {
+				// $layer = get frame from video
+			} else if ($post->text === 'text') {
+				// sentiment analysis
+				// http://access.alchemyapi.com/calls/text/TextGetTextSentiment?outputMode=json&maxRetrieve=1&apikey=40eb84f27e9aa5a701bc3f3e3bbf6cac9e3ad506&text=hello%20i%27m%20sad
+				// $layer = create color
+				// http://access.alchemyapi.com/calls/text/TextGetRankedKeywords?outputMode=json&apikey=40eb84f27e9aa5a701bc3f3e3bbf6cac9e3ad506&text=hello%20i%27m%20sad%20a%20bing
+				// $layer->draw word main word
+			}
+
+			if (!$layer) {
+				$app->response->setStatus(404);
+			} else {
+				$layer->resizeInPixel($size, $size);
+				$preview = $layer->getResult();
+				if ($cell) {
+					$preview = generateCell($preview, $size);
+				}
+				$app->response->headers->set('Content-type', 'image/png');
+				imagepng($preview);
+				imagedestroy($preview);
+			}
+		}
 	});
 
 	/*$app->post('/media/text', function () use (&$app) {
