@@ -3,15 +3,6 @@
 	<li class="post" ng-repeat="post in posts.models" ng-include="'templates/post.html'"></li>
 </ul>
 
-<!-- <ul class="honeycomb" ng-if="!noHoneycomb">
-	<li class="hexagon" ng-repeat="post in posts.models"
-		style="left: {{ post.attributes.offset * 0.45 * 200 + post.attributes.col * 0.9 * 200 }}px; top: {{ post.attributes.row * 0.26 * 200 }}px;">
-		<div class="hexagon-p1">
-			<div class="hexagon-p2" style="background-image: url({{ post.attributes.media.url }})"></div>
-		</div>
-	</li>
-</ul> -->
-
 <div class="honeycomb" ng-if="!noHoneycomb">
 	<svg	xmlns="http://www.w3.org/2000/svg"
 			xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -19,7 +10,7 @@
 			ng-attr-height="{{ posts.honeycomb.rowCount * 83 }}">
 		<defs>
 			<pattern ng-attr-id="img-{{ cell.id }}" width="1" height="1" ng-repeat="cell in posts.honeycomb.cells">
-				<image xlink:href="img/empty.png" ng-xlink-href="{{ cell.url }}" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid slice" />
+				<image xlink:href="img/empty.png" ng-xlink-href="{{ cell.url }}" x="0" y="0" ng-attr-width="{{ posts.honeycomb.cellWidth }}" ng-attr-height="{{ posts.honeycomb.cellWidth }}" preserveAspectRatio="xMidYMid slice" />
 			</pattern>
 		</defs>
 		<path 	class="hexagon"

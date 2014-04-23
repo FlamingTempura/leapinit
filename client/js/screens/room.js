@@ -11,6 +11,9 @@ angular.module('leapinit')
 			// TODO
 			console.error('hmm')
 		}
+
+		$rootScope.title = room.get('name');
+
 		$rootScope.add = function () {
 			$scope.showBubbles = !$scope.showBubbles;
 		};

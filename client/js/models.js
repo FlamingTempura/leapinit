@@ -50,8 +50,6 @@ angular.module('leapinit')
 		return auth;
 	})
 	.factory('models', function ($rootScope) {
-		
-
 
 		var _sync = Backbone.sync;
 		Backbone.sync = function(method, model, options) {
@@ -129,10 +127,12 @@ angular.module('leapinit')
 					this.generateHoneycomb();
 					this.on('change add remove reset', this.generateHoneycomb, this);
 				},
-				generateHoneycomb: function () {
+				generateHoneycomb: function (width) {
+					width = window.innerWidth;
 					var posts = _.clone(this.models),
 						cells = [],
-						radius = 50,
+						cellWidth = width / 3.2, //50,
+						radius = 0.435 * cellWidth,
 						maxCols = 4,
 						row = -1,
 						col = -1,
@@ -172,7 +172,7 @@ angular.module('leapinit')
 							cell.url = 'http://lorempixel.com/400/300/?' + Math.random();
 							cell.fill = 'url(#img-' + cell.id + ')';
 						} else {
-							cell.fill = '#ddd';
+							cell.fill = '#999';
 						}
 						
 						col++;
@@ -189,7 +189,8 @@ angular.module('leapinit')
 
 					this.honeycomb = {
 						cells: cells,
-						rowCount: row + 1
+						rowCount: row + 1,
+						cellWidth: cellWidth
 					};
 				}
 
