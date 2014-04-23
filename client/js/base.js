@@ -6,8 +6,7 @@ angular.module('leapinit', ['navbar', 'ngAnimate', 'ngRoute', 'ngTouch'])
 			templateUrl: 'templates/screens/splash.html',
 			controller: function ($location, $rootScope) {
 				loadingScreens.then(function () {
-					console.log('BING')
-					$location.path($rootScope.user ? '/feed' : '/start');
+					$location.path($rootScope.user ? '/feed' : '/login');
 				});
 			}
 		});
