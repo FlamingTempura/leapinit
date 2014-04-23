@@ -129,37 +129,40 @@ angular.module('leapinit')
 				},
 				generateHoneycomb: function (width) {
 					width = window.innerWidth;
-					var posts = _.clone(this.models),
+					var posts = _.clone(this.models).slice(0,21),
 						cells = [],
 						cellWidth = width / 3.2, //50,
-						radius = 0.435 * cellWidth,
 						maxCols = 4,
 						row = -1,
 						col = -1,
 
+						c = 0.435 * cellWidth,
+						b = Math.sin(1.05) * c,
+						a = c / 2,
+
+						path = [
+							'M', 0, a + c,
+							'L', 0, a,
+							'L', b, 0,
+							'L', 2 * b, a,
+							'L', 2 * b, a + c,
+							'L', b, 2 * c
+						].join(' '),
+
 						post, even, cell, x, y, c, b, a;
 
 					while (posts.length > 0 || col >= 0) {
-						cell = { id: 'r' + row + 'c' + col };
+						cell = {
+							id: 'r' + row + 'c' + col,
+							index: cells.length,
+							col: col,
+							row: row
+						};
 
 						even = (row % 2) === 0;
 
-						x = (even ? 0.916 : 0) * radius + col * 1.86 * radius;
-						y = row * 1.6 * radius;
-
-						c = radius;
-						b = Math.sin(1.05) * c;
-						a = c / 2;
-
-						cell.path = [
-							'M', x, y + a + c,
-							'L', x, y + a,
-							'L', x + b, y,
-							'L', x + 2 * b, y + a,
-							'L', x + 2 * b, y + a + c,
-							'L', x + b, y + 2 * c
-						].join(' ');
-
+						cell.x = (even ? 0.916 : 0) * c + col * 1.86 * c;
+						cell.y = row * 1.6 * c;
 
 						cell.visible = even ? 
 							(row > -1 && col > -1 && col < maxCols - 1) : 
@@ -190,7 +193,8 @@ angular.module('leapinit')
 					this.honeycomb = {
 						cells: cells,
 						rowCount: row + 1,
-						cellWidth: cellWidth
+						cellWidth: cellWidth,
+						path: path
 					};
 				}
 

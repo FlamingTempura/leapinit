@@ -7,16 +7,27 @@
 	<svg	xmlns="http://www.w3.org/2000/svg"
 			xmlns:xlink="http://www.w3.org/1999/xlink"
 			width="100%"
-			ng-attr-height="{{ posts.honeycomb.rowCount * 83 }}">
+			ng-attr-height="{{ posts.honeycomb.rowCount * 83 }}"
+			ng-clock>
 		<defs>
 			<pattern ng-attr-id="img-{{ cell.id }}" width="1" height="1" ng-repeat="cell in posts.honeycomb.cells">
 				<image xlink:href="img/empty.png" ng-xlink-href="{{ cell.url }}" x="0" y="0" ng-attr-width="{{ posts.honeycomb.cellWidth }}" ng-attr-height="{{ posts.honeycomb.cellWidth }}" preserveAspectRatio="xMidYMid slice" />
 			</pattern>
 		</defs>
-		<path 	class="hexagon"
-				ng-repeat="cell in posts.honeycomb.cells"
-				ng-attr-d="{{ cell.path }}"
-				ng-attr-fill="{{ cell.fill }}"
-				ng-click="go('/post/' + cell.post.id)"></path>
+		<g 	ng-attr-transform="translate({{ cell.x }},{{ cell.y }})"
+			ng-repeat="cell in posts.honeycomb.cells">
+			<path 	ng-attr-id="hex-{{ cell.id }}"
+					class="hexagon"
+					ng-attr-d="{{ posts.honeycomb.path }}"
+					ng-attr-fill="{{ cell.fill }}"
+					ng-click="go('/post/' + cell.post.id)"
+					opacity="0">
+				<animate 	attributeName="opacity"
+							from="0" to="1" dur="0.4s" 
+							begin="5s"
+							ng-attr-begin="{{ (3 + cell.col + cell.row) / 10 }}s"
+							fill="freeze" />
+			</path>
+		</g>
 	</svg>
 </image>
