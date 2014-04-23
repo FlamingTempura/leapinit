@@ -1,0 +1,37 @@
+<nav class="nav-top">
+	<ul>
+		<li class="icon"><a ng-click="opensidenav = !opensidenav">
+			<i class="fa fa-bars"></i>
+		</a></li>
+		<li class="title">
+			{{ title }}
+		</li>
+	</ul>
+</nav>
+<nav class="nav-side" ng-show="opensidenav">
+	<ul>
+		<li ng-repeat="item in navSide"
+			ng-class="{
+				'nav-active': item.screen === name,
+				'nav-scan': item.screen === 'scan'
+			}">
+				<a 	href="#{{ item.screen }}">
+					<i class="fa fa-{{ item.icon }}"></i>
+					{{ item.title }}
+				</a>
+		</li>
+	</ul>
+</nav>
+<nav class="nav-main">
+	<ul>
+		<li ng-repeat="item in navMain"
+			ng-class="{
+				'nav-active': item.screen === name,
+				'nav-scan': item.screen === 'scan'
+			}">
+				<a 	href="#{{ item.screen }}">
+					<i class="fa fa-{{ item.icon }}"></i>
+				</a>
+		</li>
+	</ul>
+</nav>

@@ -1,16 +1,22 @@
 angular.module('navbar', [])
-	.directive('nav', function () {
+	.directive('navbars', function () {
 		return {
-			restrict: 'E',
-			templateUrl: '../templates/nav.html',
+			restrict: 'A',
+			templateUrl: '../templates/navs.html',
 			link: function ($scope) {
-				$scope.navicons = [
-					{ screen: 'feed', icon: 'bars' },
-					{ screen: 'rooms', icon: 'globe' },
+				$scope.navMain = [
+					{ screen: 'feed', icon: 'rss' },
 					{ screen: 'scan', icon: 'bullseye' },
-					{ screen: 'friends', icon: 'users' },
-					{ screen: 'profile', icon: 'user' }
+					{ screen: 'rooms', icon: 'globe' }
 				];
+				$scope.navSide = [
+					{ screen: 'recommendations', icon: 'lightbulb-o', title: 'Recommendations' },
+					{ screen: 'messages', icon: 'comments', title: 'Messages' },
+					{ screen: 'friends', icon: 'users', title: 'Friends' },
+					{ screen: 'profile', icon: 'user', title: 'Profile' },
+					{ screen: 'logout', icon: 'sign-out', title: 'Logout' },
+					{ screen: 'settings', icon: 'cog', title: 'Settings' }
+				]
 			}
 		}
 	});

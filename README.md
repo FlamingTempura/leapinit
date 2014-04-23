@@ -26,6 +26,14 @@ Steps:
 Client
 ------
 
+Install the required libraries using bower. Get bower using npm.
+
+```
+npm -g install bower
+cd /path/to/leapinit/app/www
+bower install
+```
+
 The LeapIn.it client is web-based, and may be hosted using a web server, or deployed as part of a Apache Cordova package for Android and iPhone apps.
 
 ===Web server method===
