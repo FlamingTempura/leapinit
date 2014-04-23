@@ -118,7 +118,13 @@ angular.module('leapinit')
 				url: server + '/api/room'
 			});
 
-		var Post = Model.extend({}),
+		var Post = Model.extend({
+				initialize: function () {
+					this.media = {
+						thumbnail: 'http://lorempixel.com/400/300/?' + Math.random()
+					}
+				}
+			}),
 			Posts = Collection.extend({
 				model: Post,
 				url: server + '/api/post',
@@ -169,10 +175,9 @@ angular.module('leapinit')
 							(row > -1 && col > -1 && col < maxCols);
 
 						// If cell is on screen
-						if (cell.visible) {
+						if (cell.visible && posts.length > 0) {
 							cell.post = posts.shift();
-							//cell.url = cell.post.media.
-							cell.url = 'http://lorempixel.com/400/300/?' + Math.random();
+							cell.url = cell.post.media.thumbnail
 							cell.fill = 'url(#img-' + cell.id + ')';
 						} else {
 							cell.fill = '#999';
