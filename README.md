@@ -17,7 +17,12 @@ Requirements:
 * [Composer](https://getcomposer.org/download/)
 
 Steps:
-* Enable mod_rewrite 
+* Enable mod_rewrite and mod_headers:
+```
+sudo a2enmod mod_rewrite
+sudo a2enmod mod_headers
+sudo apache2ctl resrart
+```
 * Create a database.
 * Create the config file.
 * Install libraries. 

@@ -3,20 +3,71 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "400da42b0887896ecf7034246d247e12",
+    "hash": "99049c5aa4d30a63a5e0608001f86cc4",
     "packages": [
+        {
+            "name": "blueimp/jquery-file-upload",
+            "version": "9.5.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vkhramtsov/jQuery-File-Upload.git",
+                "reference": "1840dc3c01f3469ca75a9f754201bfaee40b56c5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vkhramtsov/jQuery-File-Upload/zipball/1840dc3c01f3469ca75a9f754201bfaee40b56c5",
+                "reference": "1840dc3c01f3469ca75a9f754201bfaee40b56c5",
+                "shasum": ""
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sebastian Tschan",
+                    "homepage": "https://blueimp.net",
+                    "role": "Developer"
+                }
+            ],
+            "description": "File Upload widget for jQuery.",
+            "homepage": "https://github.com/blueimp/jQuery-File-Upload",
+            "keywords": [
+                "bootstrap",
+                "chunk",
+                "cross-domain",
+                "cross-site",
+                "drag",
+                "drop",
+                "file",
+                "gae",
+                "go",
+                "jquery",
+                "multiple",
+                "php",
+                "preview",
+                "progress",
+                "python",
+                "resume",
+                "selection",
+                "upload",
+                "widget"
+            ],
+            "time": "2014-03-11 06:27:43"
+        },
         {
             "name": "entomb/slim-json-api",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/entomb/slim-json-api.git",
-                "reference": "821ad303147ff092963a5e3c536d18ca1d176e05"
+                "reference": "dd13a2d57b211a1850c07950c7b73757917b3dcc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/entomb/slim-json-api/zipball/821ad303147ff092963a5e3c536d18ca1d176e05",
-                "reference": "821ad303147ff092963a5e3c536d18ca1d176e05",
+                "url": "https://api.github.com/repos/entomb/slim-json-api/zipball/dd13a2d57b211a1850c07950c7b73757917b3dcc",
+                "reference": "dd13a2d57b211a1850c07950c7b73757917b3dcc",
                 "shasum": ""
             },
             "require": {
@@ -49,7 +100,7 @@
                 "slim",
                 "view"
             ],
-            "time": "2014-03-19 15:51:59"
+            "time": "2014-04-23 10:56:34"
         },
         {
             "name": "fzaninotto/faker",
@@ -57,16 +108,20 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/fzaninotto/Faker.git",
-                "reference": "a277bf23f9346e9edd704e01571fecd37af537d0"
+                "reference": "54f93f9fc61e8d4d610ab7f8fb8d4c5fc1c418f5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/a277bf23f9346e9edd704e01571fecd37af537d0",
-                "reference": "a277bf23f9346e9edd704e01571fecd37af537d0",
+                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/54f93f9fc61e8d4d610ab7f8fb8d4c5fc1c418f5",
+                "reference": "54f93f9fc61e8d4d610ab7f8fb8d4c5fc1c418f5",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0",
+                "squizlabs/php_codesniffer": "~1.5"
             },
             "type": "library",
             "extra": {
@@ -95,7 +150,7 @@
                 "faker",
                 "fixtures"
             ],
-            "time": "2014-04-04 08:07:01"
+            "time": "2014-04-23 14:04:50"
         },
         {
             "name": "gabordemooij/redbean",

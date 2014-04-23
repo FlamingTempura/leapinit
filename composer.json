@@ -8,6 +8,7 @@
 		"slim/slim": "2.3.*",
 		"entomb/slim-json-api": "dev-master",
 		"gabordemooij/redbean": "3.*",
-		"fzaninotto/faker": "1.4.*@dev"
+		"fzaninotto/faker": "1.4.*@dev",
+		"blueimp/jquery-file-upload": "9.5.7"
 	}
 }

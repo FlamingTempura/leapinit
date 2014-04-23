@@ -1,9 +1,10 @@
 
 <div class="top-right-bubble-buttons" ng-show="showBubbles">
-	<button><i class="fa fa-camera"></i></button>
-	<button><i class="fa fa-video-camera"></i></button>
-	<button><i class="fa fa-music"></i></button>
-	<button><i class="fa fa-font"></i></button>
+	<ul>
+		<li class="button"><i class="fa fa-camera"></i><input type="file" name="files[]" multiple fileupload></li>
+		<li class="button"><i class="fa fa-video-camera"></i></li>
+		<li class="button"><i class="fa fa-font"></i></li>
+	</ul>
 </div>
 
 <div ng-include="'templates/posts.html'" class="inline-container"></div>

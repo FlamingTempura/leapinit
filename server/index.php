@@ -1,6 +1,8 @@
 <?php
 
 require_once('../vendor/autoload.php');
+//require_once('../vendor/blueimp/jquery-file-upload/server/php/UploadHandler.php');
+
 require_once('models.php');
 require_once('config.php');
 
@@ -53,11 +55,13 @@ $validateToken = function () use ($app) {
 	}
 };
 
-function exportPosts (&$posts) {
+function exportPosts ($posts) {
+	$ps = array_keys($posts);
+	rsort($ps);
 	return array_map(function ($postid) {
 		$post = R::load('post', $postid);
 		return exportPost($post);
-	}, array_keys($posts));
+	}, $ps);
 }
 
 function exportPost (&$post) {
@@ -87,7 +91,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 			$token->person = $user;
 			// TODO: expires
 			R::store($token);
-			$app->render(200, [ 'result' => [ 
+			$app->render(201, [ 'result' => [ 
 				'id' => 'user',
 				'token' => $token->key,
 				'user' => $user->export()
@@ -138,7 +142,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 			$person->password = sha1($params->password);
 			R::store($person);
 
-			$app->render(200, [
+			$app->render(201, [
 				'response' => $person->export()
 			]);
 		}
@@ -241,6 +245,52 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 			]);
 		}
 	});
+
+	$app->post('/room/:id/post', $requestJSON, $validateToken, function ($id) use (&$app, &$params) {
+		$room = R::load('room', intval($id));
+
+		// TODO check room exists
+
+		$post = R::dispense('post', intval($id));
+		$post->type = $params->type;
+		$post->text = $params->text;
+		$post->person = $app->user;
+		$post->room = $room;
+		if (property_exists($params, 'url')) {
+			$post->url = $params->url;
+		}
+		R::store($post);
+		$app->render(201, [
+			'result' => exportPost($post)
+		]);
+	});
+
+
+	/*$app->post('/media/text', function () use (&$app) {
+
+	});
+
+	$app->map('/media/picture/', function () use (&$app) {
+		
+	})->via('POST', 'OPTIONS');
+
+	$app->post('/media/video', function () use (&$app) {
+
+	});*/
+
+	/*$app->get('/media/:mid/original', $requestJSON, function ($mid) use (&$app) {
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, 'http://lorempixel.com/400/300/'); 
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
+		$data = curl_exec($ch);
+		curl_close($ch);
+		$raw = imagecreatefromjpeg($data);
+
+		$app->response()->header('Content-type', 'image/png');
+		echo imagepng($raw);
+
+	});*/
 });
 
 $app->run();

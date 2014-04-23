@@ -120,8 +120,8 @@ angular.module('leapinit')
 
 		var Post = Model.extend({
 				initialize: function () {
-					this.media = {
-						thumbnail: 'http://lorempixel.com/400/300/?' + Math.random()
+					if (!this.has('url')) {
+						this.set('url', 'http://lorempixel.com/400/300/?' + Math.random());
 					}
 				}
 			}),
@@ -177,7 +177,7 @@ angular.module('leapinit')
 						// If cell is on screen
 						if (cell.visible && posts.length > 0) {
 							cell.post = posts.shift();
-							cell.url = cell.post.media.thumbnail
+							cell.url = cell.post.get('url');
 							cell.fill = 'url(#img-' + cell.id + ')';
 						} else {
 							cell.fill = '#999';
