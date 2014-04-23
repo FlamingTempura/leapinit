@@ -11,8 +11,3 @@ Header set Content-Disposition attachment
 # The following directive prevents browsers from MIME-sniffing the content-type.
 # This is an important complement to the ForceType directive above:
 Header set X-Content-Type-Options nosniff
-
-# Uncomment the following lines to prevent unauthorized download of files:
-#AuthName "Authorization required"
-#AuthType Basic
-#require valid-user
