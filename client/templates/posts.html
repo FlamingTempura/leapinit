@@ -20,7 +20,7 @@
 					class="hexagon"
 					ng-attr-d="{{ posts.honeycomb.path }}"
 					ng-attr-fill="{{ cell.fill }}"
-					ng-click="go('/post/' + cell.post.id)"
+					ng-click="go('/room/' + cell.post.attributes.room_id + '/post/' + cell.post.id)"
 					opacity="0">
 				<animate 	attributeName="opacity"
 							from="0" to="1" dur="0.4s" 

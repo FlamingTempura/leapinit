@@ -56,13 +56,17 @@ $validateToken = function () use ($app) {
 function exportPosts (&$posts) {
 	return array_map(function ($postid) {
 		$post = R::load('post', $postid);
-		return array_merge($post->export(), [
-			'media' => R::load('media', $post->media_id)->export(),
-			'person' => R::load('person', $post->person_id)->export(),
-			'room' => R::load('room', $post->room_id)->export()
-		]);
+		return exportPost($post);
 	}, array_keys($posts));
-};
+}
+
+function exportPost (&$post) {
+	return array_merge($post->export(), [
+		'media' => R::load('media', $post->media_id)->export(),
+		'person' => R::load('person', $post->person_id)->export(),
+		'room' => R::load('room', $post->room_id)->export()
+	]);
+}
 
 
 // All URI's should begin /api (e.g. /api/user/102)
@@ -222,6 +226,20 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		$app->render(200, [
 			'result' => exportPosts($room->ownPost)
 		]);
+	});
+
+	$app->get('/room/:id/post/:pid', $requestJSON, $validateToken, function ($id, $pid) use (&$app) {
+		$post = R::findOne('post', ' id = ? AND room_id = ? ', [intval($pid), intval($id)]);
+		if ($post === null) {
+			$app->render(404, [
+				'error' => true,
+				'msg' => 'Post not found.'
+			]);
+		} else {
+			$app->render(200, [
+				'result' => exportPost($post)
+			]);
+		}
 	});
 });
 

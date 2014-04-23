@@ -38,6 +38,7 @@ angular.module('leapinit', ['navbar', 'ngAnimate', 'ngRoute', 'ngTouch'])
 				navbars: current.$$route.navbars,
 				add: false
 			});
+			console.log('go to ', current.$$route.originalPath);
 		});
 	})
 	.controller('App', function ($scope, $rootScope, $location, models, auth) {
