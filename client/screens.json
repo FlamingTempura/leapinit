@@ -25,7 +25,7 @@
 		"navbars": true },
 	{	"name": "room",
 		"route": "/room/:room",
-		"title": "Rooms",
+		"title": "Room",
 		"navbars": true },
 	{	"name": "friends",
 		"route": "/friends",

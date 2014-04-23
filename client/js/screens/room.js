@@ -1,5 +1,5 @@
 angular.module('leapinit')
-	.controller('roomScreen', function ($rootScope, $scope, $location, models) {
+	.controller('roomScreen', function ($rootScope, $routeParams, $scope, $location, models) {
 		var room = $rootScope.user.rooms.get(Number($routeParams.room));
 		$scope.room = room;
 		if (room) {
@@ -11,4 +11,7 @@ angular.module('leapinit')
 			// TODO
 			console.error('hmm')
 		}
+		$rootScope.add = function () {
+			$scope.showBubbles = !$scope.showBubbles;
+		};
 	});
