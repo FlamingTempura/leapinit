@@ -4,6 +4,7 @@
 
 @screen-padding: 18px;
 @nav-height: 70px;
+@bg: #f1f1f1;
 @orange: #e69138;
 @blue: #3c78d8;
 @red: #cc4125;
@@ -148,7 +149,7 @@ body {
 	position: relative;
 	padding: @nav-height + @screen-padding @screen-padding;
 	text-align: center;
-	background: #f1f1f1;
+	background: @bg;
 	color: #222;
 	overflow: hidden;
 	box-sizing: border-box;
@@ -177,6 +178,7 @@ body {
 	left: 0;
 	right: 0;
 	padding: 0 @screen-padding @screen-padding + 10px @screen-padding;
+	z-index: 0;
 
 	&.bottom-no-nav {
 		bottom: 0;
@@ -643,4 +645,10 @@ nav.nav-side {
 	&.loading-light {
 		background-image: url('loading-light.gif');
 	}
+}
+
+form {
+	position: relative;
+	background: @bg;
+	z-index: 1;
 }
