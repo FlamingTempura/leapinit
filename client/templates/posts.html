@@ -7,7 +7,7 @@
 	<svg	xmlns="http://www.w3.org/2000/svg"
 			xmlns:xlink="http://www.w3.org/1999/xlink"
 			width="100%"
-			ng-attr-height="{{ posts.honeycomb.rowCount * 83 }}"
+			ng-attr-height="{{ (posts.honeycomb.rowCount) * posts.honeycomb.cellWidth * 0.65 }}"
 			ng-clock>
 		<defs>
 			<pattern ng-attr-id="img-{{ cell.id }}" width="1" height="1" ng-repeat="cell in posts.honeycomb.cells">

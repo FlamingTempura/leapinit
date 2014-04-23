@@ -35,7 +35,8 @@ angular.module('leapinit', ['navbar', 'ngAnimate', 'ngRoute', 'ngTouch'])
 			_.extend($rootScope, {
 				name: current.$$route.name,
 				title: current.$$route.title,
-				navbars: current.$$route.navbars
+				navbars: current.$$route.navbars,
+				add: false
 			});
 		});
 	})
