@@ -100,25 +100,30 @@ function createResidence (&$person, &$room) {
 
 
 function generateCell ($source, $size) {
-
 	// http://stackoverflow.com/questions/8778864/cropping-an-image-into-hexagon-shape-in-a-web-page
 
-	$c = 0.435 * $size;
+
+	$m = 8; // bigger = less jagged images
+
+	$c = 0.435 * ($size * $m * 1.11);
 	$b = sin(1.05) * $c;
 	$a = $c / 2;
 
 	$points = [
-		0, $a + $c,
-		0, $a,
 		$b, 0,
 		2 * $b, $a,
 		2 * $b, $a + $c,
-		$b, 2 * $c
+		$b, 2 * $c,
+		0, $a + $c,
+		0, $a
 	];
 
 	// Create the mask
+	$maskl = imagecreatetruecolor($size * $m, $size * $m);
+	imagefilledpolygon($maskl, $points, 6, imagecolorallocate($maskl, 255, 0, 0));
+
 	$mask = imagecreatetruecolor($size, $size);
-	imagefilledpolygon($mask, $points, 6, imagecolorallocate($mask, 255, 0, 0));
+	imagecopyresampled($mask, $maskl, 0, 0, 0, 0, $size, $size, $size * $m, $size * $m);
 
 	// Create the new image with a transparent bg
 	$image = imagecreatetruecolor($size, $size);
@@ -133,15 +138,15 @@ function generateCell ($source, $size) {
 	for($x = 0; $x < $size; $x++) {
 		for ($y=0; $y < $size; $y++) { 
 			$m = imagecolorsforindex($mask, imagecolorat($mask, $x, $y));
-			if($m['red']) {
+			if($m['red'] > 0) {
 				$color = imagecolorsforindex($source, imagecolorat($source, $x, $y));
 				imagesetpixel($image, $x, $y, imagecolorallocatealpha($image,
 						$color['red'], $color['green'], 
-						$color['blue'], $color['alpha']));
+						$color['blue'], 127 - ($m['red'] * 0.5)));
 			}
 		}
 	}
-	
+
 	return $image;
 }
 
@@ -419,7 +424,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		} else {
 			$filename = pathinfo(urldecode($post->url), PATHINFO_BASENAME);
 			if (!isset($size)) { $size = 100; }
-			$size = min(500, ceil(intval($size) / 100) * 100); // round to nearest 100, max of 500
+			$size = min(500, ceil(intval($size) / 1) * 1); // round to nearest 100, max of 500
 
 			if ($cell) {
 				$thumbfile = '/media/files/thumbnail/' . $filename . '-' . $size . '-cell.png';
@@ -432,8 +437,6 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 				$file = __DIR__ . '/media/files/';
 				if (strpos($post->url, '/sentiment/')) { $file .= 'sentiment/'; }
 				$file .= $filename;
-
-				//var_dump($post->type);
 
 				//if ($post->type === 'picture') {
 					$layer = ImageWorkshop::initFromPath($file);
@@ -450,13 +453,10 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 					$preview = $layer->getResult();
 					if ($cell) {
 						$preview = generateCell($preview, $size);
-						//$app->response->headers->set('Content-type', 'image/png');
 						imagepng($preview, __DIR__ . $thumbfile, 9, PNG_ALL_FILTERS);
 					} else {
-						//$app->response->headers->set('Content-type', 'image/jpeg');
 						imagejpeg($preview, __DIR__ . $thumbfile);
 					}
-					//imagedestroy($preview);
 				}
 			}
 
@@ -471,15 +471,20 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		$color = $app->request()->params('color');
 
 		if (!isset($size)) { $size = 100; }
+		$size = min(500, ceil(intval($size) / 1) * 1); // round to nearest 100, max of 500
 		if (!isset($color)) { $color = '666666'; }
 		$size = intval($size);
 
-		$layer = ImageWorkshop::initVirginLayer($size, $size, $color);
-		$preview = $layer->getResult();
-		$preview = generateCell($preview, $size);
-		$app->response->headers->set('Content-type', 'image/png');
-		imagepng($preview);
-		imagedestroy($preview);
+		$thumbfile = '/media/files/thumbnail/blank-' . $size . '-' . $color . '-cell.png';
+
+		if (!file_exists(__DIR__ . $thumbfile)) {
+			$layer = ImageWorkshop::initVirginLayer($size, $size, $color);
+			$preview = $layer->getResult();
+			$preview = generateCell($preview, $size);
+			imagepng($preview, __DIR__ . $thumbfile, 9, PNG_ALL_FILTERS);
+		}
+
+		$app->response->redirect('/leapinit/' . $thumbfile, 303);
 	});
 
 });
