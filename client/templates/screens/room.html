@@ -32,6 +32,7 @@
 
 
 <div class="residents" ng-show="showResidents">
+	<button ng-click="room.leave()">Leave this room</button>
 	Residents in {{ room.attributes.name }}:
 	<ul>
 		<li class="person" ng-repeat="person in room.residents.models" ng-include="'templates/person.html'"></li>

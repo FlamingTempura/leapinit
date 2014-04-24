@@ -183,7 +183,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 	$app->delete('/auth/user/', $requestJSON, $validateToken, function () use (&$app) {
 		$tokens = R::find('token', ' person_id = ? ', array($app->user->id));
 		R::trashAll($tokens);
-		$app->render(410, array());
+		$app->render(204, array());
 	});
 
 	$app->get('/person/:id/', $requestJSON, $validateToken, function ($id) use (&$app, &$params) {
@@ -259,16 +259,19 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		]);
 	});
 
-	/*$app->post('/person/:id/room', $requestJSON, $validateToken, function($id){
-		$user=R::load("person",intval($id));
-		echo json_encode($user->export());
-	});*/
+	$app->delete('/person/:id/room/:rid/', $requestJSON, $validateToken, function ($id, $rid) use (&$app) {
+		$residence = R::findOne('residence', ' person_id = ? AND room_id = ? ',
+				array($app->user->id, $rid));
 
-	/*$app->delete('/person/:id/room/:rid', $requestJSON, $validateToken, function ($id) use (&$app) {
-		$user=R::load("person",intval($id));
-		$room=R::load("person",intval($rid));
-		echo json_encode($user->export());
-	});*/
+		if ($residence === null) {
+			$app->render(404, [
+				'Not a resident of a room with this ID.'
+			]);
+		} else {
+			R::trash($residence);
+			$app->render(204);
+		}
+	});
 
 	$app->get('/person/:id/feed/', $requestJSON, $validateToken, function ($id) use (&$app) {
 		$person = R::load('person', intval($id));

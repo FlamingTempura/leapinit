@@ -116,6 +116,13 @@ angular.module('leapinit')
 				},
 				updateResidents: function () {
 					this.residents.reset(this.get('residents'));
+				},
+				leave: function () {
+					if (confirm('Are you sure you wish to leave the room?')) {
+						this.destroy({
+							url: _.result(this.collection, 'url') + '/' + this.id
+						});
+					}
 				}
 			}),
 			Rooms = Collection.extend({
