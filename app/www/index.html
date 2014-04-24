@@ -32,8 +32,8 @@
 	<script type="text/javascript" src="js/screens/post.js"></script>
 	<script type="text/javascript" src="js/screens/scan.js"></script>
 </head>
-<body>
-	<div class="app">
+<body ng-cloak>
+	<div class="app" ng-class="{ fakemobile: fakeMobile }">
 		<div class="screen screen-{{ name }}" ng-view></div>
 		<div ng-if="navbars" navbars></div>
 	</div>

@@ -43,6 +43,8 @@ angular.module('leapinit', ['navbar', 'ngAnimate', 'ngRoute', 'ngTouch'])
 	.controller('App', function ($scope, $rootScope, $location, models, auth) {
 
 		//$rootScope.noHoneycomb = true
+		$rootScope.cordova = typeof cordova !== 'undefined';
+		$rootScope.fakeMobile = !$rootScope.cordova;
 
 		$rootScope.auth = auth;
 
