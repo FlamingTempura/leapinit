@@ -28,6 +28,7 @@ sudo apache2ctl restart
 * Create a database.
 * Create the config file.
 * Install libraries. 
+* chmod server/media/files and server/media/files/sentiment
 
 
 API keys

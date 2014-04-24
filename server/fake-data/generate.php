@@ -9,6 +9,13 @@ require_once('../../vendor/autoload.php');
 
 $faker = Faker\Factory::create();
 
+// http://stackoverflow.com/questions/4478783/select-random-file-from-directory
+function randomPic () {
+    $files = glob('../media/files/*.*');
+    $file = array_rand($files);
+    return $files[$file];
+}
+
 function generateMedia () {
 	global $faker;
 	$media = [
@@ -17,9 +24,9 @@ function generateMedia () {
 	switch ($media['type']) {
 	case 'text':
 		$media['text'] = $faker->sentence($faker->randomNumber(5, 15));
-		break;
+		//break;
 	case 'picture':
-		$media['url'] = $faker->imageUrl(800, 600);// '/img/placeholder-' . $faker->randomNumber(0, 20) . '.jpg';
+		$media['url'] = '/media/files/' . pathinfo(randomPic(), PATHINFO_BASENAME);// '/img/placeholder-' . $faker->randomNumber(0, 20) . '.jpg';
 		break;
 	}
 	return $media;

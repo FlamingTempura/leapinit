@@ -389,8 +389,8 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 			$textLayer = ImageWorkshop::initTextLayer($keyword, __DIR__ . '/Roboto-Medium.ttf', 14, 'ffffff', 0);
 			$layer->addLayer(1, $textLayer, 5, -$textLayer->getHeight() / 2.5, 'LM');
 			$filename = 'r-' . uniqid(rand(), true) . '.png';
-			$layer->save(__DIR__ . '/media/files/', $filename);
-			$post->url = '/media/files/' . $filename;
+			$layer->save(__DIR__ . '/media/files/sentiment/', $filename);
+			$post->url = '/media/files/sentiment/' . $filename;
 		}
 		R::store($post);
 		$app->render(201, [
