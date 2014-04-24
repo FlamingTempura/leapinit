@@ -307,6 +307,42 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		if (property_exists($params, 'url')) {
 			$post->url = $params->url;
 		}
+
+		if ($post->type === 'text') {
+			$apikey = '40eb84f27e9aa5a701bc3f3e3bbf6cac9e3ad506';
+			$sentimenturl = 'http://access.alchemyapi.com/calls/text/TextGetTextSentiment?outputMode=json&apikey=' . $apikey . '&text=' . urlencode($post->text);
+			$keywordurl = 'http://access.alchemyapi.com/calls/text/TextGetRankedKeywords?outputMode=json&maxRetrieve=1&apikey='. $apikey . '&text=' . urlencode($post->text);
+
+			//echo($sentimenturl);
+			//die($keywordurl);
+
+			$sentimentjson = json_decode(file_get_contents($sentimenturl));
+			$keywordjson = json_decode(file_get_contents($keywordurl));
+
+			$docsentiment = $sentimentjson->docSentiment;
+			$keywords = $keywordjson->keywords;
+
+			if (!property_exists($docsentiment, 'score')) {
+				$sentiment = 0;
+			} else {
+				$sentiment = $docsentiment->score;
+			}
+
+			if (count($keywords) === 0) {
+				$keyword = '?';
+			} else {
+				$keyword = $keywords[0]->text;
+			}
+
+
+			$color = fGetRGB(($sentiment + 1.1) * 50, 100, 100);
+			$layer = ImageWorkshop::initVirginLayer(100, 100, $color);
+			$textLayer = ImageWorkshop::initTextLayer($keyword, __DIR__ . '/Roboto-Medium.ttf', 14, 'ffffff', 0);
+			$layer->addLayer(1, $textLayer, 5, -$textLayer->getHeight() / 2.5, 'LM');
+			$filename = 'r-' . uniqid(rand(), true) . '.png';
+			$layer->save(__DIR__ . '/media/files/', $filename);
+			$post->url = '/media/files/' . $filename;
+		}
 		R::store($post);
 		$app->render(201, [
 			'result' => exportPost($post)
@@ -335,19 +371,15 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 
 			//var_dump($post->type);
 
-			if ($post->type === 'picture') {
+			//if ($post->type === 'picture') {
 				$layer = ImageWorkshop::initFromPath($file);
-			} else if ($post->type === 'video') {
+			//} else if ($post->type === 'video') {
 				// $layer = get frame from video
-			} else if ($post->text === 'text') {
-				// sentiment analysis
-				// http://access.alchemyapi.com/calls/text/TextGetTextSentiment?outputMode=json&maxRetrieve=1&apikey=40eb84f27e9aa5a701bc3f3e3bbf6cac9e3ad506&text=hello%20i%27m%20sad
-				// $layer = create color
-				// http://access.alchemyapi.com/calls/text/TextGetRankedKeywords?outputMode=json&apikey=40eb84f27e9aa5a701bc3f3e3bbf6cac9e3ad506&text=hello%20i%27m%20sad%20a%20bing
-				// $layer->draw word main word
-			}
+			//} else if ($post->type === 'text') {
 
-			if (!$layer) {
+			//}
+
+			if (!isset($layer)) {
 				$app->response->setStatus(404);
 			} else {
 				$layer->resizeInPixel($size, $size);
@@ -379,6 +411,54 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 	});
 
 });
+
+// https://gist.github.com/Jadzia626/2323023
+function fGetRGB($iH, $iS, $iV) {
+ 
+    if($iH < 0)   $iH = 0;   // Hue:
+    if($iH > 360) $iH = 360; //   0-360
+    if($iS < 0)   $iS = 0;   // Saturation:
+    if($iS > 100) $iS = 100; //   0-100
+    if($iV < 0)   $iV = 0;   // Lightness:
+    if($iV > 100) $iV = 100; //   0-100
+
+    $dS = $iS/100.0; // Saturation: 0.0-1.0
+    $dV = $iV/100.0; // Lightness:  0.0-1.0
+    $dC = $dV*$dS;   // Chroma:     0.0-1.0
+    $dH = $iH/60.0;  // H-Prime:    0.0-6.0
+    $dT = $dH;       // Temp variable
+
+    while($dT >= 2.0) $dT -= 2.0; // php modulus does not work with float
+    $dX = $dC*(1-abs($dT-1));     // as used in the Wikipedia link
+
+    switch($dH) {
+        case($dH >= 0.0 && $dH < 1.0):
+            $dR = $dC; $dG = $dX; $dB = 0.0; break;
+        case($dH >= 1.0 && $dH < 2.0):
+            $dR = $dX; $dG = $dC; $dB = 0.0; break;
+        case($dH >= 2.0 && $dH < 3.0):
+            $dR = 0.0; $dG = $dC; $dB = $dX; break;
+        case($dH >= 3.0 && $dH < 4.0):
+            $dR = 0.0; $dG = $dX; $dB = $dC; break;
+        case($dH >= 4.0 && $dH < 5.0):
+            $dR = $dX; $dG = 0.0; $dB = $dC; break;
+        case($dH >= 5.0 && $dH < 6.0):
+            $dR = $dC; $dG = 0.0; $dB = $dX; break;
+        default:
+            $dR = 0.0; $dG = 0.0; $dB = 0.0; break;
+    }
+
+    $dM  = $dV - $dC;
+    $dR += $dM; $dG += $dM; $dB += $dM;
+    $dR *= 255; $dG *= 255; $dB *= 255;
+
+    $dR = str_pad(dechex(round($dR)), 2, "0", STR_PAD_LEFT);
+	$dG = str_pad(dechex(round($dG)), 2, "0", STR_PAD_LEFT);
+	$dB = str_pad(dechex(round($dB)), 2, "0", STR_PAD_LEFT);
+	return $dR.$dG.$dB;
+
+    //return round($dR).",".round($dG).",".round($dB);
+}
 
 $app->run();
 

@@ -17,6 +17,16 @@ angular.module('leapinit')
 		$rootScope.add = function () {
 			$scope.showBubbles = !$scope.showBubbles;
 		};
+
+		$scope.addText = function () {
+			var text = prompt('Input something');
+			if (text) {
+				$scope.posts.create({
+					type: 'text',
+					text: text
+				});
+			}
+		};
 	})
 	.directive('fileupload', function () {
 		return {
