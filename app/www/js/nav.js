@@ -2,7 +2,7 @@ angular.module('navbar', [])
 	.directive('navbars', function () {
 		return {
 			restrict: 'A',
-			templateUrl: '../templates/navs.html',
+			templateUrl: 'templates/navs.html',
 			link: function ($scope) {
 				$scope.navMain = [
 					{ screen: 'feed', icon: 'rss' },
