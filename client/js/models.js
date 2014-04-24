@@ -162,15 +162,6 @@ angular.module('leapinit')
 						b = Math.sin(1.05) * c,
 						a = c / 2,
 
-						path = [
-							'M', 0, a + c,
-							'L', 0, a,
-							'L', b, 0,
-							'L', 2 * b, a,
-							'L', 2 * b, a + c,
-							'L', b, 2 * c
-						].join(' '),
-
 						blankcell = 'url(' + server + '/api/blankcell?size=' + cellWidth + '&color=999999)',
 
 						post, even, cell, x, y, c, b, a;
@@ -219,7 +210,6 @@ angular.module('leapinit')
 						rowCount: row + 1,
 						cellWidth: 2 * b,
 						cellHeight: 0.87 * cellWidth
-						//path: path
 					};
 				}
 

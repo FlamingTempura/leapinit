@@ -119,8 +119,7 @@ label {
 
 .camera-button {
 	border-radius: 100%;
-	width: 80px;
-	height: 80px;
+	width: 80px; height: 80px;
 	color: transparent;
 	position: absolute;
 	bottom: 100px;
@@ -135,13 +134,11 @@ label {
 
 ul, li {
 	list-style: none;
-	padding: 0;
-	margin: 0;
+	padding: 0; margin: 0;
 }
 
 body {
-	margin: 0;
-	padding: 0;
+	margin: 0; padding: 0;
 	background: black;
 	color: white;
 	.user-select(none);
@@ -155,23 +152,11 @@ body {
 	color: #222;
 	overflow: hidden;
 	box-sizing: border-box;
-	//overflow-y: auto;
 }
 
 .app .screen {
 	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	//overflow: auto;
-}
-
-.all-screens {
-	background: black;
-	.screen {
-		margin: 18px;
-	}
+	top: 0; left: 0; right: 0; bottom: 0;
 }
 
 .bottom {
@@ -182,9 +167,7 @@ body {
 	padding: 0 @screen-padding @screen-padding + 10px @screen-padding;
 	z-index: 0;
 
-	&.bottom-no-nav {
-		bottom: 0;
-	}
+	&.bottom-no-nav { bottom: 0; }
 }
 
 .rect {
@@ -200,8 +183,7 @@ body {
 		margin: 2px 0;
 	}
 	&.rect-half {
-		width: 45%;
-		height: 28%;
+		width: 45%; height: 28%;
 		margin: 2px;
 	}
 	&.rect-overflow {
@@ -215,11 +197,8 @@ body {
 	&.rect-wide {
 		position: relative;
 		left: -@screen-padding;
-		width: 115%;
-		height: 20%;
-		img {
-			width: 100%;
-		}
+		width: 115%; height: 20%;
+		img { width: 100%; }
 	}
 }
 
@@ -227,15 +206,12 @@ body {
 .top-right-bubble-buttons {
 	position: absolute;
 	z-index: 49;
-	top: 70px;
-	right: 10px;
-	width: 220px;
-	height: 220px;
+	top: 70px; right: 10px; 
+	width: 220px; height: 220px;
 	.button {
 		position: absolute;
 		border-radius: 100%;
-		width: 80px;
-		height: 80px;
+		width: 80px; height: 80px;
 		overflow: none;
 		background-color: @button-bg;
 		.box-shadow(0px 0px 4px rgba(0, 0, 0, 0.5));
@@ -248,10 +224,7 @@ body {
 		&:nth-child(3) { right: 0px; }
 		input[type=file] {
 			position: absolute;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
+			top: 0; left: 0; right: 0; bottom: 0;
 			opacity: 0;
 		}
 	}
@@ -291,9 +264,7 @@ body {
 }
 
 .post.room-info {
-	.above {
-		margin-bottom: 20px;
-	}
+	.above { margin-bottom: 20px; }
 	h1 {
 		margin: 0 0 5px 0;
 		font-size: 20px;
@@ -322,11 +293,8 @@ body {
 		.meta {
 			white-space: normal;
 			display: inline-block;
-			margin-left: 6px;
-			margin-right: 12px;
-			.name, .room {
-				font-weight: bold;
-			}
+			margin-left: 6px; margin-right: 12px;
+			.name, .room { font-weight: bold; }
 			.date {
 				color: #ccc;
 				display: block;
@@ -335,23 +303,17 @@ body {
 	}
 
 	.below {
-		margin-top: -8px;
+		margin-top: -8px; margin-bottom: 20px;
 		min-height: 15px;
-		margin-bottom: 20px;
 		> ul > li {
-			width: 50%;
-			height: 60px;
+			width: 50%; height: 60px;
 			line-height: 66px;
 			display: inline-block;
 			box-sizing: border-box;
-			&:first-child {
-				border-right: 1px solid #eee;
-			}
+			&:first-child { border-right: 1px solid #eee; }
 		}
 	}
-	.rect {
-		margin: 0;
-	}
+	.rect { margin: 0; }
 }
 
 .room {
@@ -372,8 +334,7 @@ body {
 	overflow-y: auto;
 	overflow-x: hidden;
 	height: 100%;
-	margin: -@screen-padding;
-	padding: @screen-padding;
+	margin: -@screen-padding; padding: @screen-padding;
 }
 
 .interests {
@@ -382,9 +343,7 @@ body {
 		display: inline;
 		a.rect.rect-half {
 			max-height: 30%;
-			&.selected {
-				outline: 3px solid @orange;
-			}
+			&.selected { outline: 3px solid @orange; }
 		}
 	}
 }
@@ -394,12 +353,10 @@ body {
 .logo {
 	background: url(../img/logo.svg);
 	background-size: 100% 100%;
-	width: 100px;
-	height: 40px;
+	width: 100px; height: 40px;
 	display: inline-block;
 	&.logo-large {
-		width: 240px;
-		height: 96px;
+		width: 240px; height: 96px;
 		margin: 3% 0 4%;
 	}
 }
@@ -417,9 +374,7 @@ body {
 
 // Nav
 
-nav {
-	box-sizing: border-box;
-}
+nav { box-sizing: border-box; }
 
 nav.nav-main {
 	position: absolute;
@@ -437,20 +392,14 @@ nav.nav-main {
 		line-height: @nav-height + 3px;
 		li {
 			display: inline-block;
-			width: 33.33%;
-			height: 100%;
+			width: 33.33%; height: 100%;
 			a {
 				display: block;
 				color: #ddd;
-				width: 100%;
-				height: 100%;
+				width: 100%; height: 100%;
 			}
-			&.nav-scan {
-				background: fade(@orange, 90%);
-			}
-			&.nav-active {
-				background: fade(#000000, 50%);
-			}
+			&.nav-scan { background: fade(@orange, 90%); }
+			&.nav-active { background: fade(#000000, 50%); }
 		}
 	}
 }
@@ -460,9 +409,7 @@ nav.nav-top {
 	border-bottom: 1px solid #ccc;
 	height: @nav-height;
 	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
+	top: 0; left: 0; right: 0;
 	color: #333;
 	z-index: 40;
 	> ul {
@@ -472,15 +419,13 @@ nav.nav-top {
 			&.icon {
 				&.icon-right {
 					position: absolute;
-					right: 0;
-					top: 0;
+					right: 0; top: 0;
 					border-left: 1px solid #eee; 
 					border-right-width: 0px; 
 				}
 				a {
 					display: block;
-					width: @nav-height;
-					height: @nav-height;
+					width: @nav-height; height: @nav-height;
 					line-height: @nav-height;
 					text-align: center;
 					font-size: 30px;
@@ -497,10 +442,7 @@ nav.nav-top {
 
 nav.nav-side {
 	position: absolute;
-	top: @nav-height;
-	bottom: 0;
-	left: 0;
-	right: 0;
+	top: @nav-height; bottom: 0; left: 0; right: 0;
 	background-color: rgba(0, 0, 0, 0.3);
 	z-index: 70;
 	> ul {
@@ -543,17 +485,6 @@ nav.nav-side {
 	}
 }
 
-// Testing 
-.screen-toolbar {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	height: 30px;
-	background: #555;
-	z-index: 40;
-}
-
 
 // Other
 
@@ -594,10 +525,7 @@ nav.nav-side {
 
 .fill-screen {
 	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
+	top: 0; left: 0; right: 0; bottom: 0;
 }
 
 
@@ -607,17 +535,11 @@ nav.nav-side {
 	}
 }
 
-.inline-container {
-	display: inline;
-}
-
+.inline-container { display: inline; }
 
 .honeycomb {
 	position: absolute;
-	top: @nav-height;
-	left: 0;
-	right: 0;
-	bottom: @nav-height;
+	top: @nav-height; bottom: @nav-height; left: 0; right: 0;
 	overflow-x: hidden;
 	overflow-y: auto;
 	.cell {
@@ -647,22 +569,15 @@ nav.nav-side {
 }
 
 .screen-room {
-	.honeycomb {
-		top: @nav-height + @header-height;
-	}
-	.residents {
-		margin-top: @header-height;
-	}
+	.honeycomb { top: @nav-height + @header-height; }
+	.residents { margin-top: @header-height; }
 }
 
 .header {
 	background: #fff;
 	border-bottom: 1px solid #ccc;
 	position: absolute;
-	top: @nav-height;
-	left: 0;
-	right: 0;
-	height: @header-height;
+	top: @nav-height; height: @header-height; left: 0; right: 0;
 	text-align: left;
 	ul {
 		height: 100%;
@@ -670,8 +585,7 @@ nav.nav-side {
 			text-align: center;
 			position: relative;
 			display: inline-block;
-			width: 50%;
-			height: 100%;
+			width: 50%; height: 100%;
 			vertical-align: top;
 			padding: 10px;
 			border-right: 1px solid #eee;
@@ -681,13 +595,11 @@ nav.nav-side {
 			}
 			.fa-chevron-right {
 				position: absolute;
-				top: 33px;
-				right: 21px;
+				top: 33px; right: 21px;
 			}
 			.fa-chevron-left {
 				position: absolute;
-				top: 33px;
-				left: 21px;
+				top: 33px; left: 21px;
 			}
 			.number {
 				font-size: 40px;
