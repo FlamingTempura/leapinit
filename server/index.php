@@ -344,11 +344,13 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 	});
 
 	$app->post('/room/:id/post/', $requestJSON, $validateToken, function ($id) use (&$app, &$params) {
+		error_log('making post');
+
 		$room = R::load('room', intval($id));
 
 		// TODO check room exists
 
-		$post = R::dispense('post', intval($id));
+		$post = R::dispense('post');
 		$post->type = $params->type;
 		$post->text = $params->text;
 		$post->person = $app->user;
@@ -357,25 +359,26 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 			$post->url = $params->url;
 		}
 
+		error_log('checking type');
+
 		if ($post->type === 'text') {
 			$apikey = '40eb84f27e9aa5a701bc3f3e3bbf6cac9e3ad506';
 			$sentimenturl = 'http://access.alchemyapi.com/calls/text/TextGetTextSentiment?outputMode=json&apikey=' . $apikey . '&text=' . urlencode($post->text);
 			$keywordurl = 'http://access.alchemyapi.com/calls/text/TextGetRankedKeywords?outputMode=json&maxRetrieve=1&apikey='. $apikey . '&text=' . urlencode($post->text);
 
-			//echo($sentimenturl);
-			//die($keywordurl);
-
+			error_log('api call: ' . $sentimenturl);
 			$sentimentjson = json_decode(file_get_contents($sentimenturl));
-			$keywordjson = json_decode(file_get_contents($keywordurl));
-
 			$docsentiment = $sentimentjson->docSentiment;
-			$keywords = $keywordjson->keywords;
 
 			if (!property_exists($docsentiment, 'score')) {
 				$sentiment = 0;
 			} else {
 				$sentiment = $docsentiment->score;
 			}
+
+			error_log('api call: ' . $keywordurl);
+			$keywordjson = json_decode(file_get_contents($keywordurl));
+			$keywords = $keywordjson->keywords;
 
 			if (count($keywords) === 0) {
 				$keyword = '?';
@@ -426,7 +429,9 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 
 			if (!file_exists(__DIR__ . $thumbfile)) {
 
-				$file = __DIR__ . '/media/files/' . $filename;
+				$file = __DIR__ . '/media/files/';
+				if (strpos($post->url, '/sentiment/')) { $file .= 'sentiment/'; }
+				$file .= $filename;
 
 				//var_dump($post->type);
 
