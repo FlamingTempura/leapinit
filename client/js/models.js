@@ -144,11 +144,6 @@ angular.module('leapinit')
 			});
 
 		var Post = Model.extend({
-				initialize: function () {
-					if (!this.has('url')) {
-						this.set('url', 'http://lorempixel.com/400/300/?' + Math.random());
-					}
-				},
 				url: function () {
 					var url = _.result(this.collection, 'url');
 					if (!url || url.indexOf('room') === -1) {

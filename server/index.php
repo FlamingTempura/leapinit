@@ -414,31 +414,49 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 				$app->response->redirect($post->url, 303);
 			}
 		} else {
-			$file = __DIR__ . '/media/files/' . pathinfo(urldecode($post->url), PATHINFO_BASENAME);
+			$filename = pathinfo(urldecode($post->url), PATHINFO_BASENAME);
 			if (!isset($size)) { $size = 100; }
-			$size = intval($size);
+			$size = min(500, ceil(intval($size) / 100) * 100); // round to nearest 100, max of 500
 
-			//var_dump($post->type);
-
-			//if ($post->type === 'picture') {
-				$layer = ImageWorkshop::initFromPath($file);
-			//} else if ($post->type === 'video') {
-				// $layer = get frame from video
-			//} else if ($post->type === 'text') {
-
-			//}
-
-			if (!isset($layer)) {
-				$app->response->setStatus(404);
+			if ($cell) {
+				$thumbfile = '/media/files/thumbnail/' . $filename . '-' . $size . '-cell.png';
 			} else {
-				$layer->resizeInPixel($size, $size);
-				$preview = $layer->getResult();
-				if ($cell) {
-					$preview = generateCell($preview, $size);
+				$thumbfile = '/media/files/thumbnail/' . $filename . '-' . $size . '.jpg';
+			}
+
+			if (!file_exists(__DIR__ . $thumbfile)) {
+
+				$file = __DIR__ . '/media/files/' . $filename;
+
+				//var_dump($post->type);
+
+				//if ($post->type === 'picture') {
+					$layer = ImageWorkshop::initFromPath($file);
+				//} else if ($post->type === 'video') {
+					// $layer = get frame from video
+				//} else if ($post->type === 'text') {
+
+				//}
+
+				if (!isset($layer)) {
+					$app->response->setStatus(404);
+				} else {
+					$layer->resizeInPixel($size, $size);
+					$preview = $layer->getResult();
+					if ($cell) {
+						$preview = generateCell($preview, $size);
+						//$app->response->headers->set('Content-type', 'image/png');
+						imagepng($preview, __DIR__ . $thumbfile, 9, PNG_ALL_FILTERS);
+					} else {
+						//$app->response->headers->set('Content-type', 'image/jpeg');
+						imagejpeg($preview, __DIR__ . $thumbfile);
+					}
+					//imagedestroy($preview);
 				}
-				$app->response->headers->set('Content-type', 'image/png');
-				imagepng($preview);
-				imagedestroy($preview);
+			}
+
+			if ($thumbfile) {
+				$app->response->redirect('/leapinit/' . $thumbfile, 303);
 			}
 		}
 	});

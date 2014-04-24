@@ -11,6 +11,8 @@ angular.module('leapinit')
 		$scope.post.fetch().fail(function (r) {
 			$scope.error = r.responseJSON.msg;
 		}).always(function () {
+			$scope.preview = $scope.post.preview(window.innerWidth);
+			console.log($scope.preview);
 			$scope.$apply();
 		});
 	});
