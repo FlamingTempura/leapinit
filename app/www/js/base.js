@@ -20,6 +20,7 @@ angular.module('leapinit', ['navbar', 'ngAnimate', 'ngRoute', 'ngTouch'])
 					templateUrl: 'templates/screens/' + screen.name + '.html',
 					name: screen.name,
 					title: screen.title,
+					back: screen.back,
 					navbars: screen.navbars,
 					controller: screen.name + 'Screen'
 				});
@@ -35,6 +36,7 @@ angular.module('leapinit', ['navbar', 'ngAnimate', 'ngRoute', 'ngTouch'])
 				name: current.$$route.name,
 				title: current.$$route.title,
 				navbars: current.$$route.navbars,
+				back: current.$$route.back,
 				add: false
 			});
 			console.log('go to ', current.$$route.originalPath);
@@ -63,7 +65,7 @@ angular.module('leapinit', ['navbar', 'ngAnimate', 'ngRoute', 'ngTouch'])
 		$rootScope.go = function (path) {
 			$location.path(path);
 		};
-		$rootScope.back = function () {
+		$rootScope.goBack = function () {
 			history.back();
 		};
 	})

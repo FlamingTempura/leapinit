@@ -3,6 +3,9 @@
 		<li class="icon"><a ng-click="opensidenav = !opensidenav">
 			<i class="fa fa-bars"></i>
 		</a></li>
+		<li class="back" ng-if="back"><a ng-click="goBack()">
+			<i class="fa fa-chevron-left"></i>
+		</a></li>
 		<li class="title">
 			{{ title }}
 		</li>
