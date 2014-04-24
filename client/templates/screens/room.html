@@ -7,4 +7,33 @@
 	</ul>
 </div>
 
-<div ng-include="'templates/posts.html'" class="inline-container"></div>
+<div class="header" ng-show="!showResidents">
+	<ul>
+		<li>
+			Code: 
+			<pre>{{ room.attributes.code }}</pre>
+		</li><li ng-click="showResidents = true">
+			<div class="number">{{ room.residents.length }}</div>
+			<div class="noun">residents</div>
+			<i class="fa fa-chevron-right"></i>
+		</li>
+	</ul>
+</div>
+
+<div ng-show="!showResidents" ng-include="'templates/posts.html'" class="inline-container"></div>
+
+<div class="header" ng-show="showResidents">
+	<ul><li ng-click="showResidents = false">
+			<div class="noun">back</div>
+			<i class="fa fa-chevron-left"></i>
+		</li>
+	</ul>
+</div>
+
+
+<div class="residents" ng-show="showResidents">
+	Residents in {{ room.attributes.name }}:
+	<ul>
+		<li class="person" ng-repeat="person in room.residents.models" ng-include="'templates/person.html'"></li>
+	</ul>
+</div>

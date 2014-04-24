@@ -4,6 +4,9 @@ angular.module('leapinit')
 		$scope.room = room;
 		if (room) {
 			$scope.posts = room.posts;
+			room.fetch().then(function () {
+				$scope.$apply();
+			});
 			room.posts.fetch().then(function () {
 				$scope.$apply();
 			});

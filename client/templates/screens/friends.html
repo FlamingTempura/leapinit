@@ -1,8 +1,3 @@
 <ul class="people">
-	<li class="person" ng-repeat="person in user.friends.models">
-		<a href="#/profile/{{ person.id }}">
-			<div class="avatar avatar-small"></div>
-			<span class="name">{{ person.attributes.username }}</span>
-		</a>
-	</li>
+	<li class="person" ng-repeat="person in user.friends.models" ng-include="'templates/person.html'"></li>
 </ul>

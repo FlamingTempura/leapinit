@@ -263,15 +263,28 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		echo json_encode($user->export());
 	});*/
 
-	$app->get('/room/', $requestJSON, $validateToken, function () use (&$app) {
+	//$app->get('/room/', $requestJSON, $validateToken, function () use (&$app) {
 		//$code = 
 		//$room = R::load('room', ' code = ? ', array($code));
-	});
+	//});
 
-	/*$app->put('/room/:id', $requestJSON, $validateToken, function($id){
-		$user=R::load("person",intval($id));
-		echo json_encode($user->export());
-	});*/
+	$app->get('/room/:id', $requestJSON/*, $validateToken*/, function ($id) use (&$app) {
+		$room = R::load('room', intval($id));
+		// TODO check room exists + user is allowed to view room
+		//echo json_encode($room->export());
+		//var_dump();
+		$result = $room->export();
+		$result['residents'] = array_map(function ($residence) {
+			$person = R::load('person', $residence->person_id);
+			return [
+				'id' => $person->id,
+				'username' => $person->username
+			];
+		}, array_values($room->ownResidence));
+		$app->render(200, [
+			'result' =>  $result
+		]);
+	});
 
 	$app->get('/room/:id/post/', $requestJSON, $validateToken, function ($id) use (&$app) {
 		$room = R::load('room', intval($id));

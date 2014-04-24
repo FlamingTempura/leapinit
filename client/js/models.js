@@ -110,6 +110,12 @@ angular.module('leapinit')
 				initialize: function () {
 					Model.prototype.initialize.apply(this, arguments);
 					this.posts = new Posts(undefined, { url: _.result(this, 'url') + '/post' });
+					this.residents = new People();
+					this.on('change', this.updateResidents, this);
+					this.updateResidents();
+				},
+				updateResidents: function () {
+					this.residents.reset(this.get('residents'));
 				}
 			}),
 			Rooms = Collection.extend({
