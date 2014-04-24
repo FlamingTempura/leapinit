@@ -12,6 +12,10 @@
 @red: #cc4125;
 
 
+* {
+    -webkit-tap-highlight-color: rgba(0,0,0,0); /* make transparent link selection, adjust last value opacity 0 to 1.0 */
+}
+
 // Mixins
 
 // Fonts
@@ -138,10 +142,13 @@ ul, li {
 }
 
 body {
+	height:100%; width:100%;
 	margin: 0; padding: 0;
 	background: black;
 	color: white;
 	.user-select(none);
+	-webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
+	-webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
 }
 
 .screen {
@@ -636,4 +643,8 @@ form {
 	position: relative;
 	background: @bg;
 	z-index: 1;
+}
+
+/* Landscape layout (with min-width) */
+@media screen and (min-aspect-ratio: 1/1) and (min-width:400px) {
 }
