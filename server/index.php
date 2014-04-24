@@ -257,9 +257,19 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 
 	$app->get('/person/:id/room/', $requestJSON, $validateToken, function ($id) use (&$app) {
 		$person = R::load('person', intval($id));
+		// TODO check person is logged in
+
 		$app->render(200, [
 			'result' => array_map(function ($residence) {
-				return R::load('room', $residence->room_id)->export();
+				$room = R::load('room', $residence->room_id);
+				$r = $room->export();
+				$r['preview'] = array_map(function ($post) {
+					return [
+						'id' => $post->id,
+						'url' => $post->url
+					];
+				}, array_values(R::find('post', ' room_id = ? LIMIT 3', array($room->id))));
+				return $r;
 			}, array_values($person->ownResidence))
 		]);
 	});
@@ -424,7 +434,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		} else {
 			$filename = pathinfo(urldecode($post->url), PATHINFO_BASENAME);
 			if (!isset($size)) { $size = 100; }
-			$size = min(500, ceil(intval($size) / 1) * 1); // round to nearest 100, max of 500
+			$size = min(500, ceil(intval($size) / 100) * 100); // round to nearest 100, max of 500
 
 			if ($cell) {
 				$thumbfile = '/media/files/thumbnail/' . $filename . '-' . $size . '-cell.png';
@@ -471,7 +481,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		$color = $app->request()->params('color');
 
 		if (!isset($size)) { $size = 100; }
-		$size = min(500, ceil(intval($size) / 1) * 1); // round to nearest 100, max of 500
+		$size = min(500, ceil(intval($size) / 100) * 100); // round to nearest 100, max of 500
 		if (!isset($color)) { $color = '666666'; }
 		$size = intval($size);
 

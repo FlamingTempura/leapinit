@@ -108,11 +108,19 @@ angular.module('leapinit')
 					return server + '/api/room/' + this.id;
 				},
 				initialize: function () {
+					var that = this;
 					Model.prototype.initialize.apply(this, arguments);
 					this.posts = new Posts(undefined, { url: _.result(this, 'url') + '/post' });
 					this.residents = new People();
 					this.on('change', this.updateResidents, this);
 					this.updateResidents();
+					if (this.has('preview')) {
+						this.preview = new Posts(undefined, { url: _.result(this, 'url') + '/post' });
+						this.preview.reset(this.get('preview'));
+						this.on('change:preview', function () {
+							that.preview.reset(that.get('preview'));
+						});
+					}
 				},
 				updateResidents: function () {
 					this.residents.reset(this.get('residents'));
@@ -165,6 +173,7 @@ angular.module('leapinit')
 					this.on('change add remove reset', this.generateHoneycomb, this);
 				},
 				generateHoneycomb: function (width) {
+					console.log(this.models.length)
 					width = window.innerWidth;
 					var posts = _.clone(this.models).slice(0,21),
 						cells = [],

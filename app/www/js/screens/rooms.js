@@ -5,4 +5,8 @@ angular.module('leapinit')
 		}).always(function () {
 			$scope.$apply();
 		});
+	})
+	.controller('rooms', function ($scope) {
+		console.log('PAH', $scope.room.preview)
+		$scope.posts = $scope.room.preview;
 	});

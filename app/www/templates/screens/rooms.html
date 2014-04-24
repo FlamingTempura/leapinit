@@ -1,7 +1,8 @@
 <ul class="rooms">
 	<li class="room" ng-repeat="room in user.rooms.models">
-		<a href="#/room/{{ room.id }}" class="rect rect-wide" imageplaceholder>
+		<a href="#/room/{{ room.id }}" class="rect rect-wide">
 			<span class="name">{{ room.attributes.name }}</span>
+			<div ng-if="!noHoneycomb" ng-controller="rooms" ng-include="'templates/posts.html'"></div>
 		</a>
 	</li>
 </ul>
