@@ -3,7 +3,22 @@
 	<li class="post" ng-repeat="post in posts.models" ng-include="'templates/post.html'"></li>
 </ul>
 
+
 <div class="honeycomb" ng-if="!noHoneycomb">
+	<div 	ng-repeat="cell in posts.honeycomb.cells"
+			class="cell"
+			style="
+				left: {{ cell.x }}px; 
+				top: {{ cell.y }}px; 
+				background: {{ cell.bg }};
+				width: {{ posts.honeycomb.cellWidth }}px;
+				height: {{ posts.honeycomb.cellHeight }}px;"
+			ng-click="go('/room/' + cell.post.attributes.room_id + '/post/' + cell.post.id)">
+	</div>
+</image>
+
+
+<!-- <div class="honeycomb" ng-if="!noHoneycomb">
 	<svg	xmlns="http://www.w3.org/2000/svg"
 			xmlns:xlink="http://www.w3.org/1999/xlink"
 			width="100%"
@@ -30,4 +45,4 @@
 			</path>
 		</g>
 	</svg>
-</image>
+</image> -->

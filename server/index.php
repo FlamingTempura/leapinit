@@ -78,14 +78,19 @@ function exportPost (&$post) {
 function generateCell ($source, $size) {
 
 	// http://stackoverflow.com/questions/8778864/cropping-an-image-into-hexagon-shape-in-a-web-page
-	$points = array(
-		.25 * $size, .067  * $size, // A 
-		0, .5   * $size, // B
-		.25 * $size, .933  * $size, // C
-		.75 * $size, .933  * $size, // D
-		$size, .5  * $size, // E
-		.75 * $size, .067  * $size  // F
-	);
+
+	$c = 0.435 * $size;
+	$b = sin(1.05) * $c;
+	$a = $c / 2;
+
+	$points = [
+		0, $a + $c,
+		0, $a,
+		$b, 0,
+		2 * $b, $a,
+		2 * $b, $a + $c,
+		$b, 2 * $c
+	];
 
 	// Create the mask
 	$mask = imagecreatetruecolor($size, $size);
@@ -124,7 +129,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 	});
 
 	// Log in
-	$app->post('/auth', $requestJSON, function () use (&$app, &$params) {
+	$app->post('/auth/', $requestJSON, function () use (&$app, &$params) {
 		$username = $params->username;
 		$password = sha1($params->password);
 		$user = R::findOne('person', ' LOWER(username) = ? AND password = ? ', array($username, $password));
@@ -147,34 +152,34 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 	});
 
 	// Get user that is logged in
-	$app->get('/auth/user', $requestJSON, $validateToken, function () use (&$app) {
+	$app->get('/auth/user/', $requestJSON, $validateToken, function () use (&$app) {
 		$app->render(200, [ 'result' => [ 'id' => 'user', 'user' => $app->user->export() ] ]);
 	});
 
-	$app->delete('/auth/user', $requestJSON, $validateToken, function () use (&$app) {
+	$app->delete('/auth/user/', $requestJSON, $validateToken, function () use (&$app) {
 		$tokens = R::find('token', ' person_id = ? ', array($app->user->id));
 		R::trashAll($tokens);
 		$app->render(410, array());
 	});
 
-	$app->get('/person/:id', $requestJSON, $validateToken, function ($id) use (&$app, &$params) {
+	$app->get('/person/:id/', $requestJSON, $validateToken, function ($id) use (&$app, &$params) {
 		$person = R::load('person', intval($id));
 		$app->render(200, [
 			'response' => $person->export()
 		]);
 	});
 
-	$app->put('/person/:id', $requestJSON, $validateToken, function ($id) use (&$app) {
+	$app->put('/person/:id/', $requestJSON, $validateToken, function ($id) use (&$app) {
 		$person = R::load('person', intval($id));
 		echo json_encode($user->export());
 	});
 
-	$app->delete('/person/:id', $requestJSON, $validateToken, function ($id) use (&$app) {
+	$app->delete('/person/:id/', $requestJSON, $validateToken, function ($id) use (&$app) {
 		$person = R::load('person', intval($id));
 		echo json_encode($user->export());
 	});
 
-	$app->post('/person', $requestJSON, function () use (&$app, &$params) {
+	$app->post('/person/', $requestJSON, function () use (&$app, &$params) {
 		if (R::findOne('person', ' username = ? ', array($params->username))) {
 			$app->render(401, [
 				'msg' => 'Username already in use.'
@@ -191,7 +196,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		}
 	}); 
 
-	$app->get('/person/:id/friend', $requestJSON, $validateToken, function ($id) use (&$app) {
+	$app->get('/person/:id/friend/', $requestJSON, $validateToken, function ($id) use (&$app) {
 		$person = R::load('person', intval($id));
 		$app->render(200, [
 			'result' => array_map(function ($friend) {
@@ -200,19 +205,19 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		]);
 	});
 
-	$app->post('/person/:id/friend', $requestJSON, $validateToken, function ($id) use (&$app) {
+	$app->post('/person/:id/friend/', $requestJSON, $validateToken, function ($id) use (&$app) {
 		$user=R::load("person",intval($id));
 		echo json_encode($user->export());
 	});
 
-	$app->delete('/person/:id/friend/:fid', $requestJSON, $validateToken, function($id,$fid){
+	$app->delete('/person/:id/friend/:fid/', $requestJSON, $validateToken, function($id,$fid){
 		$user=R::load("person",intval($id));
 		$friend=R::load("person",intval($fid));
 		echo json_encode($user->export());
 	});
 
 
-	$app->get('/person/:id/block', $requestJSON, $validateToken, function ($id) use (&$app) {
+	$app->get('/person/:id/block/', $requestJSON, $validateToken, function ($id) use (&$app) {
 		$person = R::load('person', intval($id));
 		$app->render(200, [
 			'result' => array_map(function ($friend) {
@@ -221,7 +226,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		]);
 	});
 
-	$app->get('/person/:id/room', $requestJSON, $validateToken, function ($id) use (&$app) {
+	$app->get('/person/:id/room/', $requestJSON, $validateToken, function ($id) use (&$app) {
 		$person = R::load('person', intval($id));
 		$app->render(200, [
 			'result' => array_map(function ($residence) {
@@ -241,7 +246,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		echo json_encode($user->export());
 	});*/
 
-	$app->get('/person/:id/feed', $requestJSON, $validateToken, function ($id) use (&$app) {
+	$app->get('/person/:id/feed/', $requestJSON, $validateToken, function ($id) use (&$app) {
 		$person = R::load('person', intval($id));
 		$posts = [];
 		array_map(function ($residence) use (&$posts) {
@@ -268,14 +273,14 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		echo json_encode($user->export());
 	});*/
 
-	$app->get('/room/:id/post', $requestJSON, $validateToken, function ($id) use (&$app) {
+	$app->get('/room/:id/post/', $requestJSON, $validateToken, function ($id) use (&$app) {
 		$room = R::load('room', intval($id));
 		$app->render(200, [
 			'result' => exportPosts($room->ownPost)
 		]);
 	});
 
-	$app->get('/room/:id/post/:pid', $requestJSON, $validateToken, function ($id, $pid) use (&$app) {
+	$app->get('/room/:id/post/:pid/', $requestJSON, $validateToken, function ($id, $pid) use (&$app) {
 		$post = R::findOne('post', ' id = ? AND room_id = ? ', [intval($pid), intval($id)]);
 		if ($post === null) {
 			$app->render(404, [
@@ -289,7 +294,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		}
 	});
 
-	$app->post('/room/:id/post', $requestJSON, $validateToken, function ($id) use (&$app, &$params) {
+	$app->post('/room/:id/post/', $requestJSON, $validateToken, function ($id) use (&$app, &$params) {
 		$room = R::load('room', intval($id));
 
 		// TODO check room exists
@@ -309,7 +314,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 	});
 
 
-	$app->get('/room/:id/post/:pid/data', function ($id, $pid) use (&$app) {
+	$app->get('/room/:id/post/:pid/data/', function ($id, $pid) use (&$app) {
 		$preview = $app->request()->params('preview');
 		$size = $app->request()->params('size');
 		$cell = $app->request()->params('cell'); // honeycomb cell
@@ -355,6 +360,22 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 				imagedestroy($preview);
 			}
 		}
+	});
+
+	$app->get('/blankcell/', function () use (&$app) {
+		$size = $app->request()->params('size');
+		$color = $app->request()->params('color');
+
+		if (!isset($size)) { $size = 100; }
+		if (!isset($color)) { $color = '666666'; }
+		$size = intval($size);
+
+		$layer = ImageWorkshop::initVirginLayer($size, $size, $color);
+		$preview = $layer->getResult();
+		$preview = generateCell($preview, $size);
+		$app->response->headers->set('Content-type', 'image/png');
+		imagepng($preview);
+		imagedestroy($preview);
 	});
 
 	/*$app->post('/media/text', function () use (&$app) {

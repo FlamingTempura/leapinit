@@ -78,7 +78,6 @@ angular.module('leapinit')
 			Collection = Backbone.Collection.extend({
 				initialize: function (models, options) {
 					if (options && options.url) {
-						console.log('kl;', options.url)
 						this.url = options.url
 					}
  				},
@@ -123,11 +122,22 @@ angular.module('leapinit')
 					if (!this.has('url')) {
 						this.set('url', 'http://lorempixel.com/400/300/?' + Math.random());
 					}
+				},
+				url: function () {
+					var url = _.result(this.collection, 'url');
+					if (!url || url.indexOf('room') === -1) {
+						url = server + '/api/room/' + this.get('room_id') + '/post';
+					}
+					return url + '/' + (_.isUndefined(this.id) ? '' : this.id);
+				},
+				preview: function (size, cell) {
+					return _.result(this, 'url') + '/data?preview=true' +
+						(size ? '&size=' + size : '') +
+						(cell ? '&cell=true' : '');
 				}
 			}),
 			Posts = Collection.extend({
 				model: Post,
-				url: server + '/api/post',
 				initialize: function () {
 					Collection.prototype.initialize.apply(this, arguments);
 					this.generateHoneycomb();
@@ -155,7 +165,10 @@ angular.module('leapinit')
 							'L', b, 2 * c
 						].join(' '),
 
+						blankcell = 'url(' + server + '/api/blankcell?size=' + cellWidth + '&color=999999)',
+
 						post, even, cell, x, y, c, b, a;
+
 
 					while (posts.length > 0 || col >= 0) {
 						cell = {
@@ -177,10 +190,10 @@ angular.module('leapinit')
 						// If cell is on screen
 						if (cell.visible && posts.length > 0) {
 							cell.post = posts.shift();
-							cell.url = cell.post.get('url');
-							cell.fill = 'url(#img-' + cell.id + ')';
+							cell.url = cell.post.preview(cellWidth, true);
+							cell.bg = 'url(' + cell.url + ')';
 						} else {
-							cell.fill = '#999';
+							cell.bg = blankcell;
 						}
 						
 						col++;
@@ -198,8 +211,9 @@ angular.module('leapinit')
 					this.honeycomb = {
 						cells: cells,
 						rowCount: row + 1,
-						cellWidth: cellWidth,
-						path: path
+						cellWidth: 2 * b,
+						cellHeight: 0.87 * cellWidth
+						//path: path
 					};
 				}
 
