@@ -44,7 +44,7 @@ angular.module('leapinit', ['navbar', 'ngAnimate', 'ngRoute', 'ngTouch'])
 	})
 	.controller('App', function ($scope, $rootScope, $location, models, auth) {
 
-		//$rootScope.noHoneycomb = true
+		$rootScope.noHoneycomb = location.search.indexOf('standard') > -1;
 		$rootScope.cordova = typeof cordova !== 'undefined';
 		$rootScope.fakeMobile = !$rootScope.cordova;
 
@@ -68,15 +68,4 @@ angular.module('leapinit', ['navbar', 'ngAnimate', 'ngRoute', 'ngTouch'])
 		$rootScope.goBack = function () {
 			history.back();
 		};
-	})
-	.directive('ngXlinkHref', function () {
-		return {
-			priority: 99,
-			link: function ($scope, element, attrs) {
-				attrs.$observe('ngXlinkHref', function (value) {
-					if (!value) return;
-					attrs.$set('xlink:href', value);
-				});
-			}
-		}
 	});

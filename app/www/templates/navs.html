@@ -18,13 +18,18 @@
 	<ul>
 		<li ng-repeat="item in navSide"
 			ng-class="{
-				'nav-active': item.screen === name,
-				'nav-scan': item.screen === 'scan'
+				'nav-active': item.screen === name
 			}">
 				<a 	href="#{{ item.screen }}">
 					<i class="fa fa-{{ item.icon }}"></i>
 					{{ item.title }}
 				</a>
+		</li>
+		<li>
+			<a href="" ng-click="auth.logout()">
+				<i class="fa fa-sign-out"></i>
+				Logout
+			</a>
 		</li>
 	</ul>
 </nav>

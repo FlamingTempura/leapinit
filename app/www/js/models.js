@@ -163,6 +163,9 @@ angular.module('leapinit')
 					return _.result(this, 'url') + '/data?preview=true' +
 						(size ? '&size=' + size : '') +
 						(cell ? '&cell=true' : '');
+				},
+				previewFull: function () {
+					return this.preview($('body > .app').width());
 				}
 			}),
 			Posts = Collection.extend({

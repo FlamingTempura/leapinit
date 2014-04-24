@@ -14,8 +14,7 @@ angular.module('navbar', [])
 					{ screen: 'messages', icon: 'comments', title: 'Messages' },
 					{ screen: 'friends', icon: 'users', title: 'Friends' },
 					{ screen: 'profile', icon: 'user', title: 'Profile' },
-					{ screen: 'settings', icon: 'cog', title: 'Settings' },
-					{ screen: 'logout', icon: 'sign-out', title: 'Logout' }
+					{ screen: 'settings', icon: 'cog', title: 'Settings' }
 				]
 			}
 		}

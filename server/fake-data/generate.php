@@ -46,7 +46,7 @@ function generateFakeData ($dataSize = 1) {
 	array_walk($people, function (&$person, $i) use (&$faker, &$sponsors) {
 		$person = [
 			'id' => $i,
-			'username' => $i === 0 ? 'Dave' : $faker->userName(),
+			'username' => $i === 0 ? 'test' : $faker->userName(),
 			'password' => sha1('test'),
 			'biography' => $faker->sentence($faker->randomNumber(5, 15))
 		];

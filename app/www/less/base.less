@@ -2,7 +2,7 @@
 
 // variables
 
-@screen-padding: 18px;
+@screen-padding: 16px;
 @nav-height: 50px;
 @header-height: 55px;
 @bg: #f1f1f1;
@@ -64,7 +64,7 @@ a {
 .input-dimensions {
 	display: block;
 	box-sizing: border-box;
-	margin: 8px auto 20px;
+	margin: 6px auto 14px;
 	width: 100%;
 	max-width: 400px;
 }
@@ -77,7 +77,7 @@ button {
 	background: @button-bg;
 	border: 0;
 	color: white;
-	padding: 16px 0 14px 0;
+	padding: 12px 0 10px 0;
 	font-weight: bold;
 	.box-shadow(0px 4px 1px -1px rgba(0, 0, 0, 0.68));
 	border-radius: 3px;
@@ -100,8 +100,8 @@ label, input[type=text] {
 
 input[type=text], input[type=password] {
 	.input-dimensions;
-	height: 60px;
-	font-size: 24px;
+	height: 40px;
+	font-size: 18px;
 	background: white;
 	color: #333;
 	border: 1px solid #d7d7d7;
@@ -159,6 +159,9 @@ body {
 	color: #222;
 	overflow: hidden;
 	box-sizing: border-box;
+	&.screen-login, &.screen-register{
+		padding: @screen-padding 30px;
+	}
 }
 
 .app .screen {
@@ -376,8 +379,8 @@ body {
 	width: 100px; height: 40px;
 	display: inline-block;
 	&.logo-large {
-		width: 240px; height: 96px;
-		margin: 3% 0 4%;
+		width: 180px; height: 72px;
+		margin: 0 0 4%;
 	}
 }
 
@@ -476,6 +479,7 @@ nav.nav-side {
 	top: @nav-height; bottom: 0; left: 0; right: 0;
 	background-color: rgba(0, 0, 0, 0.3);
 	z-index: 70;
+	overflow-y: auto;
 	> ul {
 		width: 250px;
 		background: white;
@@ -690,5 +694,11 @@ form {
 	.screen {
 		max-width: 320px;
 		max-height: 480px;
+	}
+}
+
+.nohoneycomb {
+	.posts-container {
+		display: inline;
 	}
 }

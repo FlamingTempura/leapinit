@@ -17,10 +17,6 @@
 	<button>Message</button>
 </div>
 
-<div class="user-buttons" ng-if="own">
-	<button ng-click="person.auth.logout()">Log out</button>
-</div>
-
 <ul class="user-medias">
 	<li class="user-media" ng-repeat="media in medias">
 		<img placeholder ng-class="rect rect-{{ media.size }}">
