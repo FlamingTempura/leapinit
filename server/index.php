@@ -74,6 +74,30 @@ function exportPost (&$post) {
 	]);
 }
 
+function exportRoom (&$room) {
+	$result = $room->export();
+	$result['residents'] = array_map(function ($residence) {
+		$person = R::load('person', $residence->person_id);
+		return [
+			'id' => $person->id,
+			'username' => $person->username
+		];
+	}, array_values($room->ownResidence));
+	return $result;
+}
+
+function createResidence (&$person, &$room) {
+	$residence = R::findOne('residence', ' person_id = ? AND room_id = ? ',
+			array($person->id, $room->id));
+	if ($residence === null) {
+		$residence = R::dispense('residence');
+		$residence->person = $person;
+		$residence->room = $room;
+		R::store($residence);
+	}
+	return $residence;
+}
+
 
 function generateCell ($source, $size) {
 
@@ -230,7 +254,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		$person = R::load('person', intval($id));
 		$app->render(200, [
 			'result' => array_map(function ($residence) {
-				return R::load('room', $residence->id)->export();
+				return R::load('room', $residence->room_id)->export();
 			}, array_values($person->ownResidence))
 		]);
 	});
@@ -263,26 +287,35 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		echo json_encode($user->export());
 	});*/
 
-	//$app->get('/room/', $requestJSON, $validateToken, function () use (&$app) {
-		//$code = 
-		//$room = R::load('room', ' code = ? ', array($code));
-	//});
+	$app->get('/room/', $requestJSON, $validateToken, function () use (&$app) {
+		$code = $app->request()->params('code');
+		// TODO limit number of rooms a person can create
+		if (!isset($code)) {
+			$app->render(403, [
+				'msg' => 'You are not permitted to view the room list'
+			]);
+		} else {
+			$room = R::findOne('room', ' code = ? ', array($code));
+			if ($room === null) {
+				$room = R::dispense('room');
+				$room->code = $code;
+				$room->name = 'Untitled';
+				R::store($room);
+			}
+			
+			createResidence($app->user, $room);
 
-	$app->get('/room/:id', $requestJSON/*, $validateToken*/, function ($id) use (&$app) {
+			$app->render(200, [
+				'result' => exportRoom($room)
+			]);
+		}
+	});
+
+	$app->get('/room/:id/', $requestJSON/*, $validateToken*/, function ($id) use (&$app) {
 		$room = R::load('room', intval($id));
 		// TODO check room exists + user is allowed to view room
-		//echo json_encode($room->export());
-		//var_dump();
-		$result = $room->export();
-		$result['residents'] = array_map(function ($residence) {
-			$person = R::load('person', $residence->person_id);
-			return [
-				'id' => $person->id,
-				'username' => $person->username
-			];
-		}, array_values($room->ownResidence));
 		$app->render(200, [
-			'result' =>  $result
+			'result' =>  exportRoom($room)
 		]);
 	});
 
@@ -297,7 +330,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		$post = R::findOne('post', ' id = ? AND room_id = ? ', [intval($pid), intval($id)]);
 		if ($post === null) {
 			$app->render(404, [
-				'error' => true,
+				'error' => true, // TODO remove
 				'msg' => 'Post not found.'
 			]);
 		} else {

@@ -120,7 +120,20 @@ angular.module('leapinit')
 			}),
 			Rooms = Collection.extend({
 				model: Room,
-				url: server + '/api/room'
+				url: server + '/api/room',
+				fetchFromCode: function (code) {
+					var dfd = $.Deferred(),
+						room = new Room();
+					room.url = _.result(this, 'url') + '/?code=' + code;
+					this.add(room);
+					room.fetch().then(function () {
+						room.url = Room.prototype.url;
+						dfd.resolve(room);
+					}).fail(function (response) {
+						dfd.reject(response);
+					});
+					return dfd;
+				}
 			});
 
 		var Post = Model.extend({

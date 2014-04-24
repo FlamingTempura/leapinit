@@ -1,5 +1,6 @@
 angular.module('leapinit')
 	.controller('roomScreen', function ($rootScope, $routeParams, $scope, $location, models) {
+		console.log($rootScope.user.rooms, $routeParams.room)
 		var room = $rootScope.user.rooms.get(Number($routeParams.room));
 		$scope.room = room;
 		if (room) {

@@ -1,7 +1,9 @@
-<form>
-	<div class="camera fill-screen" placeholder>
-	</div>
+<form ng-submit="submit()">
 
-	<button class="camera-button camera-button-cancel">Cancel</button>
-	<button class="camera-button" type="submit">Scan</button>
+	<p>Enter the barcode value below.</p>
+	<input ng-model="code" type="text" name="inputCode" ng-disabled="loading" required>
+
+	<button type="submit" ng-class="{ loading: loading }"  ng-disabled="loading">Scan</button>
+	
+	<div class="msg msg-error" ng-if="error">{{ error }}</div>
 </form>
