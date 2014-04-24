@@ -378,31 +378,6 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		imagedestroy($preview);
 	});
 
-	/*$app->post('/media/text', function () use (&$app) {
-
-	});
-
-	$app->map('/media/picture/', function () use (&$app) {
-		
-	})->via('POST', 'OPTIONS');
-
-	$app->post('/media/video', function () use (&$app) {
-
-	});*/
-
-	/*$app->get('/media/:mid/original', $requestJSON, function ($mid) use (&$app) {
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, 'http://lorempixel.com/400/300/'); 
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
-		$data = curl_exec($ch);
-		curl_close($ch);
-		$raw = imagecreatefromjpeg($data);
-
-		$app->response()->header('Content-type', 'image/png');
-		echo imagepng($raw);
-
-	});*/
 });
 
 $app->run();
