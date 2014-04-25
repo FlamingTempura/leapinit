@@ -9,15 +9,16 @@
 	<div class="person-biography">{{ person.attributes.biography }}</div>
 
 	<div class="bottom" ng-if="own">
-		<button ng-click="edit = true">Edit</button>
+		<button ng-click="setEdit()">Edit</button>
 	</div>
 </div>
 
 <div class="person-info" ng-if="own && edit">
-	<input type="text" ng-model="person.attributes.username" class="person-username">
-	<input type="text" ng-model="person.attributes.biography" class="person-biography">
+	<input type="text" ng-model="edit.username" class="person-username">
+	<textarea ng-model="edit.biography" class="person-biography"></textarea>
 	<div class="bottom">
-		<button>Save</button>
+		<button ng-click="save()" ng-class="{ loading: loading }">Save</button>
+		<button ng-click="cancel()">Cancel</button>
 	</div>
 </div>
 

@@ -202,6 +202,14 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 	$app->put('/person/:id/', $requestJSON, $validateToken, function ($id) use (&$app, &$params) {
 		$person = R::load('person', intval($id));
 		$avatar = R::load('avatar', $person->avatar_id);
+
+		$keys = array_keys($person->export());
+		array_walk(get_object_vars($params), function ($v, $k) use (&$person, &$keys) {
+			if (in_array($k, $keys) && $k !== 'id' && $v !== null) {
+				$person->$k = $v;
+			}
+		});
+
 		$keys = array_keys($avatar->export());
 		array_walk(get_object_vars($params->avatar), function ($v, $k) use (&$avatar, &$keys) {
 			//echo("$k => $v\n");
@@ -211,6 +219,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 				$avatar->$k = $v;
 			}
 		});
+
 		R::store($avatar);
 		R::store($person);
 		

@@ -98,7 +98,7 @@ label, input[type=text] {
 	display: block;
 }
 
-input[type=text], input[type=password] {
+input[type=text], input[type=password], textarea {
 	.input-dimensions;
 	height: 40px;
 	font-size: 18px;
@@ -113,6 +113,15 @@ input[type=text], input[type=password] {
 		background: #eee;
 		.box-shadow(inset 0 1px 8px -3px rgba(0,0,0,0.3));
 	}
+}
+
+textarea {
+	height: 100px;
+	text-indent: 0;
+	font-family: inherit;
+	font-size: 16px;
+	padding: 10px;
+	line-height: 1.8em;
 }
 
 label {

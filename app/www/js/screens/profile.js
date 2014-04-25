@@ -14,4 +14,24 @@ angular.module('leapinit')
 				$scope.$apply();
 			});
 		}
+
+		$scope.setEdit = function () {
+			$scope.edit = {
+				username: $scope.person.get('username'),
+				biography: $scope.person.get('biography')
+			};
+		};
+		$scope.cancel = function () {
+			delete $scope.edit;
+		};
+		$scope.save = function () {
+			$scope.person.save($scope.edit).then(function () {
+				delete $scope.edit;
+			}).fail(function (r) {
+				$scope.error = r.responseJSON.msg;
+				$scope.loading = false;
+			}).always(function () {
+				$scope.$apply();
+			});
+		};
 	});
