@@ -59,11 +59,12 @@ angular.module('leapinit', ['ngAnimate', 'ngRoute', 'ngTouch'])
 			delete $rootScope.user;
 		}).on('login logout', function () {
 			console.log('OO')
-			$location.path('/');
+			$rootScope.go('/');
 		});
 
 		$rootScope.go = function (path) {
 			$location.path(path);
+			$scope.$apply();
 		};
 		$rootScope.goBack = function () {
 			history.back();
