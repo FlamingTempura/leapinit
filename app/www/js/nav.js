@@ -15,7 +15,9 @@ angular.module('leapinit')
 					{ screen: 'settings', icon: 'cog', title: 'Settings' }
 				];
 				document.addEventListener('menubutton', function () {
+					console.log('o')
 					$scope.opensidenav = !$scope.opensidenav;
+					$scope.$apply();
 				}, false);
 			}
 		}
