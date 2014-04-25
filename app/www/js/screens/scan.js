@@ -2,22 +2,21 @@ angular.module('leapinit')
 	.controller('scanScreen', function ($rootScope, $scope, $location, models) {
 		var rooms = new models.Rooms();
 
+		var error = function () {
+			$scope.error = "Scanning failed";
+			$scope.$apply();
+		};
+
 		if (typeof cordova !== 'undefined') {
-			cordova.plugins.barcodeScanner.scan(
-				function (result) {
-					alert("We got a barcode\n" +
-						"Result: " + result.text + "\n" +
-						"Format: " + result.format + "\n" +
-						"Cancelled: " + result.cancelled);
+			cordova.plugins.barcodeScanner.scan(function (result) {
+				if (!result) {
+					$rootScope.goBack();
+				} else {
 					$scope.error = "Loading...";
 					$scope.$apply();
 					scan(result.text);
-				}, 
-				function (error) {
-					$scope.error = "Scanning failed";
-					$scope.$apply();
 				}
-			);
+			}, error);
 		} else {
 			$scope.showForm = true;
 
@@ -39,6 +38,7 @@ angular.module('leapinit')
 			rooms.fetchFromCode(code).then(function (room) {
 				console.log('ROOM', room);
 				$rootScope.user.rooms.fetch().then(function () {
+					$rootScope.goBack();
 					$rootScope.go('/room/' + room.id);
 					console.log('EH?')
 					$scope.$apply();
