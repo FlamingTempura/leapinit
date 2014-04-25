@@ -1,4 +1,4 @@
-angular.module('navbar', [])
+angular.module('leapinit')
 	.directive('navbars', function () {
 		return {
 			restrict: 'A',

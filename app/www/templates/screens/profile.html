@@ -1,6 +1,6 @@
-<button class="top-right-button" ng-if="own"><i class="fa fa-plus"></i></button>
 
-<div class="avatar avatar-medium" ng-click="go('/avatar')">
+<div class="avatar avatar-medium" avatar="person.attributes.avatar" ng-click="go('/avatar')"></div>
+
 </div>
 <div class="user-info">
 	<div class="user-username">{{ person.attributes.username }}</div>

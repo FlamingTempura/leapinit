@@ -10,17 +10,45 @@ R::setup('mysql:host=' . $dbhost . ';dbname=' . $dbname . ($dbport !== null ? ';
 
 R::nuke();
 
+function randomColor () {
+	$colors = ['#C40C63', '#EB0F0F', '#EB730F', '#EBA40F', '#EBC70F', '#88D80E',
+			'#0CBC0C', '#098D8D', '#1A3E9E', '#3E1BA1'];
+	return $colors[array_rand($colors)];
+}
+
 // Generate some fake data
 $data = generateFakeData(1);
 
+echo("Importing avatar templates\n");
+$avatars = json_decode(file_get_contents('avatars.json'), true);
+
+array_walk($avatars, function (&$av) {
+	$avatar = R::dispense('avatar');
+	array_walk($av, function ($o, $k1) use (&$avatar) {
+		array_walk($o, function ($v, $k2) use (&$avatar, &$k1) {
+			$k = $k1 . $k2;
+			$avatar->$k = $v;
+		});
+	});
+	R::store($avatar);
+
+	$template = R::dispense('avatartemplate');
+	$template->avatar = $avatar;
+	R::store($template);
+});
+
 echo("Adding fake people\n");
 array_walk($data->people, function (&$o) {
-	echo("  k " . $o->username);
+	echo('<' . $o->username . '> ');
 	$person = R::dispense('person');
 	//$person->id = $o->id;
 	$person->username = $o->username;
 	$person->password = $o->password;
 	$person->biography = $o->biography;
+	$avatar = R::dup(R::findOne('avatar', ' ORDER BY RAND() LIMIT 1 '));
+	$avatar->bgcolor = randomColor();
+	$person->avatar = $avatar;
+	R::store($avatar);
 	R::store($person);
 
 	if (property_exists($o, 'sponsor') && $o->sponsor) {
@@ -32,7 +60,7 @@ array_walk($data->people, function (&$o) {
 	}
 });
 
-echo("Adding fake rooms\n");
+echo("\nAdding fake rooms\n");
 array_walk($data->rooms, function (&$o) {
 	$ownerId = $o->owner + 1;
 	$room = R::dispense('room');

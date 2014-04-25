@@ -1,4 +1,4 @@
-angular.module('leapinit', ['navbar', 'ngAnimate', 'ngRoute', 'ngTouch'])
+angular.module('leapinit', ['ngAnimate', 'ngRoute', 'ngTouch'])
 	.config(function ($routeProvider, $controllerProvider) {
 		var loadingScreens = $.getJSON('screens.json');
 

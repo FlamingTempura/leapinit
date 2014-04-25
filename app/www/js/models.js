@@ -87,7 +87,19 @@ angular.module('leapinit')
 			});
 
 
-		var Person = Model.extend({}),
+		var Person = Model.extend({
+				initialize: function () {
+					this.parseAvatar();
+					this.on('change:avatar', this.parseAvatar, this);
+				},
+				parseAvatar: function () {
+					var avatar = _.clone(this.get('avatar'));
+					_.each(avatar, function (v, k) {
+						if (k !== 'bgcolor') { avatar[k] = Number(v); }
+					});
+					this.set('avatar', avatar);
+				}
+			}),
 			People = Collection.extend({
 				model: Person,
 				url: server + '/api/person',

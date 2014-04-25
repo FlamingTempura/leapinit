@@ -69,7 +69,7 @@ function exportPosts ($posts) {
 function exportPost (&$post) {
 	return array_merge($post->export(), [
 		'media' => R::load('media', $post->media_id)->export(),
-		'person' => R::load('person', $post->person_id)->export(),
+		'person' => exportPerson(R::load('person', $post->person_id)),
 		'room' => R::load('room', $post->room_id)->export()
 	]);
 }
@@ -83,6 +83,12 @@ function exportRoom (&$room) {
 			'username' => $person->username
 		];
 	}, array_values($room->ownResidence));
+	return $result;
+}
+
+function exportPerson (&$person) {
+	$result = $person->export();
+	$result['avatar'] = R::load('avatar', $person->avatar_id)->export();
 	return $result;
 }
 
@@ -182,7 +188,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 
 	// Get user that is logged in
 	$app->get('/auth/user/', $requestJSON, $validateToken, function () use (&$app) {
-		$app->render(200, [ 'result' => [ 'id' => 'user', 'user' => $app->user->export() ] ]);
+		$app->render(200, [ 'result' => [ 'id' => 'user', 'user' => exportPerson($app->user) ] ]);
 	});
 
 	$app->delete('/auth/user/', $requestJSON, $validateToken, function () use (&$app) {
@@ -191,14 +197,14 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		$app->render(204, array());
 	});
 
-	$app->get('/person/:id/', $requestJSON, $validateToken, function ($id) use (&$app, &$params) {
+	/*$app->get('/person/:id/', $requestJSON, $validateToken, function ($id) use (&$app, &$params) {
 		$person = R::load('person', intval($id));
 		$app->render(200, [
-			'response' => $person->export()
+			'result' => exportPerson($person)
 		]);
-	});
+	});*/
 
-	$app->put('/person/:id/', $requestJSON, $validateToken, function ($id) use (&$app) {
+	/*$app->put('/person/:id/', $requestJSON, $validateToken, function ($id) use (&$app) {
 		$person = R::load('person', intval($id));
 		echo json_encode($user->export());
 	});
@@ -206,7 +212,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 	$app->delete('/person/:id/', $requestJSON, $validateToken, function ($id) use (&$app) {
 		$person = R::load('person', intval($id));
 		echo json_encode($user->export());
-	});
+	});*/
 
 	$app->post('/person/', $requestJSON, function () use (&$app, &$params) {
 		if (R::findOne('person', ' username = ? ', array($params->username))) {
@@ -220,7 +226,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 			R::store($person);
 
 			$app->render(201, [
-				'response' => $person->export()
+				'response' => exportPerson($person)
 			]);
 		}
 	}); 
@@ -229,12 +235,12 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		$person = R::load('person', intval($id));
 		$app->render(200, [
 			'result' => array_map(function ($friend) {
-				return R::load('person', $friend->id)->export();
+				return exportPerson(R::load('person', $friend->id));
 			}, array_values($person->ownFriendship))
 		]);
 	});
 
-	$app->post('/person/:id/friend/', $requestJSON, $validateToken, function ($id) use (&$app) {
+	/*$app->post('/person/:id/friend/', $requestJSON, $validateToken, function ($id) use (&$app) {
 		$user=R::load("person",intval($id));
 		echo json_encode($user->export());
 	});
@@ -243,7 +249,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		$user=R::load("person",intval($id));
 		$friend=R::load("person",intval($fid));
 		echo json_encode($user->export());
-	});
+	});*/
 
 
 	$app->get('/person/:id/block/', $requestJSON, $validateToken, function ($id) use (&$app) {
