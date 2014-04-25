@@ -10,10 +10,8 @@ angular.module('navbar', [])
 					{ screen: 'rooms', icon: 'globe' }
 				];
 				$scope.navSide = [
-					{ screen: 'recommendations', icon: 'lightbulb-o', title: 'Recommendations' },
-					{ screen: 'messages', icon: 'comments', title: 'Messages' },
-					{ screen: 'friends', icon: 'users', title: 'Friends' },
 					{ screen: 'profile', icon: 'user', title: 'Profile' },
+					{ screen: 'friends', icon: 'users', title: 'Friends' },
 					{ screen: 'settings', icon: 'cog', title: 'Settings' }
 				]
 			}
