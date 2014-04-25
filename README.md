@@ -29,6 +29,10 @@ sudo apache2ctl restart
 * Create the config file.
 * Install libraries. 
 * chmod server/media/files and server/media/files/sentiment
+* If server is in subdirectory, edit .htaccess
+```
+RewriteBase /subdirectory/
+```
 
 
 API keys
