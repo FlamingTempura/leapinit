@@ -352,7 +352,7 @@ body {
 }
 
 
-.posts, .rooms {
+.posts, .rooms, .people {
 	overflow-y: auto;
 	overflow-x: hidden;
 	height: 100%;
@@ -653,11 +653,26 @@ nav.nav-side {
 
 .people {
 	text-align: left;
+	background: white;
+	padding-left: 0;
+	padding-right: 0;
 	.person {
-		height: 45px;
+		border-bottom: 1px solid #eee;
+		&:first-child a {
+			padding-top: 0
+		}
+		a {
+			display: block;
+			width: 100%;
+			height: 100%;
+			padding: 14px @screen-padding 12px;
+		}
 		.avatar, .name {
 			display: inline-block;
 			vertical-align: middle;
+		}
+		.name {
+			text-indent: 10px;
 		}
 	}
 }
