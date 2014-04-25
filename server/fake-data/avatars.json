@@ -1,0 +1,1248 @@
+[
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 20,
+		"cranium": 35,
+		"side": 30,
+		"cheek": 40,
+		"jaw": 15
+	},
+	"eyes": {
+		"width": 10,
+		"height": 8,
+		"x": 16,
+		"y": 13,
+		"rotation": 45
+	},
+	"nose": {
+		"width": 4,
+		"height": 3,
+		"y": -11
+	},
+	"mouth": {
+		"leftx": 4,
+		"lefty": 4,
+		"rightx": 4,
+		"righty": 4,
+		"y": 5,
+		"lips": 1
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 43,
+		"cranium": 34,
+		"side": 43,
+		"cheek": 27,
+		"jaw": 23
+	},
+	"eyes": {
+		"width": 14,
+		"height": 15,
+		"x": 19,
+		"y": 17,
+		"rotation": -16
+	},
+	"nose": {
+		"width": 17,
+		"height": 9,
+		"y": -12
+	},
+	"mouth": {
+		"leftx": 7,
+		"lefty": -2,
+		"rightx": 9,
+		"righty": 3,
+		"y": 9,
+		"lips": 7
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 49,
+		"cranium": 34,
+		"side": 39,
+		"cheek": 29,
+		"jaw": 25
+	},
+	"eyes": {
+		"width": 11,
+		"height": 12,
+		"x": 19,
+		"y": 11,
+		"rotation": 40
+	},
+	"nose": {
+		"width": 15,
+		"height": 6,
+		"y": -8
+	},
+	"mouth": {
+		"leftx": 20,
+		"lefty": -9,
+		"rightx": 7,
+		"righty": -3,
+		"y": 14,
+		"lips": 4
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 20,
+		"cranium": 38,
+		"side": 39,
+		"cheek": 41,
+		"jaw": 49
+	},
+	"eyes": {
+		"width": 13,
+		"height": 18,
+		"x": 15,
+		"y": 17,
+		"rotation": 76
+	},
+	"nose": {
+		"width": 4,
+		"height": 15,
+		"y": -1
+	},
+	"mouth": {
+		"leftx": 16,
+		"lefty": -9,
+		"rightx": 12,
+		"righty": 4,
+		"y": -2,
+		"lips": 6
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 44,
+		"cranium": 38,
+		"side": 27,
+		"cheek": 48,
+		"jaw": 23
+	},
+	"eyes": {
+		"width": 2,
+		"height": 14,
+		"x": 11,
+		"y": 23,
+		"rotation": -50
+	},
+	"nose": {
+		"width": 15,
+		"height": 10,
+		"y": 2
+	},
+	"mouth": {
+		"leftx": 16,
+		"lefty": 2,
+		"rightx": 1,
+		"righty": 12,
+		"y": -5,
+		"lips": 4
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 23,
+		"cranium": 39,
+		"side": 37,
+		"cheek": 43,
+		"jaw": 38
+	},
+	"eyes": {
+		"width": 10,
+		"height": 7,
+		"x": 13,
+		"y": 22,
+		"rotation": 4
+	},
+	"nose": {
+		"width": 5,
+		"height": 6,
+		"y": -2
+	},
+	"mouth": {
+		"leftx": 11,
+		"lefty": -8,
+		"rightx": 20,
+		"righty": -6,
+		"y": 1,
+		"lips": 10
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 39,
+		"cranium": 44,
+		"side": 36,
+		"cheek": 39,
+		"jaw": 50
+	},
+	"eyes": {
+		"width": 13,
+		"height": 17,
+		"x": 16,
+		"y": 11,
+		"rotation": -11
+	},
+	"nose": {
+		"width": 4,
+		"height": 1,
+		"y": -6
+	},
+	"mouth": {
+		"leftx": 12,
+		"lefty": -7,
+		"rightx": 17,
+		"righty": -14,
+		"y": 3,
+		"lips": 3
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 35,
+		"cranium": 41,
+		"side": 42,
+		"cheek": 43,
+		"jaw": 40
+	},
+	"eyes": {
+		"width": 4,
+		"height": 6,
+		"x": 26,
+		"y": 5,
+		"rotation": 89
+	},
+	"nose": {
+		"width": 16,
+		"height": 6,
+		"y": -3
+	},
+	"mouth": {
+		"leftx": 5,
+		"lefty": 0,
+		"rightx": 10,
+		"righty": -6,
+		"y": 0,
+		"lips": 6
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 51,
+		"cranium": 45,
+		"side": 39,
+		"cheek": 25,
+		"jaw": 38
+	},
+	"eyes": {
+		"width": 18,
+		"height": 10,
+		"x": 17,
+		"y": 6,
+		"rotation": 19
+	},
+	"nose": {
+		"width": 23,
+		"height": 9,
+		"y": -12
+	},
+	"mouth": {
+		"leftx": 20,
+		"lefty": -4,
+		"rightx": 18,
+		"righty": 7,
+		"y": 6,
+		"lips": 9
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 45,
+		"cranium": 50,
+		"side": 31,
+		"cheek": 30,
+		"jaw": 16
+	},
+	"eyes": {
+		"width": 7,
+		"height": 2,
+		"x": 10,
+		"y": 9,
+		"rotation": -6
+	},
+	"nose": {
+		"width": 2,
+		"height": 1,
+		"y": -11
+	},
+	"mouth": {
+		"leftx": 15,
+		"lefty": 3,
+		"rightx": 15,
+		"righty": 3,
+		"y": -3,
+		"lips": 9
+	}
+},
+
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 66,
+		"cranium": 36,
+		"side": 43,
+		"cheek": 44,
+		"jaw": 48
+	},
+	"eyes": {
+		"width": 9,
+		"height": 9,
+		"x": 20,
+		"y": 4,
+		"rotation": 8
+	},
+	"nose": {
+		"width": 3,
+		"height": 6,
+		"y": -8
+	},
+	"mouth": {
+		"leftx": 12,
+		"lefty": -2,
+		"rightx": 12,
+		"righty": -2,
+		"y": -1,
+		"lips": 2
+	}
+},
+
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 38,
+		"cranium": 49,
+		"side": 31,
+		"cheek": 34,
+		"jaw": 23
+	},
+	"eyes": {
+		"width": 1,
+		"height": 1,
+		"x": 21,
+		"y": 7,
+		"rotation": 67
+	},
+	"nose": {
+		"width": 16,
+		"height": 10,
+		"y": -8
+	},
+	"mouth": {
+		"leftx": 1,
+		"lefty": 1,
+		"rightx": 1,
+		"righty": 1,
+		"y": 8,
+		"lips": 2
+	}
+},
+
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 66,
+		"cranium": 36,
+		"side": 26,
+		"cheek": 46,
+		"jaw": 44
+	},
+	"eyes": {
+		"width": 3,
+		"height": 3,
+		"x": 29,
+		"y": -4,
+		"rotation": -66
+	},
+	"nose": {
+		"width": 2,
+		"height": 2,
+		"y": -13
+	},
+	"mouth": {
+		"leftx": 3,
+		"lefty": 1,
+		"rightx": 3,
+		"righty": 1,
+		"y": -5,
+		"lips": 2
+	}
+},
+
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 31,
+		"cranium": 31,
+		"side": 33,
+		"cheek": 28,
+		"jaw": 29
+	},
+	"eyes": {
+		"width": 8,
+		"height": 10,
+		"x": 20,
+		"y": 22,
+		"rotation": 7
+	},
+	"nose": {
+		"width": 7,
+		"height": 9,
+		"y": -5
+	},
+	"mouth": {
+		"leftx": 11,
+		"lefty": -8,
+		"rightx": 12,
+		"righty": 1,
+		"y": 7,
+		"lips": 3
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 36,
+		"cranium": 36,
+		"side": 32,
+		"cheek": 39,
+		"jaw": 17
+	},
+	"eyes": {
+		"width": 6,
+		"height": 10,
+		"x": 14,
+		"y": 28,
+		"rotation": 38
+	},
+	"nose": {
+		"width": 12,
+		"height": 5,
+		"y": 10
+	},
+	"mouth": {
+		"leftx": 11,
+		"lefty": -10,
+		"rightx": 6,
+		"righty": 0,
+		"y": 14,
+		"lips": 2
+	}
+},
+
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 42,
+		"cranium": 31,
+		"side": 24,
+		"cheek": 34,
+		"jaw": 30
+	},
+	"eyes": {
+		"width": 9,
+		"height": 14,
+		"x": 25,
+		"y": 3,
+		"rotation": -54
+	},
+	"nose": {
+		"width": 2,
+		"height": 11,
+		"y": -13
+	},
+	"mouth": {
+		"leftx": 13,
+		"lefty": -8,
+		"rightx": 9,
+		"righty": 2,
+		"y": 6,
+		"lips": 5
+	}
+},
+
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 26,
+		"cranium": 48,
+		"side": 44,
+		"cheek": 51,
+		"jaw": 44
+	},
+	"eyes": {
+		"width": 7,
+		"height": 8,
+		"x": 9,
+		"y": 17,
+		"rotation": 18
+	},
+	"nose": {
+		"width": 5,
+		"height": 9,
+		"y": -5
+	},
+	"mouth": {
+		"leftx": 4,
+		"lefty": 0,
+		"rightx": 2,
+		"righty": 2,
+		"y": -7,
+		"lips": 3
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 60,
+		"cranium": 28,
+		"side": 33,
+		"cheek": 46,
+		"jaw": 33
+	},
+	"eyes": {
+		"width": 5,
+		"height": 13,
+		"x": 27,
+		"y": 20,
+		"rotation": -44
+	},
+	"nose": {
+		"width": 6,
+		"height": 2,
+		"y": 3
+	},
+	"mouth": {
+		"leftx": 10,
+		"lefty": -4,
+		"rightx": 6,
+		"righty": -3,
+		"y": -1,
+		"lips": 3
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 23,
+		"cranium": 28,
+		"side": 25,
+		"cheek": 29,
+		"jaw": 27
+	},
+	"eyes": {
+		"width": 22,
+		"height": 22,
+		"x": 16,
+		"y": 10,
+		"rotation": 77
+	},
+	"nose": {
+		"width": 7,
+		"height": 7,
+		"y": -16
+	},
+	"mouth": {
+		"leftx": 10,
+		"lefty": 1,
+		"rightx": 14,
+		"righty": -5,
+		"y": 10,
+		"lips": 5
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 30,
+		"cranium": 37,
+		"side": 43,
+		"cheek": 36,
+		"jaw": 29
+	},
+	"eyes": {
+		"width": 4,
+		"height": 4,
+		"x": 15,
+		"y": 23,
+		"rotation": -32
+	},
+	"nose": {
+		"width": 12,
+		"height": 9,
+		"y": 2
+	},
+	"mouth": {
+		"leftx": 10,
+		"lefty": 10,
+		"rightx": 10,
+		"righty": 10,
+		"y": -2,
+		"lips": 5
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 37,
+		"cranium": 45,
+		"side": 35,
+		"cheek": 32,
+		"jaw": 42
+	},
+	"eyes": {
+		"width": 19,
+		"height": 7,
+		"x": 21,
+		"y": 6,
+		"rotation": 32
+	},
+	"nose": {
+		"width": 8,
+		"height": 15,
+		"y": -6
+	},
+	"mouth": {
+		"leftx": 7,
+		"lefty": 4,
+		"rightx": 7,
+		"righty": 4,
+		"y": 1,
+		"lips": 2
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 43,
+		"cranium": 29,
+		"side": 34,
+		"cheek": 39,
+		"jaw": 50
+	},
+	"eyes": {
+		"width": 6,
+		"height": 6,
+		"x": 5,
+		"y": 15,
+		"rotation": 70
+	},
+	"nose": {
+		"width": 15,
+		"height": 9,
+		"y": -3
+	},
+	"mouth": {
+		"leftx": 18,
+		"lefty": -9,
+		"rightx": 1,
+		"righty": 4,
+		"y": -1,
+		"lips": 5
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 43,
+		"cranium": 46,
+		"side": 38,
+		"cheek": 43,
+		"jaw": 40
+	},
+	"eyes": {
+		"width": 4,
+		"height": 1,
+		"x": 17,
+		"y": 17,
+		"rotation": 1
+	},
+	"nose": {
+		"width": 13,
+		"height": 13,
+		"y": -3
+	},
+	"mouth": {
+		"leftx": 10,
+		"lefty": -7,
+		"rightx": 8,
+		"righty": 7,
+		"y": -2,
+		"lips": 3
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 34,
+		"cranium": 33,
+		"side": 23,
+		"cheek": 50,
+		"jaw": 41
+	},
+	"eyes": {
+		"width": 5,
+		"height": 10,
+		"x": 16,
+		"y": 18,
+		"rotation": 31
+	},
+	"nose": {
+		"width": 10,
+		"height": 9,
+		"y": -3
+	},
+	"mouth": {
+		"leftx": 15,
+		"lefty": -5,
+		"rightx": 1,
+		"righty": 1,
+		"y": -4,
+		"lips": 4
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 22,
+		"cranium": 50,
+		"side": 23,
+		"cheek": 25,
+		"jaw": 22
+	},
+	"eyes": {
+		"width": 3,
+		"height": 3,
+		"x": 7,
+		"y": 28,
+		"rotation": 25
+	},
+	"nose": {
+		"width": 17,
+		"height": 9,
+		"y": 6
+	},
+	"mouth": {
+		"leftx": 14,
+		"lefty": 12,
+		"rightx": 8,
+		"righty": -4,
+		"y": -4,
+		"lips": 10
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 46,
+		"cranium": 28,
+		"side": 45,
+		"cheek": 29,
+		"jaw": 44
+	},
+	"eyes": {
+		"width": 10,
+		"height": 5,
+		"x": 23,
+		"y": 26,
+		"rotation": -8
+	},
+	"nose": {
+		"width": 25,
+		"height": 12,
+		"y": -2
+	},
+	"mouth": {
+		"leftx": 18,
+		"lefty": -15,
+		"rightx": 13,
+		"righty": -1,
+		"y": 6,
+		"lips": 4
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 42,
+		"cranium": 29,
+		"side": 24,
+		"cheek": 25,
+		"jaw": 19
+	},
+	"eyes": {
+		"width": 7,
+		"height": 8,
+		"x": 30,
+		"y": 20,
+		"rotation": -80
+	},
+	"nose": {
+		"width": 20,
+		"height": 4,
+		"y": -24
+	},
+	"mouth": {
+		"leftx": 15,
+		"lefty": 8,
+		"rightx": 13,
+		"righty": 9,
+		"y": 10,
+		"lips": 6
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 44,
+		"cranium": 33,
+		"side": 26,
+		"cheek": 30,
+		"jaw": 31
+	},
+	"eyes": {
+		"width": 8,
+		"height": 3,
+		"x": 16,
+		"y": 0,
+		"rotation": -1
+	},
+	"nose": {
+		"width": 22,
+		"height": 15,
+		"y": -16
+	},
+	"mouth": {
+		"leftx": 10,
+		"lefty": -2,
+		"rightx": 11,
+		"righty": -15,
+		"y": 9,
+		"lips": 3
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 33,
+		"cranium": 29,
+		"side": 34,
+		"cheek": 32,
+		"jaw": 44
+	},
+	"eyes": {
+		"width": 4,
+		"height": 4,
+		"x": 24,
+		"y": 35,
+		"rotation": -35
+	},
+	"nose": {
+		"width": 10,
+		"height": 4,
+		"y": 6
+	},
+	"mouth": {
+		"leftx": 13,
+		"lefty": -13,
+		"rightx": 12,
+		"righty": -14,
+		"y": -9,
+		"lips": 6
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 50,
+		"cranium": 41,
+		"side": 42,
+		"cheek": 34,
+		"jaw": 39
+	},
+	"eyes": {
+		"width": 5,
+		"height": 19,
+		"x": 17,
+		"y": 20,
+		"rotation": -42
+	},
+	"nose": {
+		"width": 29,
+		"height": 8,
+		"y": 5
+	},
+	"mouth": {
+		"leftx": 16,
+		"lefty": 6,
+		"rightx": 15,
+		"righty": 8,
+		"y": 5,
+		"lips": 4
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 46,
+		"cranium": 30,
+		"side": 45,
+		"cheek": 44,
+		"jaw": 18
+	},
+	"eyes": {
+		"width": 13,
+		"height": 14,
+		"x": 14,
+		"y": 14,
+		"rotation": -68
+	},
+	"nose": {
+		"width": 12,
+		"height": 7,
+		"y": -4
+	},
+	"mouth": {
+		"leftx": 14,
+		"lefty": -14,
+		"rightx": 7,
+		"righty": -6,
+		"y": 12,
+		"lips": 7
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 39,
+		"cranium": 45,
+		"side": 35,
+		"cheek": 41,
+		"jaw": 44
+	},
+	"eyes": {
+		"width": 3,
+		"height": 4,
+		"x": 16,
+		"y": -1,
+		"rotation": 72
+	},
+	"nose": {
+		"width": 14,
+		"height": 4,
+		"y": -16
+	},
+	"mouth": {
+		"leftx": 10,
+		"lefty": -1,
+		"rightx": 4,
+		"righty": -8,
+		"y": 5,
+		"lips": 1
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 26,
+		"cranium": 33,
+		"side": 37,
+		"cheek": 40,
+		"jaw": 19
+	},
+	"eyes": {
+		"width": 2,
+		"height": 19,
+		"x": 22,
+		"y": 28,
+		"rotation": 13
+	},
+	"nose": {
+		"width": 7,
+		"height": 4,
+		"y": -6
+	},
+	"mouth": {
+		"leftx": 18,
+		"lefty": 5,
+		"rightx": 18,
+		"righty": 9,
+		"y": 0,
+		"lips": 2
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 43,
+		"cranium": 34,
+		"side": 32,
+		"cheek": 41,
+		"jaw": 22
+	},
+	"eyes": {
+		"width": 11,
+		"height": 3,
+		"x": 12,
+		"y": 14,
+		"rotation": -70
+	},
+	"nose": {
+		"width": 13,
+		"height": 15,
+		"y": -1
+	},
+	"mouth": {
+		"leftx": 9,
+		"lefty": -10,
+		"rightx": 10,
+		"righty": 4,
+		"y": 8,
+		"lips": 7
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 48,
+		"cranium": 37,
+		"side": 44,
+		"cheek": 39,
+		"jaw": 38
+	},
+	"eyes": {
+		"width": 5,
+		"height": 10,
+		"x": 32,
+		"y": 31,
+		"rotation": -70
+	},
+	"nose": {
+		"width": 29,
+		"height": 8,
+		"y": 15
+	},
+	"mouth": {
+		"leftx": 4,
+		"lefty": 5,
+		"rightx": 8,
+		"righty": -2,
+		"y": 2,
+		"lips": 9
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 21,
+		"cranium": 33,
+		"side": 25,
+		"cheek": 28,
+		"jaw": 28
+	},
+	"eyes": {
+		"width": 22,
+		"height": 22,
+		"x": 21,
+		"y": -5,
+		"rotation": 55
+	},
+	"nose": {
+		"width": 1,
+		"height": 1,
+		"y": -6
+	},
+	"mouth": {
+		"leftx": 5,
+		"lefty": 5,
+		"rightx": 5,
+		"righty": 5,
+		"y": 7,
+		"lips": 1
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 27,
+		"cranium": 46,
+		"side": 45,
+		"cheek": 41,
+		"jaw": 28
+	},
+	"eyes": {
+		"width": 2,
+		"height": 7,
+		"x": 12,
+		"y": 26,
+		"rotation": 49
+	},
+	"nose": {
+		"width": 22,
+		"height": 11,
+		"y": -2
+	},
+	"mouth": {
+		"leftx": 8,
+		"lefty": 2,
+		"rightx": 14,
+		"righty": 5,
+		"y": -6,
+		"lips": 2
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 34,
+		"cranium": 31,
+		"side": 37,
+		"cheek": 37,
+		"jaw": 36
+	},
+	"eyes": {
+		"width": 6,
+		"height": 9,
+		"x": 23,
+		"y": 14,
+		"rotation": 60
+	},
+	"nose": {
+		"width": 8,
+		"height": 14,
+		"y": -11
+	},
+	"mouth": {
+		"leftx": 10,
+		"lefty": 0,
+		"rightx": 14,
+		"righty": 10,
+		"y": -4,
+		"lips": 2
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 46,
+		"cranium": 49,
+		"side": 31,
+		"cheek": 41,
+		"jaw": 35
+	},
+	"eyes": {
+		"width": 4,
+		"height": 4,
+		"x": 25,
+		"y": 10,
+		"rotation": 50
+	},
+	"nose": {
+		"width": 10,
+		"height": 3,
+		"y": -8
+	},
+	"mouth": {
+		"leftx": 8,
+		"lefty": 5,
+		"rightx": 8,
+		"righty": 5,
+		"y": 2,
+		"lips": 4
+	}
+},
+{
+	"size": 200,
+	"color": "#000000",
+	"face": {
+		"crown": 32,
+		"cranium": 48,
+		"side": 44,
+		"cheek": 25,
+		"jaw": 27
+	},
+	"eyes": {
+		"width": 11,
+		"height": 11,
+		"x": 9,
+		"y": 18,
+		"rotation": 55
+	},
+	"nose": {
+		"width": 9,
+		"height": 8,
+		"y": -2
+	},
+	"mouth": {
+		"leftx": 12,
+		"lefty": 5,
+		"rightx": 12,
+		"righty": 5,
+		"y": 1,
+		"lips": 9
+	}
+}
+]
