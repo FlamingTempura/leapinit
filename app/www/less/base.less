@@ -174,7 +174,7 @@ body {
 	bottom: @nav-height;
 	left: 0;
 	right: 0;
-	padding: 0 @screen-padding @screen-padding + 10px @screen-padding;
+	padding: 0 @screen-padding;
 	z-index: 0;
 	&.bottom-no-nav { bottom: 0; }
 }
@@ -787,6 +787,13 @@ form {
 	}
 }
 
-.screen-avatar .bottom {
-	padding-bottom: 0;
+
+.person-info {
+	div.person-username {
+		font-size: 30px;
+		margin: 20px 0;
+	}
+	div.person-biography {
+		line-height: 1.8em;
+	}
 }

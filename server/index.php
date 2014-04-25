@@ -197,12 +197,10 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		$app->render(204, array());
 	});
 
-	/*$app->get('/person/:id/', $requestJSON, $validateToken, function ($id) use (&$app, &$params) {
+	$app->get('/person/:id/', $requestJSON, $validateToken, function ($id) use (&$app, &$params) {
 		$person = R::load('person', intval($id));
-		$app->render(200, [
-			'result' => exportPerson($person)
-		]);
-	});*/
+		$app->render(200, ['result' => exportPerson($person)]);
+	});
 
 	$app->put('/person/:id/', $requestJSON, $validateToken, function ($id) use (&$app, &$params) {
 		$person = R::load('person', intval($id));

@@ -1,24 +1,26 @@
+<div class="msg msg-error" ng-if="error">{{ error }}</div>
 
-<div class="avatar avatar-medium" avatar="person.attributes.avatar" ng-click="go('/avatar')"></div>
+<div class="avatar avatar-medium" avatar="person.attributes.avatar" ng-if="!own"></div>
+<div class="avatar avatar-medium" avatar="person.attributes.avatar" ng-if="own" ng-click="go('/avatar')"></div>
 
 </div>
-<div class="user-info">
-	<div class="user-username">{{ person.attributes.username }}</div>
-	<div class="user-biography">{{ person.attributes.biography }}</div>
+<div class="person-info" ng-if="!edit">
+	<div class="person-username">{{ person.attributes.username }}</div>
+	<div class="person-biography">{{ person.attributes.biography }}</div>
+
+	<div class="bottom" ng-if="own">
+		<button ng-click="edit = true">Edit</button>
+	</div>
 </div>
 
-<div class="user-info">
-	<input type="text" ng-model="user.attributes.username" class="user-username">
-	<input type="text" ng-model="user.attributes.biography" class="user-biography">
+<div class="person-info" ng-if="own && edit">
+	<input type="text" ng-model="person.attributes.username" class="person-username">
+	<input type="text" ng-model="person.attributes.biography" class="person-biography">
+	<div class="bottom">
+		<button>Save</button>
+	</div>
 </div>
 
-<div class="user-buttons" ng-if="!own">
+<div ng-if="!own" class="bottom">
 	<button>Add friend</button>
-	<button>Message</button>
 </div>
-
-<ul class="user-medias">
-	<li class="user-media" ng-repeat="media in medias">
-		<img placeholder ng-class="rect rect-{{ media.size }}">
-	</li>
-</ul>
