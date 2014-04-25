@@ -5,10 +5,14 @@ angular.module('leapinit')
 		$scope.room = room;
 		if (room) {
 			$scope.posts = room.posts;
-			room.fetch().then(function () {
+			room.fetch().fail(function (r) {
+				$scope.error = r.responseJSON.msg;
+			}).always(function () {
 				$scope.$apply();
 			});
-			room.posts.fetch().then(function () {
+			room.posts.fetch().fail(function (r) {
+				$scope.error = r.responseJSON.msg;
+			}).always(function () {
 				$scope.$apply();
 			});
 		} else {
@@ -20,6 +24,18 @@ angular.module('leapinit')
 
 		$rootScope.add = function () {
 			$scope.showBubbles = !$scope.showBubbles;
+		};
+
+		$rootScope.leave = function () {
+			if (confirm('Are you sure you wish to permanently leave the room?')) {
+				room.leave().then(function () {
+					$rootScope.go('/rooms');
+				}).fail(function (r) {
+					$scope.error = r.responseJSON.msg;
+				}).always(function () {
+					$scope.$apply();
+				});
+			}
 		};
 
 		$scope.addText = function () {

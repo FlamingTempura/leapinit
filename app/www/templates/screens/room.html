@@ -1,3 +1,4 @@
+<div class="msg msg-error" ng-if="error">{{ error }}</div>
 
 <div class="top-right-bubble-buttons" ng-show="showBubbles">
 	<ul>
@@ -26,7 +27,7 @@
 	<ul><li ng-click="showResidents = false">
 			<div class="noun">Back to posts</div>
 			<i class="fa fa-chevron-left"></i>
-		</li><li ng-click="room.leave()">
+		</li><li ng-click="leave()">
 			Leave this room
 		</li>
 	</ul>
