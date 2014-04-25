@@ -14,7 +14,7 @@ Server
 
 Requirements:
 * Apache 2
-* PHP 5
+* PHP 5 with php-gd
 * MySQL
 * [Composer](https://getcomposer.org/download/)
 
@@ -29,6 +29,10 @@ sudo apache2ctl restart
 * Create the config file.
 * Install libraries. 
 * chmod server/media/files and server/media/files/sentiment
+* If server is in subdirectory, edit .htaccess
+```
+RewriteBase /subdirectory/
+```
 
 
 API keys
