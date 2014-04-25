@@ -174,7 +174,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 			$app->render(201, [ 'result' => [ 
 				'id' => 'user',
 				'token' => $token->key,
-				'user' => $user->export()
+				'user' => exportPerson($user)
 			] ]);
 		} else {
 			$app->render(401, array(

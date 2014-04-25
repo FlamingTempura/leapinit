@@ -13,7 +13,10 @@ angular.module('leapinit')
 					{ screen: 'profile', icon: 'user', title: 'Profile' },
 					{ screen: 'friends', icon: 'users', title: 'Friends' },
 					{ screen: 'settings', icon: 'cog', title: 'Settings' }
-				]
+				];
+				document.addEventListener('menubutton', function () {
+					$scope.opensidenav = !$scope.opensidenav;
+				}, false);
 			}
 		}
 	});
