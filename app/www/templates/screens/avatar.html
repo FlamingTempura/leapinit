@@ -1,3 +1,4 @@
+<div class="msg msg-error" ng-if="error">{{ error }}</div>
 
 <div class="avatar avatar-medium" avatar="avatar" avatar-size="70"></div>
 
@@ -50,5 +51,5 @@
 </div>
 
 <div class="bottom">
-	<button type="submit" ng-click="save()">Save</button>
+	<button type="submit" ng-click="save()" ng-class="{ loading: loading }">Save</button>
 </div>

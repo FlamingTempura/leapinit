@@ -9,8 +9,16 @@ angular.module('leapinit')
 		$scope.segment = 'background';
 		$scope.avatar = _.clone($scope.person.attributes.avatar);
 		$scope.save = function () {
+			$scope.loading = true;
 			$scope.person.save({
 				avatar: $scope.avatar
+			}).then(function () {
+				$rootScope.go('/profile');
+			}).fail(function (r) {
+				$scope.error = r.responseJSON.msg;
+				$scope.loading = false;
+			}).always(function () {
+				$scope.$apply();
 			});
 		};
 	}).directive('slider', function () {

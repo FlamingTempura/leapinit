@@ -26,15 +26,15 @@
 	<ul><li ng-click="showResidents = false">
 			<div class="noun">Back to posts</div>
 			<i class="fa fa-chevron-left"></i>
+		</li><li ng-click="room.leave()">
+			Leave this room
 		</li>
 	</ul>
 </div>
 
-
 <div class="residents" ng-show="showResidents">
-	<button ng-click="room.leave()">Leave this room</button>
 	Residents in {{ room.attributes.name }}:
-	<ul>
+	<ul class="people">
 		<li class="person" ng-repeat="person in room.residents.models" ng-include="'templates/person.html'"></li>
 	</ul>
 </div>

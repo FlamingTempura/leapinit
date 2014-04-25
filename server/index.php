@@ -78,10 +78,7 @@ function exportRoom (&$room) {
 	$result = $room->export();
 	$result['residents'] = array_map(function ($residence) {
 		$person = R::load('person', $residence->person_id);
-		return [
-			'id' => $person->id,
-			'username' => $person->username
-		];
+		return exportPerson($person);
 	}, array_values($room->ownResidence));
 	return $result;
 }
