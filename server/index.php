@@ -68,7 +68,6 @@ function exportPosts ($posts) {
 
 function exportPost (&$post) {
 	return array_merge($post->export(), [
-		'media' => R::load('media', $post->media_id)->export(),
 		'person' => exportPerson(R::load('person', $post->person_id)),
 		'room' => R::load('room', $post->room_id)->export()
 	]);

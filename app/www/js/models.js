@@ -167,7 +167,7 @@ angular.module('leapinit')
 					if (!url || url.indexOf('room') === -1) {
 						url = server + '/api/room/' + this.get('room_id') + '/post';
 					}
-					return url + '/' + (_.isUndefined(this.id) ? '' : this.id);
+					return url + '/' + (!this.has('id') ? '' : this.get('id'));
 				},
 				preview: function (size, cell) {
 					return _.result(this, 'url') + '/data?preview=true' +
@@ -184,6 +184,11 @@ angular.module('leapinit')
 					Collection.prototype.initialize.apply(this, arguments);
 					this.generateHoneycomb();
 					this.on('change add remove reset', this.generateHoneycomb, this);
+					this.on('change add remove reset', this.sort, this);
+					this.sort();
+				},
+				comparator: function () {
+					return -Number(this.get('id'));
 				},
 				generateHoneycomb: function (width) {
 					console.log(this.models.length)
