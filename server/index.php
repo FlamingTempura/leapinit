@@ -419,13 +419,13 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 			$keywords = $keywordjson->keywords;
 
 			if (count($keywords) === 0) {
-				$keyword = '?';
+				$keyword = explode(' ', $post->text)[0];
 			} else {
 				$keyword = $keywords[0]->text;
 			}
 
 
-			$color = fGetRGB(($sentiment + 1.1) * 50, 100, 100);
+			$color = fGetRGB(($sentiment + 1.1) * 50, 93, 79);
 			$layer = ImageWorkshop::initVirginLayer(100, 100, $color);
 			$textLayer = ImageWorkshop::initTextLayer($keyword, __DIR__ . '/Roboto-Medium.ttf', 14, 'ffffff', 0);
 			$layer->addLayer(1, $textLayer, 5, -$textLayer->getHeight() / 2.5, 'LM');
