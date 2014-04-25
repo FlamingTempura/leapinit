@@ -14,7 +14,7 @@ Server
 
 Requirements:
 * Apache 2
-* PHP 5
+* PHP 5 with php-gd
 * MySQL
 * [Composer](https://getcomposer.org/download/)
 
