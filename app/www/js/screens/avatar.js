@@ -6,10 +6,10 @@ angular.module('leapinit')
 		$scope.$watch('person.attributes.avatar', function () {
 			console.log('change')
 		}, true);
-		$scope.segment = 'face';
+		$scope.segment = 'background';
 		$scope.avatar = _.clone($scope.person.attributes.avatar);
 		$scope.save = function () {
-			$scope.save({
+			$scope.person.save({
 				avatar: $scope.avatar
 			});
 		};

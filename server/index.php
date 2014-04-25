@@ -204,12 +204,25 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		]);
 	});*/
 
-	/*$app->put('/person/:id/', $requestJSON, $validateToken, function ($id) use (&$app) {
+	$app->put('/person/:id/', $requestJSON, $validateToken, function ($id) use (&$app, &$params) {
 		$person = R::load('person', intval($id));
-		echo json_encode($user->export());
+		$avatar = R::load('avatar', $person->avatar_id);
+		$keys = array_keys($avatar->export());
+		array_walk(get_object_vars($params->avatar), function ($v, $k) use (&$avatar, &$keys) {
+			//echo("$k => $v\n");
+			if (in_array($k, $keys) && $k !== 'id') {
+				//var_dump($k);
+				if ($k !== 'bgcolor') { $v = intval($v); }
+				$avatar->$k = $v;
+			}
+		});
+		R::store($avatar);
+		R::store($person);
+		
+		$app->render(200, ['result' => exportPerson($person)]);
 	});
 
-	$app->delete('/person/:id/', $requestJSON, $validateToken, function ($id) use (&$app) {
+	/*$app->delete('/person/:id/', $requestJSON, $validateToken, function ($id) use (&$app) {
 		$person = R::load('person', intval($id));
 		echo json_encode($user->export());
 	});*/
