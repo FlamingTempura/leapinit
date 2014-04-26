@@ -1,24 +1,23 @@
 angular.module('leapinit')
 	.controller('roomScreen', function ($rootScope, $routeParams, $scope, $location, models) {
-		console.log($rootScope.user.rooms, $routeParams.room)
-		var room = $rootScope.user.rooms.get(Number($routeParams.room));
+		var roomId = Number($routeParams.room),
+			rooms = new models.Rooms({ id: roomId }),
+			room = rooms.at(0);
+
 		$scope.room = room;
-		if (room) {
-			$scope.posts = room.posts;
-			room.fetch().fail(function (r) {
-				$scope.error = r.responseJSON.msg;
-			}).always(function () {
-				$scope.$apply();
-			});
-			room.posts.fetch().fail(function (r) {
-				$scope.error = r.responseJSON.msg;
-			}).always(function () {
-				$scope.$apply();
-			});
-		} else {
-			// TODO
-			console.error('hmm')
-		}
+
+		$scope.posts = room.posts;
+		room.fetch().fail(function (r) {
+			$scope.error = r.responseJSON.msg;
+		}).always(function () {
+			$rootScope.title = room.get('name');
+			$scope.$apply();
+		});
+		room.posts.fetch().fail(function (r) {
+			$scope.error = r.responseJSON.msg;
+		}).always(function () {
+			$scope.$apply();
+		});
 
 		$rootScope.title = room.get('name');
 
