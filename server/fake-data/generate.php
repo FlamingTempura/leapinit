@@ -64,7 +64,7 @@ function generateFakeData ($dataSize = 1) {
 		$room = [
 			'id' => $i,
 			'name' => $faker->word(),
-			'code' => $faker->boolean(8) ? $faker->randomNumber(11) : $faker->url(),
+			'code' => $faker->boolean(80) ? $faker->randomNumber(11) : $faker->url(),
 			'owner' => $faker->randomElement($people)['id']
 		];
 		// Sponsored room?

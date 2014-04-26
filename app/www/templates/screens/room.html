@@ -23,19 +23,22 @@
 
 <div ng-show="!showResidents" ng-include="'templates/posts.html'" class="inline-container"></div>
 
-<div class="header" ng-show="showResidents">
-	<ul><li ng-click="showResidents = false">
-			<div class="noun">Back to posts</div>
-			<i class="fa fa-chevron-left"></i>
-		</li><li ng-click="leave()">
-			Leave this room
-		</li>
-	</ul>
-</div>
+<div class="scroller">
+	<div class="header" ng-show="showResidents">
+		<ul><li ng-click="showResidents = false">
+				<div class="number">Back</div>
+				<div class="noun">to posts</div>
+				<i class="fa fa-chevron-left"></i>
+			</li><li ng-click="leave()">
+				<div class="number">Leave</div>
+				<div class="noun">this room</div>
+			</li>
+		</ul>
+	</div>
 
-<div class="residents" ng-show="showResidents">
-	Residents in {{ room.attributes.name }}:
-	<ul class="people">
-		<li class="person" ng-repeat="person in room.residents.models" ng-include="'templates/person.html'"></li>
-	</ul>
+	<div class="residents" ng-show="showResidents">
+		<ul class="people">
+			<li class="person" ng-repeat="person in room.residents.models" ng-include="'templates/person.html'"></li>
+		</ul>
+	</div>
 </div>

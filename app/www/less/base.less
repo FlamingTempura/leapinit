@@ -361,11 +361,15 @@ body {
 }
 
 
-.posts, .rooms, .people {
+.posts, .rooms, .people, .scroller {
 	overflow-y: auto;
 	overflow-x: hidden;
 	height: 100%;
 	margin: -@screen-padding; padding: @screen-padding;
+}
+
+.scroller {
+	margin-bottom: -@screen-padding - @nav-height;
 }
 
 .interests {
@@ -646,15 +650,16 @@ nav.nav-side {
 			}
 			.fa-chevron-right {
 				position: absolute;
-				top: 33px; right: 21px;
+				top: 20px; right: 21px;
 			}
 			.fa-chevron-left {
 				position: absolute;
-				top: 33px; left: 21px;
+				top: 20px; left: 21px;
 			}
 			.number {
-				font-size: 20px;
+				font-size: 16px;
 				font-weight: bold;
+				margin-bottom: 3px;
 			}
 		}
 	}
