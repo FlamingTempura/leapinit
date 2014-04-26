@@ -69,5 +69,21 @@
 			$rootScope.goBack = function () {
 				history.back();
 			};
+		})
+		.directive('fixscroll', function () {
+			// Fixes scrolling bug in Android WebView - overflow-x doesn't work when position is intialised as absolute.
+			return {
+				restrict: 'A',
+				link: function ($scope, element) {
+					var reset = function () {
+						var position = element.css('position');
+						element.css({ 'position': 'static', 'opacity': 0 });
+						setTimeout(function () { 
+							element.css({ 'position': position, 'opacity': 1 });
+						}, 50);
+					};
+					setTimeout(reset, 1000);
+				}
+			};
 		});
 }(this.angular, this.jQuery, this._));

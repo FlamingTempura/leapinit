@@ -1,5 +1,15 @@
 (function (angular, $) {
 	'use strict';
+
+	var $navScope;
+
+	// HACK to prevent listener being registered multiple times
+	document.addEventListener('menubutton', function () {
+		if (!$navScope) { return; }
+		$navScope.opensidenav = !$navScope.opensidenav;
+		$navScope.$apply();
+	}, true);
+
 	angular.module('leapinit')
 
 	.directive('navbars', function () {
@@ -7,6 +17,7 @@
 			restrict: 'A',
 			templateUrl: 'templates/navs.html',
 			link: function ($scope) {
+				$navScope = $scope;
 				$scope.navMain = [
 					{ screen: 'feed', icon: 'rss' },
 					{ screen: 'scan', icon: 'bullseye' },
@@ -20,10 +31,6 @@
 				$scope.toggleAdd = function () {
 					$scope.adding = !$scope.adding;
 				};
-				document.addEventListener('menubutton', function () {
-					$scope.opensidenav = !$scope.opensidenav;
-					$scope.$apply();
-				}, false);
 			}
 		};
 	})
