@@ -18,6 +18,11 @@
 		room.posts.fetch().fail(function (r) {
 			$scope.error = r.responseJSON.msg;
 		}).always(function () {
+			console.log('got em')
+			$scope.posts = room.posts;
+			$scope.$apply();
+		});
+		room.posts.on('add remove reset change', function () {
 			$scope.$apply();
 		});
 
@@ -35,22 +40,30 @@
 			}
 		};
 
+		var create = function (post) {
+			$scope.loading = true;
+			var model = new $scope.posts.prototype.model(post);
+			room.posts.add(model);
+			model.save(undefined, {wait: true}).fail(function (response) {
+				$scope.error = response.responseJSON.msg;
+				model.trigger('destroy');
+			}).then(function () {
+				console.log('SUCCESS');
+			}).always(function () {
+				$scope.loading = false;
+				$scope.$apply();
+			});
+		};
+
 		$rootScope.add = {
 			text: function () {
 				var text = window.prompt('Enter you text below');
 				if (text) {
-					$scope.posts.create({
-						type: 'text',
-						text: text
-					});
+					create({ type: 'text', text: text });
 				}
 			},
 			media: function (type, url) {
-				$scope.posts.create({
-					type: type,
-					text: 'testing',
-					url: url
-				});
+				$scope.posts.create({ type: type, text: 'testing', url: url });
 			}
 		};
 	});

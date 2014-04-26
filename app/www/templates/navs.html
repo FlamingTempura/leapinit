@@ -3,13 +3,13 @@
 		<li class="icon"><a ng-click="opensidenav = !opensidenav">
 			<i class="fa fa-bars"></i>
 		</a></li>
-		<li class="back" ng-show="!adding" ng-if="back"><a ng-click="goBack()">
+		<li class="back" ng-show="!add || !adding" ng-if="back"><a ng-click="goBack()">
 			<i class="fa fa-chevron-left"></i>
 		</a></li>
-		<li class="title" ng-show="!adding">
+		<li class="title" ng-show="!add || !adding">
 			{{ title }}
 		</li>
-		<li class="adding" ng-show="adding">
+		<li class="adding" ng-show="add && adding">
 			<ul><li>
 					<i class="fa fa-camera"></i><input type="file" name="files[]" multiple fileupload>
 				</li><li>

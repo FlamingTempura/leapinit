@@ -62,9 +62,20 @@
 				$rootScope.go('/');
 			});
 
+			$rootScope.safeApply = function ($scope) {
+				if (!$scope) { $scope = $rootScope; }
+				if(!$scope.$$phase) {
+					$scope.$apply();
+				} else {
+					_.defer(function () {
+						$scope.$apply();
+					});
+				}
+			};
+
 			$rootScope.go = function (path) {
 				$location.path(path);
-				$scope.$apply();
+				$rootScope.safeApply($scope);
 			};
 			$rootScope.goBack = function () {
 				history.back();

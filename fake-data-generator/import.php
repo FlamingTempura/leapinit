@@ -68,17 +68,15 @@ array_walk($data->people, function (&$o) {
 
 echo("\nAdding fake rooms\n");
 array_walk($data->rooms, function (&$o) {
-	$ownerId = $o->owner + 1;
 	$room = R::dispense('room');
 	$room->name = $o->name;
 	$room->code = $o->code;
-	//$room->owner = R::load('person', $ownerId);
 	R::store($room);
 
 	if (property_exists($o, 'sponsored') && $o->sponsored) {
 		$sponsoredroom = R::dispense('sponsoredroom');
 		$sponsoredroom->room = $room;
-		$sponsoredroom->sponsor = R::findOne('sponsor', ' person_id = ? ', array($ownerId));
+		//$sponsoredroom->sponsor = R::findOne('sponsor', ' person_id = ? ', array($ownerId));
 		R::store($sponsoredroom);
 	}
 });
@@ -113,9 +111,6 @@ array_walk($data->people, function (&$o) {
 
 echo("Adding fake posts\n");
 array_walk($data->posts, function (&$o) {
-	//$media = R::dispense('media');
-	//R::store($media);
-
 	$post = R::dispense('post');
 	if (property_exists($o->media, 'type')) {
 		$post->type = $o->media->type;
@@ -126,9 +121,7 @@ array_walk($data->posts, function (&$o) {
 	if (property_exists($o->media, 'url')) {
 		$post->url = $o->media->url;
 	}
-	//$post->id = $o->id;
 	$post->person = R::load('person', $o->person + 1);
 	$post->room = R::load('room', $o->room + 1);
-	//$post->media = $media;
 	R::store($post);
 });

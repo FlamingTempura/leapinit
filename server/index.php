@@ -260,6 +260,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 			$avatar = R::dup(R::findOne('avatar', ' ORDER BY RAND() LIMIT 1 '));
 			$avatar->bgcolor = randomColor();
 			$person->avatar = $avatar;
+			$person->joined = time();
 
 			R::store($person);
 
@@ -361,7 +362,8 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 			if ($room === null) {
 				$room = R::dispense('room');
 				$room->code = $code;
-				$room->name = 'Untitled';
+				$room->name = null;
+				$room->created = time();
 				R::store($room);
 			}
 			
@@ -414,6 +416,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		$post->type = $params->type;
 		$post->text = $params->text;
 		$post->person = $app->user;
+		$post->created = time();
 		$post->room = $room;
 		if (property_exists($params, 'url')) {
 			$post->url = $params->url;
@@ -536,7 +539,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 			$layer = ImageWorkshop::initVirginLayer($size, $size, $color);
 			$preview = $layer->getResult();
 			$preview = generateCell($preview, $size);
-			imagepng($preview, __SERVERURL__ . '/server' . $thumbfile, 9, PNG_ALL_FILTERS);
+			imagepng($preview, __ROOT__ . '/server' . $thumbfile, 9, PNG_ALL_FILTERS);
 		}
 
 		$app->response->redirect(__SERVERURL__ . $thumbfile, 303);

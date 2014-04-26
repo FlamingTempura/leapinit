@@ -55,6 +55,8 @@
 	.factory('models', function ($rootScope) {
 		var server = window.config.server;
 
+		var blankcolor = '999999';
+
 		var _sync = Backbone.sync;
 		Backbone.sync = function(method, model, options) {
 
@@ -174,6 +176,9 @@
 					return url + '/' + (!this.has('id') ? '' : this.get('id'));
 				},
 				preview: function (size, cell) {
+					if (!this.has('id')) {
+						return server + 'api/blankcell?size=' + size + '&color=' + blankcolor;
+					}
 					return _.result(this, 'url') + '/data?preview=true' +
 						(size ? '&size=' + size : '') +
 						(cell ? '&cell=true' : '');
@@ -188,15 +193,14 @@
 					Collection.prototype.initialize.apply(this, arguments);
 					this.generateHoneycomb();
 					this.on('change add remove reset', this.generateHoneycomb, this);
-					this.on('change add remove reset', this.sort, this);
 					this.sort();
 				},
-				comparator: function () {
-					return -Number(this.get('id'));
+				comparator: function (post) {
+					return -Number(post.get('created'));
 				},
 				generateHoneycomb: function (width) {
 					width = $('body > .app').width();
-					var posts = _.clone(this.models).slice(0,50),
+					var posts = _.clone(this.sort().models).slice(0,50),
 						cells = [],
 						cellWidth = width / 3.2, //50,
 						maxCols = 4,
@@ -206,7 +210,7 @@
 						c = 0.435 * cellWidth,
 						b = Math.sin(1.05) * c,
 
-						blankcell = 'url(' + server + 'api/blankcell?size=' + cellWidth + '&color=999999)',
+						blankcell = 'url(' + server + 'api/blankcell?size=' + cellWidth + '&color=' + blankcolor +')',
 
 						even, cell;
 

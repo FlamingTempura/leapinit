@@ -48,7 +48,27 @@ function generateFakeData ($dataSize = 1) {
 			'id' => $i,
 			'username' => $i === 0 ? 'test' : $faker->userName(),
 			'password' => sha1('test'),
-			'biography' => $faker->sentence($faker->randomNumber(5, 15))
+			'biography' => $faker->sentence($faker->randomNumber(5, 15)),
+			'joined' => $faker->unixTime(),
+/*			'cbitbucket' => 
+			'cemail' => 
+			'cfacebook' => 
+			'cflickr' => 
+			'cfoursquare' => 
+			'cgithub' => 
+			'cgoogleplus' => 
+			'cinstagram' => 
+			'clinkedin' => 
+			'cphone' => 
+			'cpinterest' => 
+			'cpskype' => 
+			'crenren' => 
+			'ctumble' => 
+			'ctwitter' => 
+			'cvk' => 
+			'cweibo' => 
+			'cxing' => 
+			'cyoutube' => */
 		];
 		// Sponsor?
 		if ($i == 0 || $faker->boolean(10)) {
@@ -65,12 +85,11 @@ function generateFakeData ($dataSize = 1) {
 			'id' => $i,
 			'name' => $faker->word(),
 			'code' => $i === 1 ? '729789101707' : ($faker->boolean(80) ? $faker->randomNumber(11) : $faker->url()),
-			'owner' => $faker->randomElement($people)['id']
+			'created' => $faker->unixTime()
 		];
 		// Sponsored room?
 		if ($i == 0 || $faker->boolean(10)) {
 			$room['sponsored'] = true;
-			$room['owner'] = $faker->randomElement($sponsors)['id'];
 		}
 	});
 
@@ -92,20 +111,8 @@ function generateFakeData ($dataSize = 1) {
 			'id' => $i,
 			'person' => $person['id'],
 			'room' => $faker->randomElement($person['rooms']),
-			'media' => generateMedia()
-		];
-	});
-
-	// Messages
-	array_walk($messages, function (&$message, $i) use (&$faker, &$people) {
-		do {
-			$person = $faker->randomElement($people);
-		} while (count($person['friends']) == 0);
-		$message = [
-			'id' => $i,
-			'person' => $person['id'],
-			'recipient' => $faker->randomElement($person['friends']),
-			'media' => generateMedia()
+			'media' => generateMedia(),
+			'created' => $faker->unixTime()
 		];
 	});
 
@@ -113,8 +120,7 @@ function generateFakeData ($dataSize = 1) {
 	$data = [
 		'people' => &$people,
 		'rooms' => &$rooms,
-		'posts' => &$posts,
-		'messages' => &$messages
+		'posts' => &$posts
 	];
 
 	//echo(json_encode($data, JSON_PRETTY_PRINT));
