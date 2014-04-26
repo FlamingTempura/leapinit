@@ -62,7 +62,17 @@
 		};
 
 		$scope.removeFriend = function () {
-
+			var friend = new models.People.prototype.model({ id: personId });
+			$rootScope.user.friends.add(friend);
+			friend.destroy().then(function () {
+				$rootScope.user.fetch().then(function () {
+					$scope.$apply();
+				});
+			}).fail(function (r) {
+				$scope.error = r.responseJSON.msg;
+			}).always(function () {
+				$scope.$apply();
+			});
 		};
 
 		$scope.contactIcon = {

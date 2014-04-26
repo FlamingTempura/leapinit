@@ -116,7 +116,11 @@
 							that.contact[k.substr(2)] = v;
 						}
 					});
-					console.log('cc', this.contact)
+				},
+				url: function () {
+					var url = _.result(this.collection, 'url');
+					if (!url) { url = server + 'api/person'; }
+					return url + '/' + (!this.has('id') ? '' : this.get('id'));
 				}
 			}),
 			People = Collection.extend({
