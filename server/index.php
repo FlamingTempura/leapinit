@@ -270,7 +270,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		}
 	}); 
 
-	$app->get('/person/:id/friend/', $requestJSON/*, $validateToken*/, function ($id) use (&$app) {
+	$app->get('/person/:id/friend/', $requestJSON, $validateToken, function ($id) use (&$app) {
 		$person = R::load('person', intval($id));
 		$friendships = R::find('friendship', ' person_id = ? ', array($person->id));
 		$app->render(200, [
@@ -334,13 +334,15 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		}
 	});
 
-	$app->get('/person/:id/feed/', $requestJSON, $validateToken, function ($id) use (&$app) {
+	$app->get('/person/:id/feed/', $requestJSON/*, $validateToken*/, function ($id) use (&$app) {
 		$person = R::load('person', intval($id));
 		$posts = [];
+
 		array_map(function ($residence) use (&$posts) {
-			$ps = R::find('post', ' room_id = ? ', array($residence->id));
+			$ps = R::find('post', ' room_id = ? ', array($residence->room_id));
 			$posts = array_merge($posts, exportPosts($ps));
 		}, array_values($person->ownResidence));
+
 		$app->render(200, [
 			'result' =>  $posts
 		]);
