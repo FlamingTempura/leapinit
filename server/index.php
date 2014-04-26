@@ -270,12 +270,13 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		}
 	}); 
 
-	$app->get('/person/:id/friend/', $requestJSON, $validateToken, function ($id) use (&$app) {
+	$app->get('/person/:id/friend/', $requestJSON/*, $validateToken*/, function ($id) use (&$app) {
 		$person = R::load('person', intval($id));
+		$friendships = R::find('friendship', ' person_id = ? ', array($person->id));
 		$app->render(200, [
-			'result' => array_map(function ($friend) {
-				return exportPerson(R::load('person', $friend->id));
-			}, array_values($person->ownFriendship))
+			'result' => array_map(function (&$friendship) {
+				return exportPerson(R::load('person', $friendship->person2_id));
+			}, array_values($friendships))
 		]);
 	});
 

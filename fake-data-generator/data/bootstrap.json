@@ -1,0 +1,8 @@
+{
+	"person": [
+		{	"username": "test" }
+	],
+	"room": [
+		{	"name": "guitar string", "code": 729789101707 }
+	]
+}
