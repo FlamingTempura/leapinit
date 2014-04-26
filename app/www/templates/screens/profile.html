@@ -15,11 +15,11 @@
 			<div class="number">Cancel</div>
 			<div class="noun">edit</div>
 
-		</li><li ng-if="!own && !isFriend()">
+		</li><li ng-if="!own && !isFriend()" ng-click="addFriend()">
 			<div class="number">Add</div>
 			<div class="noun">friend</div>
 
-		</li><li ng-if="!own && isFriend()">
+		</li><li ng-if="!own && isFriend()" ng-click="removeFriend()">
 			<div class="number">Remove</div>
 			<div class="noun">friend</div>
 

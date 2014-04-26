@@ -279,12 +279,19 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		]);
 	});
 
-	/*$app->post('/person/:id/friend/', $requestJSON, $validateToken, function ($id) use (&$app) {
-		$user=R::load("person",intval($id));
-		echo json_encode($user->export());
+	$app->post('/person/:id/friend/', $requestJSON, $validateToken, function ($id) use (&$app, &$params) {
+		$person = R::load('person', intval($id));
+		$person2 = R::load('person', $params->person2_id);
+		$friendship = R::dispense('friendship');
+		$friendship->person = $person;
+		$friendship->person2 = $person2;
+		R::store($friendship);
+		$app->render(200, [
+			'result' => exportPerson($person2)
+		]);
 	});
 
-	$app->delete('/person/:id/friend/:fid/', $requestJSON, $validateToken, function($id,$fid){
+	/*$app->delete('/person/:id/friend/:fid/', $requestJSON, $validateToken, function($id,$fid){
 		$user=R::load("person",intval($id));
 		$friend=R::load("person",intval($fid));
 		echo json_encode($user->export());

@@ -47,6 +47,24 @@
 			});
 		};
 
+		$scope.addFriend = function () {
+			var friend = new models.People.prototype.model({ person2_id: personId });
+			$rootScope.user.friends.add(friend);
+			friend.save().then(function () {
+				$rootScope.user.fetch().then(function () {
+					$scope.$apply();
+				});
+			}).fail(function (r) {
+				$scope.error = r.responseJSON.msg;
+			}).always(function () {
+				$scope.$apply();
+			});
+		};
+
+		$scope.removeFriend = function () {
+
+		};
+
 		$scope.contactIcon = {
 			bitbucket: 'fa-bitbucket',
 			email: 'fa-envelope',
