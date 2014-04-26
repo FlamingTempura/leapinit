@@ -91,7 +91,7 @@
 						element.css({ 'position': 'static', 'opacity': 0 });
 						setTimeout(function () { 
 							element.css({ 'position': position, 'opacity': 1 });
-						}, 50);
+						}, 1);
 					};
 					setTimeout(reset, 1000);
 				}

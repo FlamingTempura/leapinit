@@ -334,7 +334,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		}
 	});
 
-	$app->get('/person/:id/feed/', $requestJSON/*, $validateToken*/, function ($id) use (&$app) {
+	$app->get('/person/:id/feed/', $requestJSON, $validateToken, function ($id) use (&$app) {
 		$person = R::load('person', intval($id));
 		$posts = [];
 
