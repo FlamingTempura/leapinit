@@ -84,3 +84,5 @@ IOS/www/
 .Trashes
 
 config.php
+
+lib/

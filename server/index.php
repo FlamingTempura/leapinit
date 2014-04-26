@@ -1,17 +1,24 @@
 <?php
 
-require_once('../vendor/autoload.php');
-//require_once('../vendor/blueimp/jquery-file-upload/server/php/UploadHandler.php');
+define('__ROOT__', dirname(dirname(__FILE__))); 
+
+require_once(__ROOT__ . '/vendor/autoload.php');
+require_once(__ROOT__ . '/config.php');
+
+define('__SERVERURL__', $config['server']['url']);
 
 require_once('models.php');
-require_once('config.php');
 
 use RedBean_Facade as R;
 
 use PHPImageWorkshop\ImageWorkshop as ImageWorkshop;
 
 // Connect to the database
-R::setup('mysql:host=' . $dbhost . ';dbname=' . $dbname . ($dbport !== null ? ';port=' . $dbport : ''), $dbuser, $dbpass);
+
+R::setup('mysql:host=' . $config['database']['host'] . 
+		';dbname=' . $config['database']['name'] . 
+		($config['database']['port'] !== null ? ';port=' . $config['database']['port'] : ''), 
+		$config['database']['user'], $config['database']['pass']);
 
 // Slim is used for creating a REST endpoint
 $app = new \Slim\Slim();
@@ -100,6 +107,12 @@ function createResidence (&$person, &$room) {
 	return $residence;
 }
 
+
+function randomColor () {
+	$colors = ['#C40C63', '#EB0F0F', '#EB730F', '#EBA40F', '#EBC70F', '#88D80E',
+			'#0CBC0C', '#098D8D', '#1A3E9E', '#3E1BA1'];
+	return $colors[array_rand($colors)];
+}
 
 function generateCell ($source, $size) {
 	// http://stackoverflow.com/questions/8778864/cropping-an-image-into-hexagon-shape-in-a-web-page
@@ -204,7 +217,10 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 
 		$keys = array_keys($person->export());
 		array_walk(get_object_vars($params), function ($v, $k) use (&$person, &$keys) {
-			if (in_array($k, $keys) && $k !== 'id' && $v !== null && $v !== '' && $v !== 'null' && $v !== 'undefined') {
+			if (in_array($k, $keys) && $k !== 'id' && $v !== null && $v !== '' && $v !== 'null' && $v !== 'undefined') { // PHP madness
+				if ($k === 'password') {
+					$v = sha1($v);
+				}
 				$person->$k = $v;
 			}
 		});
@@ -225,10 +241,11 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		$app->render(200, ['result' => exportPerson($person)]);
 	});
 
-	/*$app->delete('/person/:id/', $requestJSON, $validateToken, function ($id) use (&$app) {
+	$app->delete('/person/:id/', $requestJSON, $validateToken, function ($id) use (&$app) {
 		$person = R::load('person', intval($id));
-		echo json_encode($user->export());
-	});*/
+		R::trash($person);
+		$app->render(204);
+	});
 
 	$app->post('/person/', $requestJSON, function () use (&$app, &$params) {
 		if (R::findOne('person', ' username = ? ', array($params->username))) {
@@ -239,6 +256,11 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 			$person = R::dispense('person');
 			$person->username = $params->username;
 			$person->password = sha1($params->password);
+
+			$avatar = R::dup(R::findOne('avatar', ' ORDER BY RAND() LIMIT 1 '));
+			$avatar->bgcolor = randomColor();
+			$person->avatar = $avatar;
+
 			R::store($person);
 
 			$app->render(201, [
@@ -381,6 +403,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 	});
 
 	$app->post('/room/:id/post/', $requestJSON, $validateToken, function ($id) use (&$app, &$params) {
+		global $config;
 		error_log('making post');
 
 		$room = R::load('room', intval($id));
@@ -399,7 +422,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		error_log('checking type');
 
 		if ($post->type === 'text') {
-			$apikey = '40eb84f27e9aa5a701bc3f3e3bbf6cac9e3ad506';
+			$apikey = $config['apikeys']['alchemyapi'];
 			$sentimenturl = 'http://access.alchemyapi.com/calls/text/TextGetTextSentiment?outputMode=json&apikey=' . $apikey . '&text=' . urlencode($post->text);
 			$keywordurl = 'http://access.alchemyapi.com/calls/text/TextGetRankedKeywords?outputMode=json&maxRetrieve=1&apikey='. $apikey . '&text=' . urlencode($post->text);
 
@@ -429,8 +452,8 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 			$textLayer = ImageWorkshop::initTextLayer($keyword, __DIR__ . '/Roboto-Medium.ttf', 14, 'ffffff', 0);
 			$layer->addLayer(1, $textLayer, 5, -$textLayer->getHeight() / 2.5, 'LM');
 			$filename = 'r-' . uniqid(rand(), true) . '.png';
-			$layer->save(__DIR__ . '/media/files/sentiment/', $filename);
-			$post->url = '/media/files/sentiment/' . $filename;
+			$layer->save(__ROOT__ . '/server/media/files/sentiment/', $filename);
+			$post->url = __SERVERURL__ . '/media/files/sentiment/' . $filename;
 		}
 		R::store($post);
 		$app->render(201, [
@@ -464,9 +487,9 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 				$thumbfile = '/media/files/thumbnail/' . $filename . '-' . $size . '.jpg';
 			}
 
-			if (!file_exists(__DIR__ . $thumbfile)) {
+			if (!file_exists(__ROOT__ . '/server' . $thumbfile)) {
 
-				$file = __DIR__ . '/media/files/';
+				$file = __ROOT__ . '/server/media/files/';
 				if (strpos($post->url, '/sentiment/')) { $file .= 'sentiment/'; }
 				$file .= $filename;
 
@@ -493,7 +516,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 			}
 
 			if ($thumbfile) {
-				$app->response->redirect('/leapinit/' . $thumbfile, 303);
+				$app->response->redirect(__SERVERURL__ . $thumbfile, 303);
 			}
 		}
 	});
@@ -509,14 +532,14 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 
 		$thumbfile = '/media/files/thumbnail/blank-' . $size . '-' . $color . '-cell.png';
 
-		if (!file_exists(__DIR__ . $thumbfile)) {
+		if (!file_exists(__ROOT__ . '/server' . $thumbfile)) {
 			$layer = ImageWorkshop::initVirginLayer($size, $size, $color);
 			$preview = $layer->getResult();
 			$preview = generateCell($preview, $size);
-			imagepng($preview, __DIR__ . $thumbfile, 9, PNG_ALL_FILTERS);
+			imagepng($preview, __SERVERURL__ . '/server' . $thumbfile, 9, PNG_ALL_FILTERS);
 		}
 
-		$app->response->redirect('/leapinit/' . $thumbfile, 303);
+		$app->response->redirect(__SERVERURL__ . $thumbfile, 303);
 	});
 
 });

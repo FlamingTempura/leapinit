@@ -1,14 +1,13 @@
 <?php
 
-require_once('../../vendor/autoload.php');
-require_once('../config.php');
-require_once('generate.php');
+define('__ROOT__', dirname(dirname(__FILE__))); 
+
+require_once(__ROOT__ . '/vendor/autoload.php');
+require_once(__ROOT__ . '/config.php');
+
+require_once('data/generate.php');
 
 use RedBean_Facade as R;
-
-R::setup('mysql:host=' . $dbhost . ';dbname=' . $dbname . ($dbport !== null ? ';port=' . $dbport : ''), $dbuser, $dbpass);
-
-R::nuke();
 
 function randomColor () {
 	$colors = ['#C40C63', '#EB0F0F', '#EB730F', '#EBA40F', '#EBC70F', '#88D80E',
@@ -16,11 +15,18 @@ function randomColor () {
 	return $colors[array_rand($colors)];
 }
 
+R::setup('mysql:host=' . $config['database']['host'] . 
+		';dbname=' . $config['database']['name'] . 
+		($config['database']['port'] !== null ? ';port=' . $config['database']['port'] : ''), 
+		$config['database']['user'], $config['database']['pass']);
+
+R::nuke();
+
 // Generate some fake data
 $data = generateFakeData(3);
 
 echo("Importing avatar templates\n");
-$avatars = json_decode(file_get_contents('avatars.json'), true);
+$avatars = json_decode(file_get_contents(__ROOT__ . '/fake-data-generator/data/avatars.json'), true);
 
 array_walk($avatars, function (&$av) {
 	$avatar = R::dispense('avatar');

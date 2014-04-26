@@ -7,6 +7,9 @@
 		<a class="room" href="#/room/{{ post.attributes.room.id }}">{{ post.attributes.room.name }}</a>
 		<span class="date">13:00, 12-12-2014</span>
 	</div>
+	<div class="text">
+		{{ post.attributes.text }}
+	</div>
 </div>
 <div class="rect rect-overflow media media-picture" style="background-image:url({{ post.previewFull() }})"></div>
 <div class="below">

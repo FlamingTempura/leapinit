@@ -1,7 +1,6 @@
-var server = 'http://192.168.1.66/leapinit';
-
 angular.module('leapinit')
 	.factory('auth', function (models) {
+		var server = window.config.server;
 
 		var ajax = function (url, method, data) {
 			return $.ajax({
@@ -18,7 +17,7 @@ angular.module('leapinit')
 			token: localStorage.getItem('token'),
 
 			check: function () {
-				return ajax('/api/auth/user', 'GET').then(function (response) {
+				return ajax('api/auth/user', 'GET').then(function (response) {
 					auth.user = models.People.prototype.makeUser(response.result.user, auth);
 					auth.trigger('login');
 				}).fail(function () {
@@ -27,7 +26,7 @@ angular.module('leapinit')
 			},
 
 			login: function (o) {
-				return ajax('/api/auth', 'POST', {
+				return ajax('api/auth', 'POST', {
 					username: o.username,
 					password: o.password 
 				}).then(function (response) {
@@ -40,7 +39,7 @@ angular.module('leapinit')
 			},
 
 			logout: function () {
-				return ajax('/api/auth/user', 'DELETE').always(function () {
+				return ajax('api/auth/user', 'DELETE').always(function () {
 					localStorage.removeItem('token');
 					auth.trigger('logout');
 				});
@@ -50,6 +49,8 @@ angular.module('leapinit')
 		return auth;
 	})
 	.factory('models', function ($rootScope) {
+		console.log('run')
+		var server = window.config.server;
 
 		var _sync = Backbone.sync;
 		Backbone.sync = function(method, model, options) {
@@ -102,7 +103,7 @@ angular.module('leapinit')
 			}),
 			People = Collection.extend({
 				model: Person,
-				url: server + '/api/person',
+				url: server + 'api/person',
 				makeUser: function (user, auth) {
 					var users = new People(user),
 						user = users.at(0);
@@ -117,7 +118,7 @@ angular.module('leapinit')
 
 		var Room = Model.extend({
 				url: function () {
-					return server + '/api/room/' + this.id;
+					return server + 'api/room/' + this.id;
 				},
 				initialize: function () {
 					var that = this;
@@ -145,7 +146,7 @@ angular.module('leapinit')
 			}),
 			Rooms = Collection.extend({
 				model: Room,
-				url: server + '/api/room',
+				url: server + 'api/room',
 				fetchFromCode: function (code) {
 					var dfd = $.Deferred(),
 						room = new Room();
@@ -165,7 +166,7 @@ angular.module('leapinit')
 				url: function () {
 					var url = _.result(this.collection, 'url');
 					if (!url || url.indexOf('room') === -1) {
-						url = server + '/api/room/' + this.get('room_id') + '/post';
+						url = server + 'api/room/' + this.get('room_id') + '/post';
 					}
 					return url + '/' + (!this.has('id') ? '' : this.get('id'));
 				},
@@ -204,7 +205,7 @@ angular.module('leapinit')
 						b = Math.sin(1.05) * c,
 						a = c / 2,
 
-						blankcell = 'url(' + server + '/api/blankcell?size=' + cellWidth + '&color=999999)',
+						blankcell = 'url(' + server + 'api/blankcell?size=' + cellWidth + '&color=999999)',
 
 						post, even, cell, x, y, c, b, a;
 

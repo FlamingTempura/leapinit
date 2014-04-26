@@ -5,13 +5,13 @@ FIXME:
 	Person A's rooms should include rooms they own
 */
 
-require_once('../../vendor/autoload.php');
+require_once(__ROOT__ . '/vendor/autoload.php');
 
 $faker = Faker\Factory::create();
 
 // http://stackoverflow.com/questions/4478783/select-random-file-from-directory
 function randomPic () {
-    $files = glob('../media/files/*.*');
+    $files = glob(__ROOT__ . '/server/media/files/*.*');
     $file = array_rand($files);
     return $files[$file];
 }

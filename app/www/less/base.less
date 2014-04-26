@@ -220,67 +220,6 @@ body {
 	}
 }
 
-
-.top-right-bubble-buttons {
-	position: absolute;
-	z-index: 49;
-	top: 70px; right: 10px; 
-	width: 220px; height: 220px;
-	.button {
-		position: absolute;
-		border-radius: 100%;
-		width: 80px; height: 80px;
-		overflow: none;
-		background-color: @button-bg;
-		.box-shadow(0px 0px 4px rgba(0, 0, 0, 0.5));
-		top: 0;
-		color: white;
-		line-height: 80px;
-		&.loading { color: transparent; }
-		&:nth-child(1) { right: 200px; }
-		&:nth-child(2) { right: 100px; }
-		&:nth-child(3) { right: 0px; }
-		input[type=file] {
-			position: absolute;
-			top: 0; left: 0; right: 0; bottom: 0;
-			opacity: 0;
-		}
-	}
-	
-
-	&.ng-hide-add, 
-	&.ng-hide-remove {
-		.transition(right, 0.4s, ease);
-		display: block !important;
-		button {
-			.transition(opacity 0.4s ease, right 0.4s ease);
-			display: block !important;
-		}
-	}
-	&.ng-hide-add.ng-hide-add-active,
-	&.ng-hide-remove {
-		right: -40px;
-		button {
-			opacity: 0;
-			&:nth-child(1), &:nth-child(2), 
-			&:nth-child(3), &:nth-child(4) {
-				right: -40px;
-			}
-		}
-	}
-	 
-	&.ng-hide-add,
-	&.ng-hide-remove.ng-hide-remove-active {
-		right: 10px;
-		button {
-			opacity: 1;
-			&:nth-child(1) { right: 200px; }
-			&:nth-child(2) { right: 100px; }
-			&:nth-child(3) { right: 0px; }
-		}
-	}
-}
-
 .post.room-info {
 	.above { margin-bottom: 20px; }
 	h1 {
@@ -317,6 +256,11 @@ body {
 				color: #ccc;
 				display: block;
 			}
+		}
+
+		.text {
+			padding: 8px 0 2px;
+			white-space: normal;
 		}
 	}
 
@@ -449,43 +393,104 @@ nav.nav-top {
 	top: 0; left: 0; right: 0;
 	color: #333;
 	z-index: 40;
-	> ul {
-		> li {
-			display: inline-block;
-			vertical-align: middle;
-			&.icon {
-				&.icon-right {
-					position: absolute;
-					right: 0; top: 0;
-					border-left: 1px solid #eee; 
-					border-right-width: 0px; 
-				}
-				a {
-					display: block;
-					width: @nav-height; height: @nav-height;
-					line-height: @nav-height;
-					text-align: center;
-					font-size: 20px;
-					border-right: 1px solid #eee; 
-				}
+	> ul > li {
+		display: inline-block;
+		vertical-align: middle;
+		&.icon {
+			background: white;
+			z-index: 10;
+			position: relative;
+			&.icon-right {
+				position: absolute;
+				right: 0; top: 0;
+				border-left: 1px solid #eee; 
+				border-right-width: 0px; 
 			}
-			&.back a {
-				position: relative;
-				z-index: 10;
-				padding-left: 10px;
+			a {
 				display: block;
-				text-align: left;
-				margin-right: -20px;
-				width: 30px; height: @nav-height;
-				line-height: @nav-height + 2px;
-
+				width: @nav-height; height: @nav-height - 1;
+				line-height: @nav-height;
+				text-align: center;
+				font-size: 20px;
+				border-right: 1px solid #eee; 
 			}
-			&.title {
-				font-size: 22px; 
-				text-indent: 10px;
+		}
+		&.back a {
+			position: relative;
+			z-index: 10;
+			padding-left: 10px;
+			display: block;
+			text-align: left;
+			margin-right: -20px;
+			width: 30px; height: @nav-height - 1;
+			line-height: @nav-height + 2px;
+
+		}
+		&.title {
+			font-size: 22px; 
+			text-indent: 10px;
+		}
+
+		&.title, &.back {
+			z-index: 8;
+			position: relative;
+			&.ng-hide-add, 
+			&.ng-hide-remove {
+				.transition(left 0.4s ease, opacity 0.4s ease);
+				display: inline-block !important;
+			}
+			&.ng-hide-add.ng-hide-add-active,
+			&.ng-hide-remove {
+				left: -3.5 * @nav-height;
+				opacity: 0;
+			}
+			 
+			&.ng-hide-add,
+			&.ng-hide-remove.ng-hide-remove-active {
+				left: 0;
+				opacity: 1;
+			}
+		}
+		&.adding {
+			position: absolute;
+			right: @nav-height - 1; top: 0;
+			z-index: 8;
+			li {
+				position: relative;
+				display: inline-block;
+				border-left: 1px solid #eee;
+				width: @nav-height; height: @nav-height;
+				line-height: @nav-height;
+				text-align: center;
+				overflow: hidden;
+				color: #666;
+				&.loading { color: transparent; }
+				input[type=file] {
+					position: absolute;
+					top: 0; left: 0; right: 0; bottom: 0;
+					opacity: 0;
+				}
+			}
+			
+			&.ng-hide-add, 
+			&.ng-hide-remove {
+				.transition(right 0.4s ease, opacity 0.4s ease);
+				display: block !important;
+			}
+			&.ng-hide-add.ng-hide-add-active,
+			&.ng-hide-remove {
+				right: -3 * @nav-height;
+				opacity: 0;
+			}
+			 
+			&.ng-hide-add,
+			&.ng-hide-remove.ng-hide-remove-active {
+				right: @nav-height;
+				opacity: 1;
 			}
 		}
 	}
+	
 }
 
 nav.nav-side {

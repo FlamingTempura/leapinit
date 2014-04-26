@@ -13,7 +13,7 @@ angular.module('leapinit')
 			$scope.person.save({
 				avatar: $scope.avatar
 			}).then(function () {
-				$rootScope.go('/profile');
+				$rootScope.goBack();
 			}).fail(function (r) {
 				$scope.error = r.responseJSON.msg;
 				$scope.loading = false;
