@@ -85,4 +85,4 @@ IOS/www/
 
 config.php
 
-www/lib
+lib/
