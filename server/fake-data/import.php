@@ -17,7 +17,7 @@ function randomColor () {
 }
 
 // Generate some fake data
-$data = generateFakeData(1);
+$data = generateFakeData(2);
 
 echo("Importing avatar templates\n");
 $avatars = json_decode(file_get_contents('avatars.json'), true);
@@ -65,6 +65,7 @@ array_walk($data->rooms, function (&$o) {
 	$ownerId = $o->owner + 1;
 	$room = R::dispense('room');
 	$room->name = $o->name;
+	$room->code = $o->code;
 	//$room->owner = R::load('person', $ownerId);
 	R::store($room);
 

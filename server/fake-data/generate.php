@@ -63,7 +63,8 @@ function generateFakeData ($dataSize = 1) {
 	array_walk($rooms, function (&$room, $i) use (&$faker, &$people, &$sponsors) {
 		$room = [
 			'id' => $i,
-			'name'  => $faker->word(),
+			'name' => $faker->word(),
+			'code' => $faker->boolean(8) ? $faker->randomNumber(11) : $faker->url(),
 			'owner' => $faker->randomElement($people)['id']
 		];
 		// Sponsored room?

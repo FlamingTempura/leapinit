@@ -193,7 +193,7 @@ angular.module('leapinit')
 				generateHoneycomb: function (width) {
 					console.log(this.models.length)
 					width = $('body > .app').width();
-					var posts = _.clone(this.models).slice(0,21),
+					var posts = _.clone(this.models).slice(0,50),
 						cells = [],
 						cellWidth = width / 3.2, //50,
 						maxCols = 4,
