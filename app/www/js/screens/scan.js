@@ -21,6 +21,7 @@ angular.module('leapinit')
 			$scope.showForm = true;
 
 			$scope.submit = function () {
+				console.log($scope.code);
 				$scope.error = false;
 				if (!$scope.code) {
 					$scope.error = 'Please enter a code.';

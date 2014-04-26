@@ -17,7 +17,7 @@ function randomColor () {
 }
 
 // Generate some fake data
-$data = generateFakeData(2);
+$data = generateFakeData(3);
 
 echo("Importing avatar templates\n");
 $avatars = json_decode(file_get_contents('avatars.json'), true);

@@ -204,7 +204,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 
 		$keys = array_keys($person->export());
 		array_walk(get_object_vars($params), function ($v, $k) use (&$person, &$keys) {
-			if (in_array($k, $keys) && $k !== 'id' && $v !== null) {
+			if (in_array($k, $keys) && $k !== 'id' && $v !== null && $v !== '' && $v !== 'null' && $v !== 'undefined') {
 				$person->$k = $v;
 			}
 		});
