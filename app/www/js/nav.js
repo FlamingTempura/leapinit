@@ -14,6 +14,9 @@ angular.module('leapinit')
 					{ screen: 'friends', icon: 'users', title: 'Friends' },
 					{ screen: 'settings', icon: 'cog', title: 'Settings' }
 				];
+				$scope.toggleAdd = function () {
+					$scope.adding = !$scope.adding;
+				};
 				document.addEventListener('menubutton', function () {
 					console.log('o')
 					$scope.opensidenav = !$scope.opensidenav;
@@ -21,4 +24,25 @@ angular.module('leapinit')
 				}, false);
 			}
 		}
+	})
+	.directive('fileupload', function ($rootScope) {
+		return {
+			link: function ($scope, element, attrs) {
+				var url = 'http://192.168.1.66/leapinit/media/index.php',
+					button = element.parent();
+
+				element.fileupload({
+					url: url,
+					dataType: 'json',
+					send: function () {
+						button.addClass('loading');
+					},
+					done: function (e, data) {
+						button.removeClass('loading');
+						$rootScope.add.media('picture', data.result.files[0].url);
+					}
+				}).prop('disabled', !$.support.fileInput)
+					.parent().addClass($.support.fileInput ? undefined : 'disabled'); // TODO
+			}
+		};
 	});

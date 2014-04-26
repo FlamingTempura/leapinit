@@ -21,11 +21,7 @@ angular.module('leapinit')
 
 		$rootScope.title = room.get('name');
 
-		$rootScope.add = function () {
-			$scope.showBubbles = !$scope.showBubbles;
-		};
-
-		$rootScope.leave = function () {
+		$scope.leave = function () {
 			if (confirm('Are you sure you wish to permanently leave the room?')) {
 				room.leave().then(function () {
 					$rootScope.go('/rooms');
@@ -37,45 +33,22 @@ angular.module('leapinit')
 			}
 		};
 
-		$scope.addText = function () {
-			var text = prompt('Input something');
-			if (text) {
+		$rootScope.add = {
+			text: function () {
+				var text = prompt('Input something');
+				if (text) {
+					$scope.posts.create({
+						type: 'text',
+						text: text
+					});
+				}
+			},
+			media: function (type, url) {
 				$scope.posts.create({
-					type: 'text',
-					text: text
+					type: type,
+					text: 'testing',
+					url: url
 				});
 			}
 		};
-	})
-	.directive('fileupload', function () {
-		return {
-			link: function ($scope, element, attrs) {
-				var url = 'http://192.168.1.66/leapinit/media/index.php',
-					button = element.parent(),
-
-					posts = $scope.posts;
-
-				element.fileupload({
-					url: url,
-					dataType: 'json',
-					send: function () {
-						button.addClass('loading');
-					},
-					done: function (e, data) {
-						button.removeClass('loading');
-
-						posts.create({
-							type: 'picture',
-							text: 'testing',
-							url: data.result.files[0].url
-						})
-					},
-					progressall: function (e, data) {
-						//var progress = parseInt(data.loaded / data.total * 100, 10);
-						//$('#progress').html(progress + '%');
-					}
-				}).prop('disabled', !$.support.fileInput)
-					.parent().addClass($.support.fileInput ? undefined : 'disabled'); // TODO
-			}
-		};
-    });
+	});
