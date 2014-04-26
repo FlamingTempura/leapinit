@@ -1,4 +1,6 @@
-angular.module('leapinit')
+(function (angular) {
+	'use strict';
+	angular.module('leapinit')
 	.controller('profileScreen', function ($rootScope, $scope, $location, models, $routeParams) {
 		var personId = Number($routeParams.person);
 
@@ -35,3 +37,4 @@ angular.module('leapinit')
 			});
 		};
 	});
+}(this.angular));

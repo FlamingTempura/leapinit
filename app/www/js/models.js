@@ -1,4 +1,8 @@
-angular.module('leapinit')
+(function (angular, $, _, Backbone) {
+	'use strict';
+	
+	angular.module('leapinit')
+
 	.factory('auth', function (models) {
 		var server = window.config.server;
 
@@ -30,7 +34,6 @@ angular.module('leapinit')
 					username: o.username,
 					password: o.password 
 				}).then(function (response) {
-					console.log(response)
 					auth.token = response.result.token;
 					auth.user = models.People.prototype.makeUser(response.result.user, auth);
 					localStorage.setItem('token', auth.token);
@@ -48,8 +51,8 @@ angular.module('leapinit')
 
 		return auth;
 	})
+
 	.factory('models', function ($rootScope) {
-		console.log('run')
 		var server = window.config.server;
 
 		var _sync = Backbone.sync;
@@ -79,7 +82,7 @@ angular.module('leapinit')
 			Collection = Backbone.Collection.extend({
 				initialize: function (models, options) {
 					if (options && options.url) {
-						this.url = options.url
+						this.url = options.url;
 					}
  				},
 				parse: function (response) {
@@ -105,8 +108,8 @@ angular.module('leapinit')
 				model: Person,
 				url: server + 'api/person',
 				makeUser: function (user, auth) {
-					var users = new People(user),
-						user = users.at(0);
+					var users = new People(user);
+					user = users.at(0);
 					user.auth = auth;
 					user.rooms = new Rooms(undefined, { url: user.url() + '/room' });
 					user.friends = new People(undefined, { url: user.url() + '/friend' });
@@ -192,7 +195,6 @@ angular.module('leapinit')
 					return -Number(this.get('id'));
 				},
 				generateHoneycomb: function (width) {
-					console.log(this.models.length)
 					width = $('body > .app').width();
 					var posts = _.clone(this.models).slice(0,50),
 						cells = [],
@@ -203,11 +205,10 @@ angular.module('leapinit')
 
 						c = 0.435 * cellWidth,
 						b = Math.sin(1.05) * c,
-						a = c / 2,
 
 						blankcell = 'url(' + server + 'api/blankcell?size=' + cellWidth + '&color=999999)',
 
-						post, even, cell, x, y, c, b, a;
+						even, cell;
 
 
 					while (posts.length > 0 || col >= 0) {
@@ -263,3 +264,4 @@ angular.module('leapinit')
 			Rooms: Rooms
 		};
 	});
+}(this.angular, this.jQuery, this._, this.Backbone));

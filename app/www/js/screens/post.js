@@ -1,4 +1,6 @@
-angular.module('leapinit')
+(function (angular) {
+	'use strict';
+	angular.module('leapinit')
 	.controller('postScreen', function ($rootScope, $routeParams, $scope, $location, models) {
 		var roomId = $routeParams.room,
 			postId = $routeParams.post,
@@ -11,7 +13,7 @@ angular.module('leapinit')
 		$scope.post.fetch().fail(function (r) {
 			$scope.error = r.responseJSON.msg;
 		}).always(function () {
-			console.log('fetch')
 			$scope.$apply();
 		});
 	});
+}(this.angular));

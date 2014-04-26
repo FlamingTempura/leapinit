@@ -1,4 +1,6 @@
-angular.module('leapinit')
+(function (angular) {
+	'use strict';
+	angular.module('leapinit')
 	.controller('registerScreen', function ($rootScope, $scope, $location, models) {
 		
 		$scope.submit = function () {
@@ -44,3 +46,4 @@ angular.module('leapinit')
 			}
 		};
 	});
+}(this.angular));

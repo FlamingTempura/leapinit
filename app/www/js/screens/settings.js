@@ -1,11 +1,13 @@
-angular.module('leapinit')
-	.controller('settingsScreen', function ($rootScope, $scope, $location, models, $routeParams) {
+(function (angular) {
+	'use strict';
+	angular.module('leapinit')
+	.controller('settingsScreen', function ($rootScope, $scope) {
 
 		$scope.person = $rootScope.user;
 
 		$scope.savePassword = function () {
 			if ($scope.password1 !== $scope.password2) {
-				$scope.error = "Passwords do not match.";
+				$scope.error = 'Passwords do not match.';
 			} else {
 				$scope.loading = true;
 				$scope.person.save({ password: $scope.password1 }).then(function () {
@@ -20,7 +22,7 @@ angular.module('leapinit')
 		};
 		$scope.delete = function () {
 			$scope.loading = true;
-			if (confirm('Are you sure you wish to permanently delete your account?')) {
+			if (window.confirm('Are you sure you wish to permanently delete your account?')) {
 				$scope.person.destroy($scope.edit).then(function () {
 					$scope.auth.logout();
 				}).fail(function (r) {
@@ -32,3 +34,4 @@ angular.module('leapinit')
 			}
 		};
 	});
+}(this.angular));

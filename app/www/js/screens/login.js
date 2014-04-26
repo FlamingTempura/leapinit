@@ -1,5 +1,7 @@
-angular.module('leapinit')
-	.controller('loginScreen', function ($rootScope, $scope, $location, models) {
+(function (angular) {
+	'use strict';
+	angular.module('leapinit')
+	.controller('loginScreen', function ($rootScope, $scope) {
 		
 		$scope.submit = function () {
 			$scope.error = false;
@@ -24,3 +26,4 @@ angular.module('leapinit')
 			}
 		};
 	});
+}(this.angular));

@@ -1,9 +1,11 @@
-angular.module('leapinit')
+(function (angular, cordova) {
+	'use strict';
+	angular.module('leapinit')
 	.controller('scanScreen', function ($rootScope, $scope, $location, models) {
 		var rooms = new models.Rooms();
 
 		var error = function () {
-			$scope.error = "Scanning failed";
+			$scope.error = 'Scanning failed';
 			$scope.$apply();
 		};
 
@@ -12,7 +14,7 @@ angular.module('leapinit')
 				if (!result) {
 					$rootScope.goBack();
 				} else {
-					$scope.error = "Loading...";
+					$scope.error = 'Loading...';
 					$scope.$apply();
 					scan(result.text);
 				}
@@ -21,7 +23,6 @@ angular.module('leapinit')
 			$scope.showForm = true;
 
 			$scope.submit = function () {
-				console.log($scope.code);
 				$scope.error = false;
 				if (!$scope.code) {
 					$scope.error = 'Please enter a code.';
@@ -37,11 +38,8 @@ angular.module('leapinit')
 		var scan = function (code) {
 			$scope.loading = true;
 			rooms.fetchFromCode(code).then(function (room) {
-				console.log('ROOM', room);
 				$rootScope.user.rooms.fetch().then(function () {
-					//$rootScope.goBack();
 					$rootScope.go('/room/' + room.id);
-					console.log('EH?')
 					$scope.$apply();
 				});
 			}).fail(function (response) {
@@ -49,5 +47,6 @@ angular.module('leapinit')
 				$scope.loading = false;
 				$scope.$apply();
 			});
-		}
+		};
 	});
+}(this.angular, this.cordova));

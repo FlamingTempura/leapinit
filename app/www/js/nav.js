@@ -1,4 +1,7 @@
-angular.module('leapinit')
+(function (angular, $) {
+	'use strict';
+	angular.module('leapinit')
+
 	.directive('navbars', function () {
 		return {
 			restrict: 'A',
@@ -18,17 +21,17 @@ angular.module('leapinit')
 					$scope.adding = !$scope.adding;
 				};
 				document.addEventListener('menubutton', function () {
-					console.log('o')
 					$scope.opensidenav = !$scope.opensidenav;
 					$scope.$apply();
 				}, false);
 			}
-		}
+		};
 	})
+
 	.directive('fileupload', function ($rootScope) {
 		return {
-			link: function ($scope, element, attrs) {
-				var url = config.server + 'media/index.php',
+			link: function ($scope, element) {
+				var url = window.config.server + 'media/index.php',
 					button = element.parent();
 
 				element.fileupload({
@@ -46,3 +49,4 @@ angular.module('leapinit')
 			}
 		};
 	});
+}(this.angular, this.jQuery));

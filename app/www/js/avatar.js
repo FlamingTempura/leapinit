@@ -1,4 +1,6 @@
-angular.module('leapinit')
+(function (angular, $, _) {
+	'use strict';
+	angular.module('leapinit')
 	.directive('avatar', function () {
 		return {
 			restrict: 'A',
@@ -24,7 +26,6 @@ angular.module('leapinit')
 
 						avatar.size = $scope.$eval(attr.avatarSize) || 70;
 
-						console.log('rendering', avatar.bgcolor)
 						var svg = {
 							fgcolor: '#ffffff',
 							bgcolor: avatar.bgcolor || '#ff0000',
@@ -36,7 +37,7 @@ angular.module('leapinit')
 							aE = avatar.eyes,
 							aN = avatar.nose,
 							aM = avatar.mouth,
-							m = Math.cos(Math.PI / 4);;
+							m = Math.cos(Math.PI / 4);
 
 						svg.face = {
 							path: generatePath([
@@ -93,7 +94,7 @@ angular.module('leapinit')
 					var generatePath = function (points_, size, curve) {
 						curve = curve || 'Q';
 						var scale = size / 100; 
-						points = _.map(points_, function (point) {
+						var points = _.map(points_, function (point) {
 							return _.map(point, function (p) {
 								return p * scale;
 							});
@@ -107,5 +108,6 @@ angular.module('leapinit')
 				});
 
 			}
-		}
+		};
 	});
+}(this.angular, this.jQuery, this._));

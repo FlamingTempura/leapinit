@@ -1,4 +1,6 @@
-angular.module('leapinit')
+(function (angular) {
+	'use strict';
+	angular.module('leapinit')
 	.controller('roomScreen', function ($rootScope, $routeParams, $scope, $location, models) {
 		var roomId = Number($routeParams.room),
 			rooms = new models.Rooms({ id: roomId }),
@@ -22,7 +24,7 @@ angular.module('leapinit')
 		$rootScope.title = room.get('name');
 
 		$scope.leave = function () {
-			if (confirm('Are you sure you wish to permanently leave the room?')) {
+			if (window.confirm('Are you sure you wish to permanently leave the room?')) {
 				room.leave().then(function () {
 					$rootScope.go('/rooms');
 				}).fail(function (r) {
@@ -35,7 +37,7 @@ angular.module('leapinit')
 
 		$rootScope.add = {
 			text: function () {
-				var text = prompt('Input something');
+				var text = window.prompt('Enter you text below');
 				if (text) {
 					$scope.posts.create({
 						type: 'text',
@@ -52,3 +54,4 @@ angular.module('leapinit')
 			}
 		};
 	});
+}(this.angular));
