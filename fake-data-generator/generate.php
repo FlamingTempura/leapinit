@@ -6,8 +6,6 @@ define('__ROOT__', dirname(dirname(__FILE__)));
 require_once(__ROOT__ . '/vendor/autoload.php');
 require_once(__ROOT__ . '/config.php');
 
-require_once('data/generate.php');
-
 use RedBean_Facade as R;
 $f = Faker\Factory::create();
 
@@ -46,25 +44,25 @@ $generatePerson = function ($i) use (&$f, &$bootstrapOverride, &$randomColor) {
 	$person->password = sha1('test');
 	$person->biography = $f->sentence($f->randomNumber(5, 15));
 	$person->joined = $f->unixTime();
-	$person->cbitbucket = $f->boolean(5) ? $f->email() : null;
-	$person->cemail = $f->boolean(30) ? $f->email() : null;
-	$person->cfacebook = $f->boolean(30) ? $f->email() : null;
-	$person->cflickr = $f->boolean(5) ? $f->email() : null;
-	$person->cfoursquare = $f->boolean(15) ? $f->email() : null;
-	$person->cgithub = $f->boolean(5) ? $f->email() : null;
-	$person->cgoogleplus = $f->boolean(15) ? $f->email() : null;
-	$person->cinstagram = $f->boolean(15) ? $f->email() : null;
-	$person->clinkedin = $f->boolean(15) ? $f->email() : null;
-	$person->cphone = $f->boolean(15) ? $f->email() : null;
-	$person->cpinterest = $f->boolean(5) ? $f->email() : null;
-	$person->cpskype = $f->boolean(10) ? $f->email() : null;
-	$person->crenren = $f->boolean(15) ? $f->email() : null;
-	$person->ctumblr = $f->boolean(10) ? $f->email() : null;
-	$person->ctwitter = $f->boolean(25) ? '@' . $f->userName() : null;
-	$person->cvk = $f->boolean(5) ? $f->email() : null;
-	$person->cweibo = $f->boolean(5) ? $f->email() : null;
-	$person->cxing = $f->boolean(5) ? $f->email() : null;
-	$person->cyoutube = $f->boolean(15) ? $f->email() : null;
+	$person->ccbitbucket = $f->boolean(5) ? $f->email() : null;
+	$person->ccemail = $f->boolean(30) ? $f->email() : null;
+	$person->ccfacebook = $f->boolean(30) ? $f->email() : null;
+	$person->ccflickr = $f->boolean(5) ? $f->email() : null;
+	$person->ccfoursquare = $f->boolean(15) ? $f->email() : null;
+	$person->ccgithub = $f->boolean(5) ? $f->email() : null;
+	$person->ccgoogleplus = $f->boolean(15) ? $f->email() : null;
+	$person->ccinstagram = $f->boolean(15) ? $f->email() : null;
+	$person->cclinkedin = $f->boolean(15) ? $f->email() : null;
+	$person->ccphone = $f->boolean(15) ? $f->email() : null;
+	$person->ccpinterest = $f->boolean(5) ? $f->email() : null;
+	$person->ccpskype = $f->boolean(10) ? $f->email() : null;
+	$person->ccrenren = $f->boolean(15) ? $f->email() : null;
+	$person->cctumblr = $f->boolean(10) ? $f->email() : null;
+	$person->cctwitter = $f->boolean(25) ? '@' . $f->userName() : null;
+	$person->ccvk = $f->boolean(5) ? $f->email() : null;
+	$person->ccweibo = $f->boolean(5) ? $f->email() : null;
+	$person->ccxing = $f->boolean(5) ? $f->email() : null;
+	$person->ccyoutube = $f->boolean(15) ? $f->email() : null;
 
 	$avatar = R::dup(R::findOne('avatar', ' ORDER BY RAND() LIMIT 1 '));
 	$avatar->bgcolor = $randomColor();
@@ -117,7 +115,7 @@ $generatePost = function ($i) use (&$f, &$bootstrapOverride, &$randomPic) {
 	$post->room = R::findOne('room', ' ORDER BY RAND() LIMIT 1 ');
 	$post->type = $f->randomElement(['text', 'picture']);
 	$post->text = $f->sentence($f->randomNumber(5, 15));
-	$post->url = '/media/files/' . pathinfo(randomPic(), PATHINFO_BASENAME);
+	$post->url = '/media/files/' . pathinfo($randomPic(), PATHINFO_BASENAME);
 	$bootstrapOverride('post', $post, $i);
 	R::store($post);
 };
