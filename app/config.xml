@@ -1,12 +1,13 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="com.teamorion.leapinit" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>LeapInIt</name>
+    <name>LeapIn.it</name>
     <description>
-        A sample Apache Cordova application that responds to the deviceready event.
+        LeapIn.it is a social network designed for mobile devices which encourages people to form groups based on their interests.
     </description>
-    <author email="dev@cordova.apache.org" href="http://cordova.io">
-        Apache Cordova Team
+    <author email="dev@leapin.it" href="http://leapin.it">
+        Team Orion
     </author>
     <content src="index.html" />
     <access origin="*" />
+    <preference name="Orientation" value="portrait" />
 </widget>
