@@ -38,7 +38,7 @@ angular.module('leapinit')
 			rooms.fetchFromCode(code).then(function (room) {
 				console.log('ROOM', room);
 				$rootScope.user.rooms.fetch().then(function () {
-					$rootScope.goBack();
+					//$rootScope.goBack();
 					$rootScope.go('/room/' + room.id);
 					console.log('EH?')
 					$scope.$apply();
