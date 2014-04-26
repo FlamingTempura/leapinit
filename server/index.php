@@ -101,6 +101,12 @@ function createResidence (&$person, &$room) {
 }
 
 
+function randomColor () {
+	$colors = ['#C40C63', '#EB0F0F', '#EB730F', '#EBA40F', '#EBC70F', '#88D80E',
+			'#0CBC0C', '#098D8D', '#1A3E9E', '#3E1BA1'];
+	return $colors[array_rand($colors)];
+}
+
 function generateCell ($source, $size) {
 	// http://stackoverflow.com/questions/8778864/cropping-an-image-into-hexagon-shape-in-a-web-page
 
@@ -239,6 +245,11 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 			$person = R::dispense('person');
 			$person->username = $params->username;
 			$person->password = sha1($params->password);
+
+			$avatar = R::dup(R::findOne('avatar', ' ORDER BY RAND() LIMIT 1 '));
+			$avatar->bgcolor = randomColor();
+			$person->avatar = $avatar;
+
 			R::store($person);
 
 			$app->render(201, [

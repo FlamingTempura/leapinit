@@ -25,15 +25,12 @@ angular.module('leapinit')
 					user.trigger('destroy');
 
 				}).then(function () {
-					$rootScope.auths.reset();
-					$rootScope.auths.add({
+
+					$rootScope.auth.login({
 						username: $scope.username,
 						password: $scope.password 
-					});
-					var auth = $rootScope.auths.at(0);
-					auth.save().fail(function (response) {
+					}).fail(function (response) {
 						$scope.error = response.responseJSON.msg;
-						auth.trigger('destroy');
 					}).always(function () {
 						$scope.loading = false;
 						$scope.$apply();
