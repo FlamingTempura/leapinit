@@ -1,4 +1,4 @@
-@import "../bower_components/lesshat/build/lesshat.less";
+@import "../lib/lesshat/build/lesshat.less";
 
 // variables
 
@@ -297,6 +297,7 @@ body {
 		z-index: 2;
 	}
 	.honeycomb {
+		position: absolute;
 		top: 0;
 		bottom: 0;
 		z-index: 1;
@@ -599,6 +600,12 @@ nav.nav-side {
 .honeycomb {
 	position: absolute;
 	top: @nav-height; bottom: @nav-height; left: 0; right: 0;
+	//position: relative;
+	//top: 0;
+	//left: 0;
+	//width: 100%;
+	//height: 100%;
+	//margin: -@screen-padding;
 	overflow-x: hidden;
 	overflow-y: auto;
 	.cell {
@@ -729,6 +736,10 @@ form {
 		max-width: 320px;
 		max-height: 480px;
 	}
+}
+
+.posts-container {
+	height: 100%;
 }
 
 .nohoneycomb {
