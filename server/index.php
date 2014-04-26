@@ -234,10 +234,11 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		$app->render(200, ['result' => exportPerson($person)]);
 	});
 
-	/*$app->delete('/person/:id/', $requestJSON, $validateToken, function ($id) use (&$app) {
+	$app->delete('/person/:id/', $requestJSON, $validateToken, function ($id) use (&$app) {
 		$person = R::load('person', intval($id));
-		echo json_encode($user->export());
-	});*/
+		R::trash($person);
+		$app->render(204);
+	});
 
 	$app->post('/person/', $requestJSON, function () use (&$app, &$params) {
 		if (R::findOne('person', ' username = ? ', array($params->username))) {
