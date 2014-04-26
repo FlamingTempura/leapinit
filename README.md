@@ -9,6 +9,13 @@ To discover their interests, users are asked to scan barcodes and QR-codes that 
 Installation
 ============
 
+
+API keys
+--------
+You will need to obtain API keys for the following:
+* [AlchemyAPI](http://www.alchemyapi.com/)
+* [Faroo](http://www.faroo.com/)
+
 Server
 ------
 
@@ -25,21 +32,45 @@ sudo a2enmod rewrite
 sudo a2enmod headers
 sudo apache2ctl restart
 ```
-* Create a database.
-* Create the config file.
-* Install libraries. 
-* chmod server/media/files and server/media/files/sentiment
+* Create a database and user.
+```
+sudo mysql -u root -p
+CREATE DATABASE leapinit;
+CREATE USER 'leapinit'@'localhost' IDENTIFIED BY 'mypassword';
+GRANT ALL PRIVILEGES ON leapinit.* TO 'leapinit'@'localhost';
+exit
+```
+* Edit `config.php`:
+```
+$config = [
+	"database" => [
+		"host" => "127.0.0.1",
+		"port" => null,
+		"name" => "leapinit",
+		"user" => "leapinit",
+		"pass" => "mypassword"
+	],
+	"server" => [
+		"url" => "http://mywebsite.com/subdirectory/"
+	],
+	"apis" => [
+		"alchemyapi" => "alchemy api key"
+	]
+];
+```
+* Install libraries.
+```
+composer update
+``` 
+* Create image directories and set permissions:
+```
+mkdir server/media/files/thumbnail server/media/files/sentiment
+chmod 744 server/media/files server/media/files/thumbnail server/media/files/sentiment
+```
 * If server is in subdirectory, edit .htaccess
 ```
 RewriteBase /subdirectory/
 ```
-
-
-API keys
---------
-You will need to obtain API keys for the following:
-* [AlchemyAPI](http://www.alchemyapi.com/)
-* [Faroo](http://www.faroo.com/)
 
 
 Client
@@ -49,9 +80,10 @@ Install the required libraries using bower. Get bower using npm.
 
 ```
 npm -g install bower
-cd /path/to/leapinit/app/www
 bower install
 ```
+
+Edit app/www/config.json and enter the server url.
 
 The LeapIn.it client is web-based, and may be hosted using a web server, or deployed as part of a Apache Cordova package for Android and iPhone apps.
 

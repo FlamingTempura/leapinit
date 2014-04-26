@@ -28,7 +28,7 @@ angular.module('leapinit')
 	.directive('fileupload', function ($rootScope) {
 		return {
 			link: function ($scope, element, attrs) {
-				var url = 'http://192.168.1.66/leapinit/media/index.php',
+				var url = config.server + 'media/index.php',
 					button = element.parent();
 
 				element.fileupload({
