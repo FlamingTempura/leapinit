@@ -17,6 +17,11 @@
 			});
 		}
 
+		$scope.isFriend = function () {
+			console.log($rootScope.user.attributes.friends, personId);
+			return $rootScope.user.attributes.friends.indexOf(personId) > -1;
+		};
+
 		$scope.toggleEdit = function (v) {
 			$scope.showEdit = v;
 			if (v) {

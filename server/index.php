@@ -89,6 +89,10 @@ function exportPerson (&$person) {
 	$result = $person->export();
 	$result['avatar'] = R::load('avatar', $person->avatar_id)->export();
 	unset($result['password']);
+	$friendships = R::find('friendship', ' person_id = ? ', array($person->id));
+	$result['friends'] = array_map(function (&$friendship) {
+		return intval($friendship->person2_id);
+	}, array_values($friendships));
 	return $result;
 }
 

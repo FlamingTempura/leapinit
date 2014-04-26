@@ -15,11 +15,11 @@
 			<div class="number">Cancel</div>
 			<div class="noun">edit</div>
 
-		</li><li ng-if="!own && !friend">
+		</li><li ng-if="!own && !isFriend()">
 			<div class="number">Add</div>
 			<div class="noun">friend</div>
 
-		</li><li ng-if="!own && friend">
+		</li><li ng-if="!own && isFriend()">
 			<div class="number">Remove</div>
 			<div class="noun">friend</div>
 
@@ -27,7 +27,7 @@
 			<div class="number">Back</div>
 			<div class="noun">to profile</div>
 
-		</li><li ng-if="!showContact && !showEdit && (own || friend) " ng-click="toggleContact(true)">
+		</li><li ng-if="!showContact && !showEdit && (own || isFriend()) " ng-click="toggleContact(true)">
 			<div class="number">Contact</div>
 			<div class="noun">info</div>
 		</li>
