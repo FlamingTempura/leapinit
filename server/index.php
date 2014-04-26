@@ -23,8 +23,6 @@ $app = new \Slim\Slim();
 
 $params = json_decode($app->request->getBody());
 
-//error_log(var_dump($$app->request->getBody()));
-
 if (isset($_SERVER['HTTP_ORIGIN'])) {
 	$app->response->headers->set('Access-Control-Allow-Origin', '*'); //$_SERVER['HTTP_ORIGIN']);
 	$app->response->headers->set('Access-Control-Allow-Credentials', true);
@@ -216,12 +214,8 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 
 		$keys = array_keys($person->export());
 		array_walk(get_object_vars($params), function ($v, $k) use (&$person, &$keys) {
-			//var_dump($k);
-			//var_dump($v);
 			if (in_array($k, $keys) && $k !== 'id' && $v !== null) { // Don't save anything we don't want to
-				//var_dump('Value found');
 				if ($k === 'password') {
-					//var_dump('IT GOT THIS FAR');
 					$v = sha1($v);
 				}
 				$person->$k = $v;
@@ -230,9 +224,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 
 		$keys = array_keys($avatar->export());
 		array_walk(get_object_vars($params->avatar), function ($v, $k) use (&$avatar, &$keys) {
-			//echo("$k => $v\n");
 			if (in_array($k, $keys) && $k !== 'id') {
-				//var_dump($k);
 				if ($k !== 'bgcolor') { $v = intval($v); }
 				$avatar->$k = $v;
 			}
