@@ -7,8 +7,6 @@ require_once(__ROOT__ . '/config.php');
 
 define('__SERVERURL__', $config['server']['url']);
 
-require_once('models.php');
-
 use RedBean_Facade as R;
 
 use PHPImageWorkshop\ImageWorkshop as ImageWorkshop;
@@ -92,6 +90,7 @@ function exportRoom (&$room) {
 function exportPerson (&$person) {
 	$result = $person->export();
 	$result['avatar'] = R::load('avatar', $person->avatar_id)->export();
+	unset($result['password']);
 	return $result;
 }
 
@@ -217,8 +216,12 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 
 		$keys = array_keys($person->export());
 		array_walk(get_object_vars($params), function ($v, $k) use (&$person, &$keys) {
-			if (in_array($k, $keys) && $k !== 'id' && $v !== null && $v !== '' && $v !== 'null' && $v !== 'undefined') { // PHP madness
+			//var_dump($k);
+			//var_dump($v);
+			if (in_array($k, $keys) && $k !== 'id' && $v !== null) { // Don't save anything we don't want to
+				//var_dump('Value found');
 				if ($k === 'password') {
+					//var_dump('IT GOT THIS FAR');
 					$v = sha1($v);
 				}
 				$person->$k = $v;

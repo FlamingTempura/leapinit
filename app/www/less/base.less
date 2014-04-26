@@ -171,6 +171,9 @@ body {
 	&.screen-login, &.screen-register{
 		padding: @screen-padding 30px;
 	}
+	&.screen-profile {
+		padding-top: @nav-height + @screen-padding + @header-height;
+	}
 }
 
 .app .screen {
@@ -847,4 +850,25 @@ pre {
 	margin-top: 7px;
 	font-size: 10px;
 	overflow: hidden;
+}
+
+
+.contact {
+	text-align: center;
+	margin-top: 20px;
+	>li {
+		display: inline-block;
+		width: 50px; height: 38px;
+		padding: 12px 10px;
+		background: white;
+		text-align: center;
+		margin: 2px;
+		font-size: 11px;
+		line-height: 20px;
+		i {
+			display: block;
+			font-size: 20px;
+			line-height: 26px;
+		}
+	}
 }

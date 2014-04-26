@@ -17,24 +17,51 @@
 			});
 		}
 
-		$scope.setEdit = function () {
-			$scope.edit = {
-				username: $scope.person.get('username'),
-				biography: $scope.person.get('biography')
-			};
+		$scope.toggleEdit = function (v) {
+			$scope.showEdit = v;
+			if (v) {
+				$scope.edit = {
+					username: $scope.person.get('username'),
+					biography: $scope.person.get('biography')
+				};
+			} else {
+				delete $scope.edit;
+			}
 		};
-		$scope.cancel = function () {
-			delete $scope.edit;
+		$scope.toggleContact = function (v) {
+			$scope.showContact = v;
 		};
 		$scope.save = function () {
 			$scope.person.save($scope.edit).then(function () {
-				delete $scope.edit;
+				$scope.toggleEdit(false);
 			}).fail(function (r) {
 				$scope.error = r.responseJSON.msg;
 				$scope.loading = false;
 			}).always(function () {
 				$scope.$apply();
 			});
+		};
+
+		$scope.contactIcon = {
+			bitbucket: 'fa-bitbucket',
+			email: 'fa-envelope',
+			facebook: 'fa-facebook',
+			flickr: 'fa-flickr',
+			foursquare: 'fa-foursquare',
+			github: 'fa-github',
+			googleplus: 'fa-google-plus',
+			instagram: 'fa-instagram',
+			linkedin: 'fa-linkedin',
+			phone: 'fa-phone',
+			pinterest: 'fa-pinterest',
+			skype: 'fa-skype',
+			renren: 'fa-renren',
+			tumblr: 'fa-tumblr',
+			twitter: 'fa-twitter',
+			vk: 'fa-vk',
+			weibo: 'fa-weibo',
+			xing: 'fa-xing',
+			youtube: 'fa-youtube'
 		};
 	});
 }(this.angular));

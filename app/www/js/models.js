@@ -97,6 +97,9 @@
 				initialize: function () {
 					this.parseAvatar();
 					this.on('change:avatar', this.parseAvatar, this);
+					this.on('change', this.parseContact, this);
+					this.parseAvatar();
+					this.parseContact();
 				},
 				parseAvatar: function () {
 					var avatar = _.clone(this.get('avatar'));
@@ -104,6 +107,16 @@
 						if (k !== 'bgcolor') { avatar[k] = Number(v); }
 					});
 					this.set('avatar', avatar);
+				},
+				parseContact: function () {
+					var that = this;
+					this.contact = {};
+					_.each(this.attributes, function (v, k) {
+						if (k.indexOf('cc') === 0 && v) {
+							that.contact[k.substr(2)] = v;
+						}
+					});
+					console.log('cc', this.contact)
 				}
 			}),
 			People = Collection.extend({
