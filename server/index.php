@@ -485,7 +485,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		error_log('checking type');
 
 		if ($post->type === 'text') {
-			$apikey = $config['apikeys']['alchemyapi'];
+			$apikey = $config['apis']['alchemyapi'];
 			$sentimenturl = 'http://access.alchemyapi.com/calls/text/TextGetTextSentiment?outputMode=json&apikey=' . $apikey . '&text=' . urlencode($post->text);
 			$keywordurl = 'http://access.alchemyapi.com/calls/text/TextGetRankedKeywords?outputMode=json&maxRetrieve=1&apikey='. $apikey . '&text=' . urlencode($post->text);
 

@@ -13,17 +13,17 @@
 			$scope.error = r.responseJSON.msg;
 		}).always(function () {
 			$rootScope.title = room.get('name') || 'New room';
-			$scope.$apply();
+			$rootScope.safeApply($scope);
 		});
 		room.posts.fetch().fail(function (r) {
 			$scope.error = r.responseJSON.msg;
 		}).always(function () {
 			$scope.posts = room.posts;
-			$scope.$apply();
+			$rootScope.safeApply($scope);
 		});
 		room.posts.on('add remove reset change', function () {
 			$rootScope.title = room.get('name') || 'New room';
-			$scope.$apply();
+			$rootScope.safeApply($scope);
 			$rootScope.safeApply();
 		});
 
@@ -36,7 +36,7 @@
 			}).always(function () {
 				$rootScope.title = room.get('name') || 'New room';
 				$scope.loading = false;
-				$scope.$apply();
+				$rootScope.safeApply($scope);
 			});
 		};
 
@@ -47,14 +47,14 @@
 				}).fail(function (r) {
 					$scope.error = r.responseJSON.msg;
 				}).always(function () {
-					$scope.$apply();
+					$rootScope.safeApply($scope);
 				});
 			}
 		};
 
 		var create = function (post) {
 			$scope.loading = true;
-			var model = new $scope.posts.prototype.model(post);
+			var model = new models.Posts.prototype.model(post);
 			room.posts.add(model);
 			model.save(undefined, {wait: true}).fail(function (response) {
 				$scope.error = response.responseJSON.msg;
@@ -63,7 +63,7 @@
 				console.log('SUCCESS');
 			}).always(function () {
 				$scope.loading = false;
-				$scope.$apply();
+				$rootScope.safeApply($scope);
 			});
 		};
 
@@ -75,7 +75,7 @@
 				}
 			},
 			media: function (type, url) {
-				$scope.posts.create({ type: type, text: 'testing', url: url });
+				create({ type: type, text: 'testing', url: url });
 			}
 		};
 	});

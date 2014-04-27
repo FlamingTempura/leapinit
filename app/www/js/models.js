@@ -282,7 +282,8 @@
 
 		return {
 			People: People,
-			Rooms: Rooms
+			Rooms: Rooms,
+			Posts: Posts
 		};
 	});
 }(this.angular, this.jQuery, this._, this.Backbone));
