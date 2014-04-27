@@ -24,18 +24,20 @@ echo "Connected!\n";
 
 echo "Nuking database.\n";
 
-R::nuke();
-
-$numberOfPeople = AMOUNT * 10;
-$numberOfFriendships = AMOUNT * 50;
-$numberOfBlocks = AMOUNT * 10;
-$numberOfResidences = AMOUNT * 50;
-$numberOfRooms = AMOUNT * 10;
-$numberOfPosts = AMOUNT * 100;
 
 echo "Loading bootstrap data...\n";
 $bootstrap = json_decode(file_get_contents(__ROOT__ . '/fake-data-generator/data/bootstrap.json'), true);
 $avatars = json_decode(file_get_contents(__ROOT__ . '/fake-data-generator/data/avatars.json'), true);
+
+R::nuke();
+
+$numberOfPeople = max(AMOUNT * 10, isset($bootstrap['person']) ? count($bootstrap['person']) : 0);
+$numberOfFriendships = max(AMOUNT * 50, isset($bootstrap['friendship']) ? count($bootstrap['friendship']) : 0);
+$numberOfBlocks = max(AMOUNT * 10, isset($bootstrap['block']) ? count($bootstrap['block']) : 0);
+$numberOfResidences = max(AMOUNT * 50, isset($bootstrap['residence']) ? count($bootstrap['residence']) : 0);
+$numberOfRooms = max(AMOUNT * 10, isset($bootstrap['room']) ? count($bootstrap['room']) : 0);
+$numberOfPosts = max(AMOUNT * 100, isset($bootstrap['post']) ? count($bootstrap['post']) : 0);
+
 
 
 $generatePerson = function ($i) use (&$f, &$bootstrapOverride, &$randomColor) {
@@ -136,6 +138,11 @@ $bootstrapOverride = function ($type, &$bean, $i) use (&$bootstrap) {
 	if (isset($bootstrap[$type]) && count($bootstrap[$type]) > $i) {
 		$data = $bootstrap[$type][$i];
 		array_walk($data, function ($v, $k) use (&$bean) {
+			if (strpos($k, '_id')) { // Load referenced beans
+				$k = substr($k, 0, strlen($k) - 3);
+				if ($k === 'person2') { $k = 'person'; } // Fix for bootstrapped friendships
+				$v = R::load($k, $v);
+			}
 			$bean->$k = $v;
 		});
 	}
