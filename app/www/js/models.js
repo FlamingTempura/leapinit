@@ -55,7 +55,7 @@
 	.factory('models', function ($rootScope) {
 		var server = window.config.server;
 
-		var blankcolor = '999999';
+		var blankcolor = 'f4f4f4';
 
 		var _sync = Backbone.sync;
 		Backbone.sync = function(method, model, options) {

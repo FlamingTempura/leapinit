@@ -139,7 +139,7 @@ function createPolygon ($size, $r, $g, $b, $line = false) {
 	// large version to be scaled down to antialiasing
 	$polygonLarge = imagecreatetruecolor($size * $m, $size * $m);
 	if ($line) {
-		imagesetthickness($polygonLarge, 16);
+		imagesetthickness($polygonLarge, 8);
 		imagepolygon($polygonLarge, $points, 6, imagecolorallocate($polygonLarge, $r, $g, $b));
 	} else {
 		imagefilledpolygon($polygonLarge, $points, 6, imagecolorallocate($polygonLarge, $r, $g, $b));
