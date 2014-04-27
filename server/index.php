@@ -400,11 +400,6 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		]);
 	});
 
-	/*$app->get('/room/:id', $requestJSON, $validateToken, function($id){
-		$user=R::load("person",intval($id));
-		echo json_encode($user->export());
-	});*/
-
 	$app->get('/room/', $requestJSON, $validateToken, function () use (&$app) {
 		$code = $app->request()->params('code');
 		// TODO limit number of rooms a person can create
@@ -430,9 +425,19 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		}
 	});
 
-	$app->get('/room/:id/', $requestJSON/*, $validateToken*/, function ($id) use (&$app) {
+	$app->get('/room/:id/', $requestJSON, $validateToken, function ($id) use (&$app) {
 		$room = R::load('room', intval($id));
 		// TODO check room exists + user is allowed to view room
+		$app->render(200, [
+			'result' =>  exportRoom($room)
+		]);
+	});
+
+	$app->put('/room/:id/', $requestJSON, $validateToken, function ($id) use (&$app, &$params) {
+		$room = R::load('room', intval($id));
+		// TODO check room exists + user is allowed to view room
+		$room->name = $params->name;
+		R::store($room);
 		$app->render(200, [
 			'result' =>  exportRoom($room)
 		]);

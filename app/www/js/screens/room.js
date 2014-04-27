@@ -12,21 +12,33 @@
 		room.fetch().fail(function (r) {
 			$scope.error = r.responseJSON.msg;
 		}).always(function () {
-			$rootScope.title = room.get('name');
+			$rootScope.title = room.get('name') || 'New room';
 			$scope.$apply();
 		});
 		room.posts.fetch().fail(function (r) {
 			$scope.error = r.responseJSON.msg;
 		}).always(function () {
-			console.log('got em')
 			$scope.posts = room.posts;
 			$scope.$apply();
 		});
 		room.posts.on('add remove reset change', function () {
+			$rootScope.title = room.get('name') || 'New room';
 			$scope.$apply();
+			$rootScope.safeApply();
 		});
 
-		$rootScope.title = room.get('name');
+		$rootScope.title = room.get('name') || 'New room';
+				
+
+		$scope.setName = function () {
+			room.save({ 'name': room.newName }, { wait: true }).fail(function (response) {
+				$scope.error = response.responseJSON.msg;
+			}).always(function () {
+				$rootScope.title = room.get('name') || 'New room';
+				$scope.loading = false;
+				$scope.$apply();
+			});
+		};
 
 		$scope.leave = function () {
 			if (window.confirm('Are you sure you wish to permanently leave the room?')) {
