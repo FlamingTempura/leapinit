@@ -1,7 +1,7 @@
 <div class="msg msg-error" ng-if="error">{{ error }}</div>
 
 
-<div ng-if="!room.attributes.name">
+<div ng-if="!room.fetching && !room.attributes.name">
 	<p><strong>You are the first resident in this room!</strong></p>
 	<p>What you want to name this room?</p>
 	<form ng-submit="setName()">
@@ -24,9 +24,9 @@
 		</ul>
 	</div>
 
-	<div ng-if="posts.length > 0" ng-show="!showResidents" ng-include="'templates/posts.html'" class="inline-container"></div>
+	<div ng-if="!posts.empty()" ng-show="!showResidents" ng-include="'templates/posts.html'" class="inline-container"></div>
 
-	<div ng-if="posts.length === 0" class="msg msg-info">
+	<div ng-if="posts.empty()" class="msg msg-info">
 		<p><strong>There are no posts in this room.</strong></p>
 		<p>Why not add something by tapping <i class="fa fa-plus"></i> above?</p>
 	</div>

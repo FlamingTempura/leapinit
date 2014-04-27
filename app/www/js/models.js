@@ -79,7 +79,14 @@
 					} else {
 						return response;
 					}
-				}
+				},
+				fetch: function (options) {
+					var that = this;
+					this.fetching = true;
+					return Backbone.Model.prototype.fetch.call(this, options).then(function () {
+						that.fetching = false;
+					});
+				},
 			}),
 			Collection = Backbone.Collection.extend({
 				initialize: function (models, options) {
@@ -92,9 +99,15 @@
 				},
 				fetch: function (options) {
 					var that = this;
+					this.fetching = true;
 					return Backbone.Collection.prototype.fetch.call(this, _.extend({ silent: true }, options)).then(function () {
 						that.trigger('reset');
+					}).always(function () {
+						that.fetching = false;
 					});
+				},
+				empty: function () {
+					return !this.fetching && this.models.length === 0;
 				}
 			});
 

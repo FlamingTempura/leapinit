@@ -1,4 +1,4 @@
-<ul ng-if="user.rooms.models.length > 0" class="rooms" fixscroll>
+<ul ng-if="!user.rooms.empty()" class="rooms" fixscroll>
 	<li class="room" ng-repeat="room in user.rooms.models">
 		<a href="#/room/{{ room.id }}" class="rect rect-wide">
 			<span class="name">{{ room.attributes.name }}</span>
@@ -9,7 +9,7 @@
 
 
 
-<li ng-if="user.rooms.models.length === 0" class="msg msg-info">
+<li ng-if="user.rooms.empty()" class="msg msg-info">
 	<p><strong>You are not in any rooms.</strong></p>
 	<p>Join rooms by scanning barcodes</p>
 </li>
