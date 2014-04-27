@@ -5,7 +5,7 @@
 		<a class="name" href="#/profile/{{ post.attributes.person.id }}">{{ post.attributes.person.username }}</a>
 		posted in
 		<a class="room" href="#/room/{{ post.attributes.room.id }}">{{ post.attributes.room.name }}</a>
-		<span class="date">13:00, 12-12-2014</span>
+		<span class="date">{{ post.created() }}</span>
 	</div>
 	<div class="text">
 		{{ post.attributes.text }}

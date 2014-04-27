@@ -1,4 +1,4 @@
-(function (angular, $, _, Backbone) {
+(function (angular, $, _, Backbone, moment) {
 	'use strict';
 	
 	angular.module('leapinit')
@@ -208,6 +208,9 @@
 				},
 				previewFull: function () {
 					return this.preview($('body > .app').width());
+				},
+				created: function () {
+					return moment(Number(this.get('created')) * 1000).fromNow();
 				}
 			}),
 			Posts = Collection.extend({
@@ -296,4 +299,4 @@
 			Posts: Posts
 		};
 	});
-}(this.angular, this.jQuery, this._, this.Backbone));
+}(this.angular, this.jQuery, this._, this.Backbone, this.moment));
