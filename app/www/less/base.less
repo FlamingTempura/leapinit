@@ -559,12 +559,18 @@ nav.nav-side {
 	border: 1px solid fade(#111, 10%);
 	padding: 10px;
 	color: #111;
-	font-weight: bold;
 	border-radius: 3px;
+	line-height: 1.5em;
 	&.msg-error {
 		background: fade(@red, 15%);
 		border-color: fade(@red, 18%);
 		color: @red;
+		font-weight: bold;
+	}
+	&.msg-info {
+		background: fade(@blue, 15%);
+		border-color: fade(@blue, 18%);
+		color: @blue;
 	}
 }
 
@@ -641,6 +647,7 @@ nav.nav-side {
 .screen-room {
 	.honeycomb { top: @nav-height + @header-height; }
 	.residents { margin-top: @header-height; }
+	.msg-info { margin-top: @header-height; }
 }
 
 .header {

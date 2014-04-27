@@ -1,10 +1,14 @@
 
 <ul class="posts" ng-if="noHoneycomb">
 	<li class="post" ng-repeat="post in posts.models" ng-include="'templates/post.html'"></li>
+	<li ng-if="user.feed.models.length === 0" class="msg msg-info">
+		<p><strong>There are no more posts to display in your feed.</strong></p>
+		<p>Join more rooms by scanning barcodes.</p>
+	</li>
 </ul>
 
-<div class="honeycomb" ng-if="!noHoneycomb" fixscroll>
-	<div 	ng-repeat="cell in posts.honeycomb.cells"
+<ul class="honeycomb" ng-if="!noHoneycomb" fixscroll>
+	<li 	ng-repeat="cell in posts.honeycomb.cells"
 			class="cell"
 			style="
 				left: {{ cell.x }}px; 
@@ -13,5 +17,5 @@
 				width: {{ posts.honeycomb.cellWidth }}px;
 				height: {{ posts.honeycomb.cellHeight }}px;"
 			ng-click="go('/room/' + cell.post.attributes.room_id + '/post/' + cell.post.id)">
-	</div>
-</div>
+	</li>
+</ul>

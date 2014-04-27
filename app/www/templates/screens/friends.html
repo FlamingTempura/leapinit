@@ -1,3 +1,8 @@
-<ul class="people" fixscroll>
+<ul ng-if="user.friends.length > 0" class="people" fixscroll>
 	<li class="person" ng-repeat="person in user.friends.models" ng-include="'templates/person.html'"></li>
 </ul>
+
+<div ng-if="user.friends.length === 0" class="msg msg-info">
+	<p><strong>You have no friends : (</strong></p>
+	<p>Make friends in rooms.</p>
+</div>

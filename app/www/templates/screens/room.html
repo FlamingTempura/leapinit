@@ -13,7 +13,12 @@
 	</ul>
 </div>
 
-<div ng-show="!showResidents" ng-include="'templates/posts.html'" class="inline-container"></div>
+<div ng-if="posts.length > 0" ng-show="!showResidents" ng-include="'templates/posts.html'" class="inline-container"></div>
+
+<div ng-if="posts.length === 0" class="msg msg-info">
+	<p><strong>There are no posts in this room.</strong></p>
+	<p>Why not add something by tapping <i class="fa fa-plus"></i> above?</p>
+</div>
 
 <div class="scroller">
 	<div class="header" ng-show="showResidents">
