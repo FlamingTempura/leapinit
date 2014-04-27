@@ -216,7 +216,6 @@
 					Collection.prototype.initialize.apply(this, arguments);
 					this.generateHoneycomb();
 					this.on('change add remove reset', this.generateHoneycomb, this);
-					this.on('all', function (e) { console.log(e); })
 					this.sort();
 				},
 				comparator: function (post) {

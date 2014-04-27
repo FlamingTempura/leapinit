@@ -390,7 +390,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 		$person = R::load('person', intval($id));
 		$posts = [];
 
-		array_map(function ($residence) use (&$posts) {
+		array_map(function (&$residence) use (&$posts) {
 			$ps = R::find('post', ' room_id = ? ', array($residence->room_id));
 			$posts = array_merge($posts, exportPosts($ps));
 		}, array_values($person->ownResidence));

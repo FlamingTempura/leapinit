@@ -117,6 +117,7 @@ $generatePost = function ($i) use (&$f, &$bootstrapOverride, &$randomPic) {
 	$post->room = R::findOne('room', ' ORDER BY RAND() LIMIT 1 ');
 	$post->type = $f->randomElement(['text', 'picture']);
 	$post->text = $f->sentence($f->randomNumber(5, 15));
+	$post->created = $f->unixTime();
 	$post->url = '/media/files/' . pathinfo($randomPic(), PATHINFO_BASENAME);
 	$bootstrapOverride('post', $post, $i);
 	R::store($post);
