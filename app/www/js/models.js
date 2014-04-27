@@ -89,6 +89,12 @@
  				},
 				parse: function (response) {
 					return response.result;
+				},
+				fetch: function (options) {
+					var that = this;
+					return Backbone.Collection.prototype.fetch.call(this, _.extend({ silent: true }, options)).then(function () {
+						that.trigger('reset');
+					});
 				}
 			});
 
@@ -210,6 +216,7 @@
 					Collection.prototype.initialize.apply(this, arguments);
 					this.generateHoneycomb();
 					this.on('change add remove reset', this.generateHoneycomb, this);
+					this.on('all', function (e) { console.log(e); })
 					this.sort();
 				},
 				comparator: function (post) {
@@ -227,10 +234,11 @@
 						c = 0.435 * cellWidth,
 						b = Math.sin(1.05) * c,
 
-						blankcell = 'url(' + server + 'api/blankcell?size=' + cellWidth + '&color=' + blankcolor +')',
+						blankcellurl = server + 'api/blankcell?size=' + cellWidth + '&color=' + blankcolor,
+						blankcell = 'url(' + blankcellurl + ')',
 
 						even, cell;
-
+					
 
 					while (posts.length > 0 || col >= 0) {
 						cell = {
@@ -242,19 +250,22 @@
 
 						even = (row % 2) === 0;
 
-						cell.x = (even ? 0.916 : 0) * c + col * 1.86 * c;
-						cell.y = row * 1.6 * c;
-
 						cell.visible = even ? 
 							(row > -1 && col > -1 && col < maxCols - 1) : 
 							(row > -1 && col > -1 && col < maxCols);
+						
 
+						cell.x = (even ? 0.916 : 0) * c + col * 1.86 * c;
+						cell.y = row * 1.6 * c;
+
+						
 						// If cell is on screen
 						if (cell.visible && posts.length > 0) {
 							cell.post = posts.shift();
 							cell.url = cell.post.preview(cellWidth, true);
 							cell.bg = 'url(' + cell.url + ')';
 						} else {
+							cell.url = blankcellurl;
 							cell.bg = blankcell;
 						}
 						

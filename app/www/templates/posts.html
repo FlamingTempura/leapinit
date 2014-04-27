@@ -13,9 +13,9 @@
 			style="
 				left: {{ cell.x }}px; 
 				top: {{ cell.y }}px; 
-				background-image: {{ cell.bg }};
 				width: {{ posts.honeycomb.cellWidth }}px;
 				height: {{ posts.honeycomb.cellHeight }}px;"
 			ng-click="go('/room/' + cell.post.attributes.room_id + '/post/' + cell.post.id)">
+				<img ng-src="{{ cell.url }}" lazyload>
 	</li>
 </ul>
