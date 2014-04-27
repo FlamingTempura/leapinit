@@ -201,24 +201,6 @@ function generateCell ($source, $size, $border = 0.1) {
 
 	imagecopy($image, $border, 0, 0, 0, 0, $size, $size);
 
-	
-	/*$maskl1 = imagecreatetruecolor($size * $m, $size * $m);
-	imagefilledpolygon($maskl1, $points, 6, imagecolorallocate($maskl1, 255, 0, 0));
-
-	$mask = imagecreatetruecolor($size, $size);
-	imagecopyresampled($mask, $maskl1, 0, 0, 0, 0, $size, $size, $size * $m, $size * $m);*/
-
-	
-	
-
-	// Create the image mask
-
-
-	// Iterate over the mask's pixels, only copy them when its red.
-	// Note that you could have semi-transparent colors by simply using the mask's 
-	// red channel as the original color's alpha.
-	
-
 	return $image;
 }
 
@@ -580,6 +562,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 				if (!isset($layer)) {
 					$app->response->setStatus(404);
 				} else {
+					$layer->cropMaximumInPixel(0, 0, 'MM');
 					$layer->resizeInPixel($size, $size);
 					$preview = $layer->getResult();
 					if ($cell) {
