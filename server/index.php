@@ -115,32 +115,44 @@ function randomColor () {
 	return $colors[array_rand($colors)];
 }
 
-function generateCell ($source, $size) {
+function createPolygon ($size, $r, $g, $b, $line = false) {
 	// http://stackoverflow.com/questions/8778864/cropping-an-image-into-hexagon-shape-in-a-web-page
-
-
 	$m = 8; // bigger = less jagged images
 
-	$c = 0.435 * ($size * $m * 1.11);
+	$padding = $line ? 0.01 : 0; // avoids edges disappearing off sides
+
+	$c = 0.435 * ($size * (1 - $padding * 2) * $m * 1.11);
 	$b = sin(1.05) * $c;
 	$a = $c / 2;
+	$p = $padding * $size * $m;
+
 
 	$points = [
-		$b, 0,
-		2 * $b, $a,
-		2 * $b, $a + $c,
-		$b, 2 * $c,
-		0, $a + $c,
-		0, $a
+		$p + $b, 		$p,
+		$p + 2 * $b,	$p + $a,
+		$p + 2 * $b,	$p + $a + $c,
+		$p + $b, 		$p + 2 * $c,
+		$p, 			$p + $a + $c,
+		$p, 			$p + $a
 	];
 
-	// Create the mask
-	$maskl = imagecreatetruecolor($size * $m, $size * $m);
-	imagefilledpolygon($maskl, $points, 6, imagecolorallocate($maskl, 255, 0, 0));
+	// large version to be scaled down to antialiasing
+	$polygonLarge = imagecreatetruecolor($size * $m, $size * $m);
+	if ($line) {
+		imagesetthickness($polygonLarge, 16);
+		imagepolygon($polygonLarge, $points, 6, imagecolorallocate($polygonLarge, $r, $g, $b));
+	} else {
+		imagefilledpolygon($polygonLarge, $points, 6, imagecolorallocate($polygonLarge, $r, $g, $b));
+	}
 
-	$mask = imagecreatetruecolor($size, $size);
-	imagecopyresampled($mask, $maskl, 0, 0, 0, 0, $size, $size, $size * $m, $size * $m);
+	// resize
+	$polygon = imagecreatetruecolor($size, $size);
+	imagecopyresampled($polygon, $polygonLarge, 0, 0, 0, 0, $size, $size, $size * $m, $size * $m);
 
+	return $polygon;
+}
+
+function maskImage ($size, $source, $mask, $c = 'red') {
 	// Create the new image with a transparent bg
 	$image = imagecreatetruecolor($size, $size);
 	$transparent = imagecolorallocatealpha($image, 0, 0, 0, 127);
@@ -148,20 +160,64 @@ function generateCell ($source, $size) {
 	imagesavealpha($image, true);
 	imagefill($image, 0, 0, $transparent);
 
-	// Iterate over the mask's pixels, only copy them when its red.
-	// Note that you could have semi-transparent colors by simply using the mask's 
-	// red channel as the original color's alpha.
+	// blend mask using red channel
 	for($x = 0; $x < $size; $x++) {
 		for ($y=0; $y < $size; $y++) { 
 			$m = imagecolorsforindex($mask, imagecolorat($mask, $x, $y));
-			if($m['red'] > 0) {
+			if ($m[$c] > 0) {
 				$color = imagecolorsforindex($source, imagecolorat($source, $x, $y));
+				$ka = 127 - ($m[$c] * 0.5);
+				$kr = $color['red'];
+				$kg = $color['green'];
+				$kb = $color['blue'];
 				imagesetpixel($image, $x, $y, imagecolorallocatealpha($image,
-						$color['red'], $color['green'], 
-						$color['blue'], 127 - ($m['red'] * 0.5)));
+						$kr, $kg, $kb, $ka));
 			}
 		}
 	}
+
+	return $image;
+}
+
+function generateCell ($source, $size, $border = 0.1) {
+	
+
+	// Create the hexagon image
+
+	$mask = createPolygon($size, 255, 0, 0);
+
+	$image = maskImage($size, $source, $mask, 'red');
+
+	// Create the border mask
+
+	$border = createPolygon($size, 255, 0, 0, true);
+
+	$bordercolor = imagecreatetruecolor($size, $size);
+	imagefill($bordercolor, 0, 0, imagecolorallocate($bordercolor, 52, 87, 129));
+
+	$border = maskImage($size, $bordercolor, $border, 'red');
+	
+	imagealphablending($image, true);
+
+	imagecopy($image, $border, 0, 0, 0, 0, $size, $size);
+
+	
+	/*$maskl1 = imagecreatetruecolor($size * $m, $size * $m);
+	imagefilledpolygon($maskl1, $points, 6, imagecolorallocate($maskl1, 255, 0, 0));
+
+	$mask = imagecreatetruecolor($size, $size);
+	imagecopyresampled($mask, $maskl1, 0, 0, 0, 0, $size, $size, $size * $m, $size * $m);*/
+
+	
+	
+
+	// Create the image mask
+
+
+	// Iterate over the mask's pixels, only copy them when its red.
+	// Note that you could have semi-transparent colors by simply using the mask's 
+	// red channel as the original color's alpha.
+	
 
 	return $image;
 }
