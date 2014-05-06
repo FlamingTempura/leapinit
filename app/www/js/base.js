@@ -45,7 +45,7 @@
 				});
 			});
 		})
-		.controller('App', function ($scope, $rootScope, $location, auth) {
+		.controller('App', function ($scope, $rootScope, $location, auth, $route) {
 
 			$rootScope.noHoneycomb = !window.config.honeycomb;
 			$rootScope.cordova = typeof cordova !== 'undefined';
@@ -53,7 +53,15 @@
 
 			$rootScope.auth = auth;
 
-			$rootScope.ready = auth.check();
+			$rootScope.check = function () {
+				$route.reload();
+				$rootScope.error = '';
+				$rootScope.ready = auth.check().fail(function () {
+					$rootScope.error = 'There is a problem reaching leapin.it. Try again later.';
+				});
+			};
+			$rootScope.check();
+
 
 			auth.on('login', function () {
 				$rootScope.user = auth.user;

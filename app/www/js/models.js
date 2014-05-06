@@ -21,12 +21,20 @@
 			token: localStorage.getItem('token'),
 
 			check: function () {
-				return ajax('api/auth/user', 'GET').then(function (response) {
+				var dfd = $.Deferred();
+				ajax('api/auth/user', 'GET').then(function (response) {
 					auth.user = models.People.prototype.makeUser(response.result.user, auth);
 					auth.trigger('login');
-				}).fail(function () {
-					localStorage.removeItem('token');
+					dfd.resolve(response);
+				}).fail(function (response) {
+					if (response.status >= 400 && response.status < 500) {
+						localStorage.removeItem('token');	
+						dfd.resolve(response);
+					} else {
+						dfd.reject(response);
+					}
 				});
+				return dfd;
 			},
 
 			login: function (o) {
