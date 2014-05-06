@@ -8,12 +8,17 @@
 
 		$scope.room = room;
 
+		var setRoomTitle = function () {
+			$rootScope.title = room.get('name') || room.fetching ? $rootScope.user.rooms.get(roomId).get('name') : 'New room'; // If loading, get cached name
+			$rootScope.safeApply($scope);
+			$rootScope.safeApply();
+		}
+
 		$scope.posts = room.posts;
 		room.fetch().fail(function (r) {
 			$scope.error = r.responseJSON.msg;
 		}).always(function () {
-			$rootScope.title = room.get('name') || 'New room';
-			$rootScope.safeApply($scope);
+			setRoomTitle();
 		});
 		room.posts.fetch().fail(function (r) {
 			$scope.error = r.responseJSON.msg;
@@ -22,21 +27,18 @@
 			$rootScope.safeApply($scope);
 		});
 		room.posts.on('add remove reset change', function () {
-			$rootScope.title = room.get('name') || 'New room';
-			$rootScope.safeApply($scope);
-			$rootScope.safeApply();
+			setRoomTitle();
 		});
 
-		$rootScope.title = room.get('name') || 'New room';
+		setRoomTitle();
 				
 
 		$scope.setName = function () {
 			room.save({ 'name': room.newName }, { wait: true }).fail(function (response) {
 				$scope.error = response.responseJSON.msg;
 			}).always(function () {
-				$rootScope.title = room.get('name') || 'New room';
 				$scope.loading = false;
-				$rootScope.safeApply($scope);
+				setRoomTitle();
 			});
 		};
 

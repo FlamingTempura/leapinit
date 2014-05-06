@@ -103,7 +103,6 @@
 				restrict: 'A',
 				link: function ($scope, element) {
 					element.addClass('fade ng-hide-add ng-hide-add-active').load(function () {
-						console.log('LO')
 						element.removeClass('ng-hide-add-active');
 					});
 				}

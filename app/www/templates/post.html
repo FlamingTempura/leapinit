@@ -1,3 +1,4 @@
+
 <div class="msg msg-error" ng-if="error">{{ error }}</div>
 <div class="above">
 	<div class="avatar avatar-small" avatar="post.attributes.person.avatar" avatar-size="30"></div>
@@ -11,7 +12,7 @@
 		{{ post.attributes.text }}
 	</div>
 </div>
-<div class="rect rect-overflow media media-picture" style="background-image:url({{ post.previewFull() }})"></div>
+<img class="rect rect-overflow media media-picture" ng-src="{{ post.previewFull() }}" loadfade>
 <div class="below">
 	<ul>
 		<li>Like</li><li>Comment</li>

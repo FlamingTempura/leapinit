@@ -1,5 +1,6 @@
-<div class="msg msg-error" ng-if="error">{{ error }}</div>
+<div ng-if="room.fetching && posts.length === 0" class="loading loading-light"></div>
 
+<div class="msg msg-error" ng-if="error">{{ error }}</div>
 
 <div ng-if="!room.fetching && !room.attributes.name">
 	<p><strong>You are the first resident in this room!</strong></p>
