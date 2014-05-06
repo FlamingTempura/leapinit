@@ -58,6 +58,7 @@
 				$rootScope.error = '';
 				$rootScope.ready = auth.check().fail(function () {
 					$rootScope.error = 'There is a problem reaching leapin.it. Try again later.';
+					$rootScope.safeApply();
 				});
 			};
 			$rootScope.check();

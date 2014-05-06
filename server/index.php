@@ -1,6 +1,6 @@
 <?php
 
-sleep(1);
+//sleep(1);
 
 define('__ROOT__', dirname(dirname(__FILE__))); 
 

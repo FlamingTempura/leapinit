@@ -27,6 +27,7 @@
 					auth.trigger('login');
 					dfd.resolve(response);
 				}).fail(function (response) {
+					console.log(response)
 					if (response.status >= 400 && response.status < 500) {
 						localStorage.removeItem('token');	
 						dfd.resolve(response);
