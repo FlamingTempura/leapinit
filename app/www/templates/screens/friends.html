@@ -1,3 +1,5 @@
+<div ng-if="user.friends.fetching && !user.friends.empty()" class="loading loading-light"></div>
+
 <ul ng-if="!user.friends.empty()" class="people" fixscroll>
 	<li class="person" ng-repeat="person in user.friends.models" ng-include="'templates/person.html'"></li>
 </ul>

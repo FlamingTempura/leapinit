@@ -1,3 +1,4 @@
+<div ng-if="user.feed.fetching && !user.feed.empty()" class="loading loading-light"></div>
 
 <div ng-if="!user.feed.empty()" ng-include="'templates/posts.html'" class="posts-container"></div>
 

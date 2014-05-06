@@ -8,8 +8,9 @@
 			$routeProvider.when('/', {
 				templateUrl: 'templates/screens/splash.html',
 				controller: function ($location, $rootScope) {
-					loadingScreens.then(function () {
+					$.when(loadingScreens, $rootScope.ready).then(function () {
 						$location.path($rootScope.user ? '/feed' : '/login');
+						$rootScope.safeApply();
 					});
 				}
 			});
@@ -52,7 +53,7 @@
 
 			$rootScope.auth = auth;
 
-			auth.check();
+			$rootScope.ready = auth.check();
 
 			auth.on('login', function () {
 				$rootScope.user = auth.user;

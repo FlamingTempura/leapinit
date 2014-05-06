@@ -346,18 +346,6 @@ body {
 }
 
 
-// Avatar
-
-.avatar {
-	/*display: inline-block;
-	svg {
-		border-radius: 8%;
-	}
-	&.avatar-small { width: 30px; height: 30px; }
-	&.avatar-medium { width: 70px; height: 70px; }
-	&.avatar-large { width: 150px; height: 150px; }*/
-}
-
 // Nav
 
 nav { box-sizing: border-box; }
@@ -732,6 +720,10 @@ nav.nav-side {
 	}
 }
 
+.screen > .loading {
+	min-height: 80px;
+}
+
 form {
 	position: relative;
 	background: @bg;
@@ -747,13 +739,14 @@ form {
 	top: 0;
 	left: 0;
 	max-width: 320px;
-	max-height: 480px;
+	min-height: 500px;
+	max-height: 520px;
 	right: 0;
 	bottom: 0;
 	overflow: hidden;
 	.screen {
 		max-width: 320px;
-		max-height: 480px;
+		max-height: 520px;
 	}
 }
 
