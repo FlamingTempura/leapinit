@@ -97,6 +97,17 @@
 					setTimeout(reset, 1000);
 				}
 			};
+		})
+		.directive('loadfade', function () {
+			return {
+				restrict: 'A',
+				link: function ($scope, element) {
+					element.addClass('fade ng-hide-add ng-hide-add-active').load(function () {
+						console.log('LO')
+						element.removeClass('ng-hide-add-active');
+					});
+				}
+			}
 		})/*
 		.directive('lazyload', function () {
 			// Fixes scrolling bug in Android WebView - overflow-x doesn't work when position is intialised as absolute.

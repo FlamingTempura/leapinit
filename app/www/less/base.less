@@ -571,7 +571,7 @@ nav.nav-side {
 .fade {
 	&.ng-hide-add, 
 	&.ng-hide-remove {
-		.transition(opacity 0.3s ease);
+		.transition(opacity 0.4s ease);
 		display: block !important;
 	}
 	&.ng-hide-add.ng-hide-add-active,
@@ -614,7 +614,12 @@ nav.nav-side {
 		position: absolute;
 		background-size: cover;
 		img {
+			position: absolute;
+			top: 0;
+			left: 0;
 			height: 100%;
+			&.blankcell { z-index: 0; }
+			&.realcell { z-index: 1; }
 		}
 		&.ng-move,
 		&.ng-enter, 

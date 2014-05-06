@@ -250,7 +250,6 @@
 						b = Math.sin(1.05) * c,
 
 						blankcellurl = server + 'api/blankcell?size=' + cellWidth + '&color=' + blankcolor,
-						blankcell = 'url(' + blankcellurl + ')',
 
 						even, cell;
 					
@@ -278,10 +277,8 @@
 						if (cell.visible && posts.length > 0) {
 							cell.post = posts.shift();
 							cell.url = cell.post.preview(cellWidth, true);
-							cell.bg = 'url(' + cell.url + ')';
 						} else {
 							cell.url = blankcellurl;
-							cell.bg = blankcell;
 						}
 						
 						col++;
@@ -300,7 +297,8 @@
 						cells: cells,
 						rowCount: row + 1,
 						cellWidth: 2 * b,
-						cellHeight: 0.87 * cellWidth
+						cellHeight: 0.87 * cellWidth,
+						blankcellurl: blankcellurl
 					};
 				}
 

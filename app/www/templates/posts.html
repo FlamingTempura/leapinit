@@ -16,6 +16,7 @@
 				width: {{ posts.honeycomb.cellWidth }}px;
 				height: {{ posts.honeycomb.cellHeight }}px;"
 			ng-click="go('/room/' + cell.post.attributes.room_id + '/post/' + cell.post.id)">
-				<img ng-src="{{ cell.url }}" lazyload>
+				<img ng-src="{{ posts.honeycomb.blankcellurl }}" class="blankcell" loadfade>
+				<img ng-src="{{ cell.url }}" ng-if="cell.post" class="realcell" loadfade>
 	</li>
 </ul>
