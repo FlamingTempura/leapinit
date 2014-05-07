@@ -77,6 +77,17 @@
 					create({ type: 'text', text: text });
 				}
 			},
+			picture: function () {
+				navigator.device.capture.captureImage(function (files) {
+					alert('got files', files);
+				}, function () {
+					$scope.error = 'Problem getting picture.';
+					$rootScope.safeApply($scope);
+				});
+			},
+			video: function () {
+				navigator.device.capture.captureVideo();
+			},
 			media: function (type, url) {
 				create({ type: type, text: 'testing', url: url });
 			}

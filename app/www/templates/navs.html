@@ -10,10 +10,18 @@
 			{{ title }}
 		</li>
 		<li class="adding" ng-show="add && adding">
-			<ul><li>
-					<i class="fa fa-camera"></i><input type="file" accept="image/*" capture>
-				</li><li>
+			<ul><li ng-if="!cordova">
+					<i class="fa fa-camera"></i><input type="file" accept="image/*" capture name="files[]" multiple fileupload>
+
+				</li><li ng-if="!cordova">
 					<i class="fa fa-video-camera"></i><input type="file" accept="video/*" capture="camcorder" name="files[]" multiple fileupload>
+
+				</li><li ng-if="cordova">
+					<a ng-click="add.picture()"><i class="fa fa-camera"></i></a>
+
+				</li><li ng-if="!cordova">
+					<a ng-click="add.video()"><i class="fa fa-video-camera"></i></a>
+
 				</li><li>
 					<a ng-click="add.text()"><i class="fa fa-font"></i></a>
 			</li></ul>
