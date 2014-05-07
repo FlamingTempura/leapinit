@@ -334,7 +334,7 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 	$app->delete('/person/:id/friend/:fid/', $requestJSON, $validateToken, function(&$id, &$fid){
 		$person = R::load('person', intval($id));
 		$person2 = R::load('person', $params->person2_id);
-		$friendship = R::findOne('friendship', ' person_id = ? AND person_id = ? ', array($id, $fid));
+		$friendship = R::findOne('friendship', ' person_id = ? AND person2_id = ? ', array($id, $fid));
 		if (!$friendship) {
 			$app->render(404, [
 				'Not friends with a person with this ID.'
