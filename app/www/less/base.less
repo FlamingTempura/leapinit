@@ -374,6 +374,9 @@ nav.nav-main {
 				display: block;
 				color: #ddd;
 				width: 100%; height: 100%;
+				&:active {
+					background: #000;
+				}
 			}
 			&.nav-scan { background: fade(@orange, 90%); }
 			&.nav-active { background: fade(#000000, 50%); }
@@ -495,7 +498,7 @@ nav.nav-top {
 
 nav.nav-side {
 	position: absolute;
-	top: @nav-height; bottom: 0; left: 0; right: 0;
+	top: @nav-height; bottom: 0; left: 0; right: -320px;
 	background-color: rgba(0, 0, 0, 0.3);
 	z-index: 70;
 	overflow-y: auto;
@@ -528,18 +531,20 @@ nav.nav-side {
 
 	&.ng-hide-add, 
 	&.ng-hide-remove {
-		.transition(left 0.4s ease, background-color 0.4s ease);
+		.transition(transform 0.4s ease, background-color 0.4s ease);
 		display: block !important;
 	}
 	&.ng-hide-add.ng-hide-add-active,
 	&.ng-hide-remove {
-		left: -320px;
+		//left: -320px;
+		.translate(-320px, 0);
 		background: rgba(0, 0, 0, 0.0);
 	}
 	 
 	&.ng-hide-add,
 	&.ng-hide-remove.ng-hide-remove-active {
-		left: 0;
+		//left: 0;
+		.translate(0, 0);
 		background: rgba(0, 0, 0, 0.3);
 	}
 }
@@ -914,4 +919,8 @@ pre {
 			line-height: 26px;
 		}
 	}
+}
+
+a:active {
+	opacity: 0.8;
 }
