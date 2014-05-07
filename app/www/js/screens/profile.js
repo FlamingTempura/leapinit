@@ -96,5 +96,7 @@
 			xing: 'fa-xing',
 			youtube: 'fa-youtube'
 		};
+
+		$scope.panel = { selected: 'profile' };
 	});
 }(this.angular));

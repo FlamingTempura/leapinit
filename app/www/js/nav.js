@@ -45,7 +45,7 @@
 					url: url,
 					dataType: 'json',
 					send: function () {
-						button.addClass('loading');
+						button.addClass('loading loading-light');
 					},
 					done: function (e, data) {
 						button.removeClass('loading');

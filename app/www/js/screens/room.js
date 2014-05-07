@@ -12,7 +12,7 @@
 			$rootScope.title = room.get('name') || room.fetching ? $rootScope.user.rooms.get(roomId).get('name') : 'New room'; // If loading, get cached name
 			$rootScope.safeApply($scope);
 			$rootScope.safeApply();
-		}
+		};
 
 		$scope.posts = room.posts;
 		room.fetch().fail(function (r) {
@@ -32,6 +32,7 @@
 
 		setRoomTitle();
 				
+		$scope.panel = { selected: 'posts' };
 
 		$scope.setName = function () {
 			room.save({ 'name': room.newName }, { wait: true }).fail(function (response) {
