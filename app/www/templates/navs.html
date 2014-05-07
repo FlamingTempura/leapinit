@@ -11,9 +11,9 @@
 		</li>
 		<li class="adding" ng-show="add && adding">
 			<ul><li>
-					<i class="fa fa-camera"></i><input type="file" name="files[]" multiple fileupload>
+					<i class="fa fa-camera"></i><input type="file" accept="image/*" capture>
 				</li><li>
-					<i class="fa fa-video-camera"></i><input type="file" name="files[]" multiple fileupload>
+					<i class="fa fa-video-camera"></i><input type="file" accept="video/*" capture="camcorder" name="files[]" multiple fileupload>
 				</li><li>
 					<a ng-click="add.text()"><i class="fa fa-font"></i></a>
 			</li></ul>
