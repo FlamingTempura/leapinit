@@ -116,6 +116,31 @@
 					});
 				}
 			}
+		})
+		.directive('marquee', function () {
+			return {
+				restrict: 'A',
+				link: function ($scope, element) {
+					/*var $text = element.addClass('marquee').find('.text'),
+						run = function () {
+							var w1 = element.outerWidth(),
+								w2 = element[0].scrollWidth;
+							if (w2 > w1) {
+								setTimeout(function () {
+									$text.animate({ left: -w2 + w1 - 20 }, 5000);
+									setTimeout(function () {
+										$text.animate({ left: 0 }, 5000);
+										run();
+									}, 2000)
+								}, 1000);
+							} else {
+								$text.css({ left: 0 });
+								setTimeout(run, 1000);
+							}
+						};
+					run();*/
+				}
+			}
 		})/*
 		.directive('lazyload', function () {
 			// Fixes scrolling bug in Android WebView - overflow-x doesn't work when position is intialised as absolute.

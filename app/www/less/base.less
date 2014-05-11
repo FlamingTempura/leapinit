@@ -428,6 +428,9 @@ nav.nav-top {
 		&.title {
 			font-size: 22px; 
 			text-indent: 10px;
+			max-width: 200px;
+			overflow: hidden;
+			white-space: nowrap;
 		}
 
 		&.title, &.back {
@@ -706,6 +709,8 @@ nav.nav-side {
 			&:last-child {
 				border-right-width: 0;
 			}
+			pre {
+			}
 			.fa-chevron-right {
 				position: absolute;
 				top: 20px; right: 21px;
@@ -923,4 +928,16 @@ pre {
 
 a:active {
 	opacity: 0.8;
+}
+
+.marquee {
+	position: relative;
+	.text {
+		position: relative;
+		//top: 0;
+		left: 0;
+		//overflow-x: -webkit-marquee;
+		//-webkit-marquee: auto large infinite slide slow;
+		//font-size:1.8em;
+	}
 }

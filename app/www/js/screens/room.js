@@ -70,6 +70,19 @@
 			});
 		};
 
+		var upload = function (file) {
+			var server = window.config.server + 'media/index.php',
+				ft = new FileTransfer();
+
+			ft.upload(file.fullPath, server, function (response) {
+				$rootScope.add.media('picture', response.results.files[0].url);
+			}, function (error) {
+				$scope.error = 'Problem uploading picture.';
+				$scope.error = JSON.stringify(error);
+				$rootScope.safeApply($scope);
+			}, { fileName: file.name, fileKey: 'files[]' });
+		}
+
 		$rootScope.add = {
 			text: function () {
 				var text = window.prompt('Enter you text below');
@@ -79,9 +92,17 @@
 			},
 			picture: function () {
 				navigator.device.capture.captureImage(function (files) {
-					alert('got files', files);
-				}, function () {
+					if (!files.length) {
+						alert('no files');
+					} else {
+						var file = files[0];
+						alert('got file', file.fullPath);
+						upload(file);
+					}
+
+				}, function (error) {
 					$scope.error = 'Problem getting picture.';
+					$scope.error = JSON.stringify(error);
 					$rootScope.safeApply($scope);
 				});
 			},
