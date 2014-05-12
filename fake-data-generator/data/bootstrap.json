@@ -1,7 +1,7 @@
 {
 	"person": [
-		{	"username": "test" },
-		{	"username": "wbryson" },
+		{	"username": "peter" },
+		{	"username": "text" },
 		{	"username": "disco.t" },
 		{	"username": "FabLisa" },
 		{	"username": "KimRemington" },
@@ -39,9 +39,17 @@
 		{	"person_id": 1, "room_id": 1 },
 		{	"person_id": 1, "room_id": 3 },
 		{	"person_id": 1, "room_id": 7 },
-		{	"person_id": 1, "room_id": 11 }
+		{	"person_id": 1, "room_id": 11 },
+		{	"person_id": 2, "room_id": 1 },
+		{	"person_id": 2, "room_id": 3 },
+		{	"person_id": 2, "room_id": 7 },
+		{	"person_id": 2, "room_id": 11 }
 	],
 	"friendship": [
+		{	"person_id": 1, "person2_id": 3 },
+		{	"person_id": 1, "person2_id": 4 },
+		{	"person_id": 1, "person2_id": 7 },
+		{	"person_id": 1, "person2_id": 16 },
 		{	"person_id": 1, "person2_id": 3 },
 		{	"person_id": 1, "person2_id": 4 },
 		{	"person_id": 1, "person2_id": 7 },
