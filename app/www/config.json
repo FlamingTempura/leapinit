@@ -1,4 +1,4 @@
 {
-	"server": "http://localhost/leapinit/",
+	"server": "http://leapin.it:8499/",
 	"honeycomb": true
 }
