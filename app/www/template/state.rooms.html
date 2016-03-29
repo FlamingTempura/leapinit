@@ -1,12 +1,13 @@
 <toolbar></toolbar>
 
-<div class="content content-nav-top content-nav-bottom">
+<div class="content">
 
 	<h3>Rooms</h3>
 
-	<a ng-repeat="room in rooms" href="#/room/{{ room.id }}" style="display: block; padding: 10px;">
-		<span class="name">{{ room.name }}</span>
-		<!-- <div ng-if="!noHoneycomb" ng-controller="rooms" ng-include="'templates/posts.html'"></div> -->
+	<a ng-repeat="room in rooms" href="#/room/{{ room.id }}" class="room"><!-- TODO: leave room -->
+		<div class="icon"><span class="fa fa-shopping-bag"></span></div>
+		<div class="name">{{ room.name }}</div>
+		<div ng-if="room.unseen > 0"><div class="label">{{ room.unseen }}</div></div>
 	</a>
 
 	<li ng-if="!rooms.length" class="msg msg-info">

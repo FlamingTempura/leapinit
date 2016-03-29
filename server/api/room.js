@@ -8,7 +8,7 @@ var _ = require('lodash'),
 
 // get all rooms that the user is a resident of
 router.get('', function (req, res) {
-	var q = 'SELECT * FROM room';
+	var q = 'SELECT *, (SELECT COUNT(*) FROM post WHERE room_id = room.id) AS unseen FROM room';
 	db.query(q).then(function (result) {
 		res.status(200).json(result.rows);
 	}).catch(function (err) {

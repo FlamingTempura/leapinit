@@ -1,13 +1,14 @@
-<nav-top title="'Room: ' + room.name">
-	<menu>
-		<a>Leave room</a>
-		<a>Residents: {{ room.residents.length }}</a>
-		<a>Manage room</a><!-- codes, delete, name -->
-		<!-- you got here from code ... -->
-	</menu>
-</nav-top>
+<toolbar title="room.name" class="toolbar-fade">
+	<a ui-sref="room-settings({ roomId: room.id })" class="icon"><span class="fa fa-cog"></span></a> <!-- admin only codes, delete, name -->
+</toolbar>
 
-<div class="content content-nav-top content-nav-bottom">
+<div class="header">
+	<input type="text" ng-model="newPost.message" placeholder="Write something...">
+	<a class="icon camera-icon"><span class="fa fa-camera"></span></a>
+	<button ng-click="createPost()">Post</button>
+</div>
+
+<div class="content content-header">
 	<div class="msg msg-error" ng-if="error">{{ error }}</div>
 
 	<!-- <div ng-if="!loading && !room.name">
@@ -21,18 +22,13 @@
 
 	<div ng-if="room.name">
 		
-		<div class="new-post-header">
-			<input type="text" ng-model="newPost.message" placeholder="Write something...">
-			<a><span class="fa fa-camera"></span></a>
-			<button ng-click="createPost()">Post</button>
-		</div>
 
 		<a>Residents: {{ room.residents }}</a><br>
 		<a>Codes: {{ room.codes }}</a>
 
 		<post ng-repeat="post in room.posts track by post.id" post="post"></post>
 
-		<div ng-if="!room.posts.length" class="msg msg-info">
+		<div ng-if="!room.posts.length">
 			<p><strong>There are no posts in this room.</strong></p>
 			<p>Why not add something by tapping <i class="fa fa-plus"></i> above?</p>
 		</div>

@@ -87,12 +87,8 @@ function exportRoom (&$room) {
 
 function exportPerson (&$person) {
 	$result = $person->export();
-	$result['avatar'] = R::load('avatar', $person->avatar_id)->export();
 	unset($result['password']);
 	$friendships = R::find('friendship', ' person_id = ? ', array($person->id));
-	$result['friends'] = array_map(function (&$friendship) {
-		return intval($friendship->person2_id);
-	}, array_values($friendships));
 	return $result;
 }
 
@@ -207,52 +203,9 @@ function generateCell ($source, $size, $border = 0.1) {
 // All URI's should begin /api (e.g. /api/user/102)
 $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateToken) {
 
-	$app->options('/:x+', function ($x) use (&$app) {
-		$app->response->setStatus(200);
-	});
-
-	// Log in
-	$app->post('/auth/', $requestJSON, function () use (&$app, &$params) {
-		$username = $params->username;
-		$password = sha1($params->password);
-		$user = R::findOne('person', ' LOWER(username) = ? AND password = ? ', array($username, $password));
-		if ($user !== null) {
-			$token = R::dispense('token');
-			$token->key = bin2hex(openssl_random_pseudo_bytes(32));
-			$token->person = $user;
-			// TODO: expires
-			R::store($token);
-			$app->render(201, [ 'result' => [ 
-				'id' => 'user',
-				'token' => $token->key,
-				'user' => exportPerson($user)
-			] ]);
-		} else {
-			$app->render(401, array(
-				'msg' => 'Username or password not found'
-			));
-		}
-	});
-
-	// Get user that is logged in
-	$app->get('/auth/user/', $requestJSON, $validateToken, function () use (&$app) {
-		$app->render(200, [ 'result' => [ 'id' => 'user', 'user' => exportPerson($app->user) ] ]);
-	});
-
-	$app->delete('/auth/user/', $requestJSON, $validateToken, function () use (&$app) {
-		$tokens = R::find('token', ' person_id = ? ', array($app->user->id));
-		R::trashAll($tokens);
-		$app->render(204, array());
-	});
-
-	$app->get('/person/:id/', $requestJSON, $validateToken, function ($id) use (&$app, &$params) {
-		$person = R::load('person', intval($id));
-		$app->render(200, ['result' => exportPerson($person)]);
-	});
 
 	$app->put('/person/:id/', $requestJSON, $validateToken, function ($id) use (&$app, &$params) {
 		$person = R::load('person', intval($id));
-		$avatar = R::load('avatar', $person->avatar_id);
 
 		$keys = array_keys($person->export());
 		array_walk(get_object_vars($params), function ($v, $k) use (&$person, &$keys) {
@@ -264,25 +217,12 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 			}
 		});
 
-		$keys = array_keys($avatar->export());
-		array_walk(get_object_vars($params->avatar), function ($v, $k) use (&$avatar, &$keys) {
-			if (in_array($k, $keys) && $k !== 'id') {
-				if ($k !== 'bgcolor') { $v = intval($v); }
-				$avatar->$k = $v;
-			}
-		});
-
-		R::store($avatar);
+		
 		R::store($person);
 		
 		$app->render(200, ['result' => exportPerson($person)]);
 	});
 
-	$app->delete('/person/:id/', $requestJSON, $validateToken, function ($id) use (&$app) {
-		$person = R::load('person', intval($id));
-		R::trash($person);
-		$app->render(204);
-	});
 
 	$app->post('/person/', $requestJSON, function () use (&$app, &$params) {
 		if (R::findOne('person', ' username = ? ', array($params->username))) {
@@ -294,9 +234,6 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 			$person->username = $params->username;
 			$person->password = sha1($params->password);
 
-			$avatar = R::dup(R::findOne('avatar', ' ORDER BY RAND() LIMIT 1 '));
-			$avatar->bgcolor = randomColor();
-			$person->avatar = $avatar;
 			$person->joined = time();
 
 			R::store($person);
@@ -306,52 +243,6 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 			]);
 		}
 	}); 
-
-	$app->get('/person/:id/friend/', $requestJSON, $validateToken, function ($id) use (&$app) {
-		$person = R::load('person', intval($id));
-		$friendships = R::find('friendship', ' person_id = ? ', array($person->id));
-		$app->render(200, [
-			'result' => array_map(function (&$friendship) {
-				return exportPerson(R::load('person', $friendship->person2_id));
-			}, array_values($friendships))
-		]);
-	});
-
-	$app->post('/person/:id/friend/', $requestJSON, $validateToken, function ($id) use (&$app, &$params) {
-		$person = R::load('person', intval($id));
-		$person2 = R::load('person', $params->person2_id);
-		$friendship = R::dispense('friendship');
-		$friendship->person = $person;
-		$friendship->person2 = $person2;
-		R::store($friendship);
-		$app->render(200, [
-			'result' => exportPerson($person2)
-		]);
-	});
-
-	$app->delete('/person/:id/friend/:fid/', $requestJSON, $validateToken, function(&$id, &$fid){
-		$person = R::load('person', intval($id));
-		$person2 = R::load('person', $params->person2_id);
-		$friendship = R::findOne('friendship', ' person_id = ? AND person_id = ? ', array($id, $fid));
-		if (!$friendship) {
-			$app->render(404, [
-				'Not friends with a person with this ID.'
-			]);
-		} else {
-			R::trash($friendship);
-			$app->render(204);
-		}
-	});
-
-
-	$app->get('/person/:id/block/', $requestJSON, $validateToken, function ($id) use (&$app) {
-		$person = R::load('person', intval($id));
-		$app->render(200, [
-			'result' => array_map(function ($friend) {
-				return R::load('person', $friend->id)->export();
-			}, array_values($person->ownBlock))
-		]);
-	});
 
 	$app->get('/person/:id/room/', $requestJSON, $validateToken, function ($id) use (&$app) {
 		$person = R::load('person', intval($id));
@@ -426,21 +317,11 @@ $app->group('/api', function () use (&$app, &$params, &$requestJSON, &$validateT
 	});
 
 	$app->get('/room/:id/', $requestJSON, $validateToken, function ($id) use (&$app) {
-		$room = R::load('room', intval($id));
-		// TODO check room exists + user is allowed to view room
-		$app->render(200, [
-			'result' =>  exportRoom($room)
-		]);
+		
 	});
 
 	$app->put('/room/:id/', $requestJSON, $validateToken, function ($id) use (&$app, &$params) {
-		$room = R::load('room', intval($id));
-		// TODO check room exists + user is allowed to view room
-		$room->name = $params->name;
-		R::store($room);
-		$app->render(200, [
-			'result' =>  exportRoom($room)
-		]);
+		
 	});
 
 	$app->get('/room/:id/post/', $requestJSON, $validateToken, function ($id) use (&$app) {

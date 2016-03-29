@@ -1,61 +1,10 @@
-<div class="post">
-<!-- <a href="#/profile/{{ person.id }}">
-	<div class="avatar avatar-small" avatar="person.attributes.avatar" avatar-size="30"></div>
-	<span class="name">{{ person.attributes.username }}</span>
-</a> -->
-	<!-- <div>{{ post.thumbnail }}</div> -->
-	<div>{{ post.message }}</div>
-	<div>{{ post.userId }}</div>
-	<div>{{ post.created | date }}</div>
-	<!-- 
-	<div class="msg msg-error" ng-if="error">{{ error }}</div>
-	<div class="above">
-		<div class="avatar avatar-small" avatar="post.attributes.person.avatar" avatar-size="30"></div>
-		<div class="meta">
-			<a class="name" href="#/profile/{{ post.attributes.person.id }}">{{ post.attributes.person.username }}</a>
-			posted in
-			<a class="room" href="#/room/{{ post.attributes.room.id }}">{{ post.attributes.room.name }}</a>
-			<span class="date">{{ post.created() }}</span>
-		</div>
-		<div class="text">
-			{{ post.attributes.text }}
-		</div>
-	</div>
-	<div class="rect rect-overflow media media-picture" style="background-image:url({{ post.previewFull() }})"></div>
-	<div class="below">
-		<ul>
-			<li>Like</li><li>Comment</li>
-		</ul>
-	</div> -->
-	<!-- <div class="msg msg-error" ng-if="error">{{ error }}</div>
-<div class="above">
-	<div class="avatar avatar-small" avatar="post.attributes.person.avatar" avatar-size="30"></div>
-	<div class="meta">
-		<a class="name" href="#/profile/{{ post.attributes.person.id }}">{{ post.attributes.person.username }}</a>
-		posted in
-		<a class="room" href="#/room/{{ post.attributes.room.id }}">{{ post.attributes.room.name }}</a>
-		<span class="date">{{ post.created() }}</span>
-	</div>
-	<div class="text">
-		{{ post.attributes.text }}
-	</div>
-</div>
-<div class="rect rect-overflow media media-picture" style="background-image:url({{ post.previewFull() }})"></div>
-<div class="below">
-	<ul>
-		<li>Like</li><li>Comment</li>
-	</ul>
-</div> -->
-<!-- <ul class="honeycomb" ng-if="!noHoneycomb" fixscroll>
-	<li 	ng-repeat="cell in posts.honeycomb.cells"
-			class="cell"
-			style="
-				left: {{ cell.x }}px; 
-				top: {{ cell.y }}px; 
-				width: {{ posts.honeycomb.cellWidth }}px;
-				height: {{ posts.honeycomb.cellHeight }}px;"
-			ng-click="go('/room/' + cell.post.attributes.room_id + '/post/' + cell.post.id)">
-				<img ng-src="{{ cell.url }}" lazyload>
-	</li>
-</ul> -->
-</div>
+<a ui-sref="post({ postId: post.id })" class="card post">
+	<div class="pic" ng-if="post.picture" style="background-image: url({{ post.picture }});"></div>
+	<div class="user" ng-if="post.username">{{ post.username }}</div>
+	<div class="location" ng-if="post.location">{{ post.location }}</div>
+	<div class="message">{{ post.message }}</div>
+	<div class="created">{{ post.created | date }}</div>
+	<div class="reply">{{ replies.length }} replies</div>
+	<div class="room"><a ui-sref="room({ roomId: post.room.id })">in {{ post.room.name }}</a></div>
+	<div>{{ score }}</div>
+</a>

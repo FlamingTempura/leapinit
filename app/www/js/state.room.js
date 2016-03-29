@@ -6,7 +6,7 @@ angular.module('leapinit').config(function ($stateProvider) {
 	$stateProvider.state('room', {
 		url: '/room/:roomId',
 		templateUrl: 'template/state.room.html',
-		controller: function ($scope, $stateParams, remote) {
+		controller: function ($scope, $stateParams, remote, geo) {
 			$scope.laoding = true;
 			remote.get('/room/' + $stateParams.roomId).then(function (room) {
 				$scope.room = room;
@@ -15,6 +15,8 @@ angular.module('leapinit').config(function ($stateProvider) {
 			}).finally(function () {
 				delete $scope.loading;
 			});
+
+
 
 			$scope.newPost = {};
 			$scope.createPost = function () {

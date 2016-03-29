@@ -82,15 +82,14 @@ angular.module('leapinit').config(function ($stateProvider) {
 				'#0CBC0C', '#098D8D', '#1A3E9E', '#3E1BA1'];
 
 			$scope.segment = 'background';
-			$scope.avatar = _.clone($scope.person.attributes.avatar);
 			$scope.save = function () {
 				$scope.loading = true;
 				$scope.person.save({
-					avatar: $scope.avatar
+					
 				}).then(function () {
 					$rootScope.goBack();
-				}).fail(function (r) {
-					$scope.error = r.responseJSON.msg;
+				}).fail(function (err) {
+					$scope.error = err;
 					$scope.loading = false;
 				}).always(function () {
 					$scope.$apply();

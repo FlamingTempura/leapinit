@@ -10,16 +10,15 @@ angular.module('leapinit', ['ui.router'])
 			restrict: 'E',
 			templateUrl: 'template/partial.toolbar.html',
 			replace: true,
-			scope: { title: '=' },
-			link: function ($scope) {
-				console.log('ting', $scope)
-			}
+			transclude: true,
+			scope: { title: '=' }
 		};
 	})
 	.directive('post', function () {
 		return {
-			restrict: 'A',
-			templateUrl: 'template/post.html',
+			restrict: 'E',
+			replace: true,
+			templateUrl: 'template/partial.post.html',
 			scope: { post: '=' }
 		};
 	})
@@ -70,6 +69,23 @@ angular.module('leapinit', ['ui.router'])
 						.html(title);
 				$slider.append($plus, $title, $minus);
 				$input.hide().after($slider);
+			}
+		};
+	})
+	.factor('geo', function () {
+		return {
+			getCurrentPosition: function () {
+				return new Promise(function (resolve, reject) {
+					navigator.geolocation.getCurrentPosition(function (position) {
+						resolve(position.coords);
+					}, function (err) {
+						reject(err);
+					}, {
+						enableHighAccuracy: true,
+						timeout: 10000,
+						maximumAge: 60000
+					});
+				});
 			}
 		};
 	})

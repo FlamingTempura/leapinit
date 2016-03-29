@@ -8,19 +8,6 @@ var _ = require('lodash'),
 
 // feed from subscribed rooms
 router.get('/', function (req, res) {
-
-	$person = R::load('person', intval($id));
-	$posts = [];
-
-	array_map(function (&$residence) use (&$posts) {
-		$ps = R::find('post', ' room_id = ? ', array($residence->room_id));
-		$posts = array_merge($posts, exportPosts($ps));
-	}, array_values($person->ownResidence));
-
-	$app->render(200, [
-	'result' =>  $posts
-	]);
-
 	validate({
 		userId: { value: req.body.userId, type: 'number' }, // todo: token
 		roomId: { value: req.body.roomId, type: 'number' },

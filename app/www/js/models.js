@@ -2,38 +2,6 @@
 
 		
 
-
-		var Person = Model.extend({
-				initialize: function () {
-					this.parseAvatar();
-					this.on('change:avatar', this.parseAvatar, this);
-					this.on('change', this.parseContact, this);
-					this.parseAvatar();
-					this.parseContact();
-				},
-				parseAvatar: function () {
-					var avatar = _.clone(this.get('avatar'));
-					_.each(avatar, function (v, k) {
-						if (k !== 'bgcolor') { avatar[k] = Number(v); }
-					});
-					this.set('avatar', avatar);
-				}
-			}),
-			People = Collection.extend({
-				model: Person,
-				url: server + 'api/person',
-				makeUser: function (user, auth) {
-					var users = new People(user);
-					user = users.at(0);
-					user.auth = auth;
-					user.rooms = new Rooms(undefined, { url: user.url() + '/room' });
-					user.friends = new People(undefined, { url: user.url() + '/friend' });
-					user.blocks = new People(undefined, { url: user.url() + '/block' });
-					user.feed = new Posts(undefined, { url: user.url() + '/feed' });
-					return user;
-				}
-			});
-
 		var Post = Model.extend({
 				url: function () {
 					var url = _.result(this.collection, 'url');
