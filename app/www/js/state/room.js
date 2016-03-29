@@ -6,18 +6,33 @@ angular.module('leapinit').config(function ($stateProvider) {
 	$stateProvider.state('room', {
 		url: '/room/:roomId',
 		templateUrl: 'template/state/room.html',
-		controller: function ($scope, remote) {
-			
-			server.get('/room/' + $stateParams.roomId).then(function (room) {
+		controller: function ($scope, $stateParams, remote) {
+			$scope.laoding = true;
+			remote.get('/room/' + $stateParams.roomId).then(function (room) {
 				$scope.room = room;
-
 			}).catch(function (err) {
-				$scope.error = r.responseJSON.msg;
+				$scope.error = err;
+			}).finally(function () {
+				delete $scope.loading;
 			});
 
-			$scope.room = room;
+			$scope.newPost = {};
+			$scope.createPost = function () {
+				delete $scope.newPost.error;
+				$scope.newPost.loading = true;
+				remote.post('/post', {
+					roomId: Number($stateParams.roomId),
+					userId: 3,
+					message: $scope.newPost.message
+				}).then(function () {
 
-			$scope.posts = room.posts;
+				}).catch(function (err) {
+					$scope.newPost.error = err;
+				}).finally(function () {
+					delete $scope.newPost.loading;
+				});
+			};
+
 /*
 			room.fetch().catch(function (r) {
 				

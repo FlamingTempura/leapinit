@@ -1,40 +1,24 @@
-/* global angular */
+/* global angular, _ */
 'use strict';
 
-angular.module('leapinit').factory('remote', function () {
+angular.module('leapinit').factory('remote', function ($http) {
 	var token = localStorage.getItem('token');
 	if (token) { console.log('user is authed with token', token); }
+	var request = function (options) {
+		// TODO: if 401, deauth
+		options = _.clone(options);
+		options.url = 'http://127.0.0.1:9122' + options.url;
+		return $http(options).then(function (result) {
+			return result.data;
+		});
+	};
 	return {
-		request: function (options) {
-			// TODO: if 401, deauth
-		},
+		request: request,
 		get: function (url, params) {
-			return new Promise(function (resolve) {
-				if (url === '/feed') {
-					resolve([
-						/*{ thumbnail: 'hello' },
-						{ thumbnail: 'moo' },
-						{ thumbnail: 'blah' },
-						{ thumbnail: 'eee' },
-						{ thumbnail: 'ting' }*/
-					]);
-				} else if (url === '/room') {
-					resolve({ id: 'room1' });
-				}
-			});
+			return request({ method: 'GET', url: url, data: params });
 		},
 		post: function (url, data) {
-			console.log('POST', url)
-			return new Promise(function (resolve, reject) {
-				if (url === '/auth/signup') {
-					resolve('token1');
-				} else if (url === '/auth/signin') {
-					console.log('plox')
-					resolve('token1');
-				} else {
-					reject('404 not found');
-				}
-			});
+			return request({ method: 'POST', url: url, data: data });
 		},
 		auth: function (newToken) {
 			if (newToken) {

@@ -7,6 +7,7 @@ module.exports = Bluebird.method(function (schema) {
 	var result = {},
 		allErrors = [];
 	_.each(schema, function (constraints, field) {
+		console.log('CHECKING SCEME', constraints)
 		var value = constraints.value,
 			errors = _.chain(constraints).omit('value').map(function (value, name) {
 				return { value: value, name: name };

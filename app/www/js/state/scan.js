@@ -6,46 +6,34 @@ angular.module('leapinit').config(function ($stateProvider) {
 		url: '/scan',
 		templateUrl: 'template/state/scan.html',
 		controller: function ($scope, $state, remote) {
-			
-			var error = function () {
-				$scope.error = 'Scanning failed';
-				$scope.$apply();
-			};
 
 			if (typeof window.cordova !== 'undefined') {
 				window.cordova.plugins.barcodeScanner.scan(function (result) {
 					if (!result) {
 						window.history.go(-1);
 					} else {
-						$scope.error = 'Loading...';
-						$scope.$apply();
-						scan(result.text);
+						$scope.scan(result.text);
 					}
-				}, error);
+				}, function (err) {
+					console.error(err);
+					$scope.error = 'Scanning failed';
+				});
 			} else {
 				$scope.showForm = true;
-
-				$scope.submit = function () {
-					$scope.error = false;
-					if (!$scope.code) {
-						$scope.error = 'Please enter a code.';
-					} else {
-						scan($scope.code);
-					}
-				};
 			}
 
-			var scan = function (code) {
+			$scope.scan = function (code) {
 				delete $scope.error;
 				$scope.loading = true;
-				remote.get('/room', { code: code }).then(function (room) {
-					$state.go('room', { roomId: room.id });
+				remote.post('/room/from_code', { code: code }).then(function (result) {
+					$state.go('room', { roomId: result.roomId });
 				}).catch(function (err) {
 					$scope.error = err;
 				}).finally(function () {
 					delete $scope.loading;
 				});
 			};
+
 		}
 	});
 });

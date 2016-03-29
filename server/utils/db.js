@@ -29,8 +29,8 @@ _.extend(Client.prototype, {
 			promise = new Bluebird(function (resolve, reject, onCancel) {
 				that._client.queryAsync(query, values).catch(function (err) {
 					err.query = query;
-					log.error(query, 'FAILED!!');
-					log.error(err);
+					log.error(query);
+					//log.error(err);
 					throw err;
 				}).then(resolve).catch(reject);
 				onCancel(function () {

@@ -2,6 +2,7 @@ CREATE TABLE "resident"
   ("id"            SERIAL PRIMARY KEY NOT NULL,
    "user_id"       INT REFERENCES "user"("id") NOT NULL,
    "room_id"       INT REFERENCES "room"("id") NOT NULL,
+   "code_id"       INT REFERENCES "code"("id") NOT NULL,
    "is_admin"      BOOLEAN NOT NULL,
    "created"       TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL);
 

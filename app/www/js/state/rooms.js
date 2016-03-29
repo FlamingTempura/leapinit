@@ -7,12 +7,11 @@ angular.module('leapinit').config(function ($stateProvider) {
 		url: '/room',
 		templateUrl: 'template/state/rooms.html',
 		controller: function ($scope, remote) {
-			$rootScope.user.rooms.fetch().fail(function () {
-				$scope.error = { message: 'Failed to load room list.' };
-			}).always(function () {
-				$scope.$apply();
+			remote.get('/room').then(function (rooms) {
+				$scope.rooms = rooms;
+			}).catch(function (err) {
+				$scope.error = err; // 'Failed to load room list.'
 			});
-			$scope.posts = $scope.room.preview;
 		}
 	});
 });

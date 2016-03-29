@@ -23,7 +23,7 @@ router.post('/register', function (req, res) {
 		email: { value: req.body.email, type: 'string', max: 1000, email: true },
 		password: { value: req.body.password, type: 'string', min: 6, max: 1000 }
 	}).then(function (params) {
-		log.info('creating new user...', req.params);
+		log.info('creating new user...', params);
 		var q = 'INSERT INTO "user" (email_hash, email_ciphertext, password_hash) ' +
 				'  VALUES (digest($1, \'md5\'), pgp_sym_encrypt($1, $3, $4), crypt($2, gen_salt(\'md5\'))) ' +
 				'RETURNING id';
@@ -33,8 +33,8 @@ router.post('/register', function (req, res) {
 			log.info('[user ' + userId + '] created user');
 			mailer.send('welcome', req.params.email);
 		});
-	}).then(function (result) {
-		return issueToken(result.rows[0].id);
+	}).then(function (userId) {
+		return issueToken(userId);
 	}).then(function (token) {
 		res.status(200).json({ token: token });
 	}).catch(function (err) {

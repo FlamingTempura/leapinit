@@ -5,4 +5,4 @@ CREATE TABLE "code"
    "created"   TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL);
 
 CREATE INDEX "code_index"
-  ON "user"("code");
+  ON "code"("code");
