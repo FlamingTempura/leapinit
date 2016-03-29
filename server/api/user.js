@@ -34,7 +34,7 @@ var getUserFromAuthHeader = function (authHeader) {
 // generate a guest account
 router.post('/', function (req, res) {
 	log.info('creating new guest account...');
-	return db.query('INSERT INTO "user" RETURNING id').then(function (result) {
+	return db.query('INSERT INTO "user" DEFAULT VALUES RETURNING id').then(function (result) {
 		log.info('[user ' + result.rows[0].id + '] created user');
 		return issueToken(result.rows[0].id);
 	}).then(function (token) {
@@ -123,5 +123,7 @@ router.get('/me', function (req, res) {
 		}
 	});
 });
+
+router.getUserFromAuthHeader = getUserFromAuthHeader;
 
 module.exports = router;

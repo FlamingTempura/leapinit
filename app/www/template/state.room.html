@@ -23,8 +23,8 @@
 	<div ng-if="room.name">
 		
 
-		<a>Residents: {{ room.residents }}</a><br>
-		<a>Codes: {{ room.codes }}</a>
+		<!-- <a>Residents: {{ room.residents }}</a><br>
+		<a>Codes: {{ room.codes }}</a> -->
 
 		<post ng-repeat="post in room.posts track by post.id" post="post"></post>
 

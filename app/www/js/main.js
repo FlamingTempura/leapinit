@@ -1,4 +1,4 @@
-/* global angular */
+/* global angular, moment */
 
 'use strict';
 angular.module('leapinit', ['ui.router'])
@@ -19,7 +19,15 @@ angular.module('leapinit', ['ui.router'])
 			restrict: 'E',
 			replace: true,
 			templateUrl: 'template/partial.post.html',
-			scope: { post: '=' }
+			scope: { post: '=' },
+			link: function ($scope) {
+				_.extend($scope.post, {
+					picture: '/img/test.jpg',
+					location: 'London, UK',
+					replies: 1,
+					room: { name: 'Batman', id: 1 }
+				})
+			}
 		};
 	})
 	.directive('fileupload', function ($rootScope) {
@@ -72,21 +80,33 @@ angular.module('leapinit', ['ui.router'])
 			}
 		};
 	})
-	.factor('geo', function () {
-		return {
-			getCurrentPosition: function () {
-				return new Promise(function (resolve, reject) {
-					navigator.geolocation.getCurrentPosition(function (position) {
-						resolve(position.coords);
-					}, function (err) {
-						reject(err);
-					}, {
-						enableHighAccuracy: true,
-						timeout: 10000,
-						maximumAge: 60000
-					});
+	.factory('geo', function () {
+		var geo = {
+			watch: function () {
+				navigator.geolocation.watchPosition(function (position) {
+					geo.latitude = position.coords.latitude;
+					geo.longitude = position.coords.longitude;
+				}, function () {
+					delete geo.coords;
+				}, {
+					enableHighAccuracy: true,
+					timeout: 10000,
+					maximumAge: 60000
 				});
 			}
+		};
+		return geo;
+	})
+	.run(function (geo, remote, $rootScope) {
+		Promise.setScheduler(function (cb) {
+			$rootScope.$evalAsync(cb);
+		});
+		geo.watch();
+		remote.auth();
+	})
+	.filter('fromNow', function () {
+		return function (value) {
+			return moment(value).fromNow();
 		};
 	})
 	.controller('App', function () {

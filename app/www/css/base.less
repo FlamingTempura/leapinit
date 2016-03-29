@@ -99,10 +99,10 @@ h3 {
 
 .header {
 	background: url('/img/test.jpg');
-	background-size: 100% 100%;
+	background-size: cover;
 	position: absolute;
 	top: 0; left: 0; right: 0;
-	padding-top: @nav-height * 3;
+	padding-top: @nav-height * 3.5;
 	z-index: 30;
 	box-shadow: @shadow1;
 	//background: @leapWhite;
@@ -111,17 +111,17 @@ h3 {
 		height: @nav-height;
 		padding: @padding;
 		border: 0;
-		color: @leapWhite;
-		background: linear-gradient(transparent, rgba(0, 0, 0, 0.6));
+		color: @leapBlack;
+		background: @leapWhite;
 	}
 	.camera-icon {
 		position: absolute;
 		bottom: 0;
 		right: 0;
-		color: @leapWhite;
+		color: #ddd;
 	}
 	button {
-		display: none;
+		//display: none;
 	}
 }
 
@@ -134,7 +134,7 @@ h3 {
 	padding-top: @nav-height + @padding;
 	overflow-y: auto;
 	&.content-header {
-		padding-top: @nav-height * 4 + @padding;
+		padding-top: @nav-height * 4.5 + @padding;
 	}
 }
 
@@ -188,10 +188,11 @@ button {
 
 
 .card {
+	display: block;
 	margin-bottom: @padding;
 	background: @leapWhite;
 	box-shadow: @shadow1;
-	padding: 10px;
+	padding: @padding;
 	color: #111;
 	line-height: 1.4em;
 	&.msg-error h2, &.msg-error h3 { color: @red; }
@@ -263,6 +264,29 @@ textarea {
 		margin-left: 14px;
 	}
 	.label {
+	}
+}
+
+.post {
+	.pic {
+		height: 100px;
+		margin: -@padding -@padding @padding -@padding;
+		background-size: cover;
+	}
+	.location {
+		color: @leapColor2;
+		font-size: 14px;
+		margin-bottom: 4px;
+		.fa { margin-right: 4px; }
+	}
+	.below {
+		font-size: 14px;
+		margin-top: 4px;
+		display: flex;
+		flex-direction: row;
+		.created {
+			color: #999;
+		}
 	}
 }
 

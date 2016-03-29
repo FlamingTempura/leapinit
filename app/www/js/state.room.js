@@ -7,7 +7,7 @@ angular.module('leapinit').config(function ($stateProvider) {
 		url: '/room/:roomId',
 		templateUrl: 'template/state.room.html',
 		controller: function ($scope, $stateParams, remote, geo) {
-			$scope.laoding = true;
+			$scope.loading = true;
 			remote.get('/room/' + $stateParams.roomId).then(function (room) {
 				$scope.room = room;
 			}).catch(function (err) {
@@ -16,16 +16,15 @@ angular.module('leapinit').config(function ($stateProvider) {
 				delete $scope.loading;
 			});
 
-
-
 			$scope.newPost = {};
 			$scope.createPost = function () {
 				delete $scope.newPost.error;
 				$scope.newPost.loading = true;
 				remote.post('/post', {
 					roomId: Number($stateParams.roomId),
-					userId: 3,
-					message: $scope.newPost.message
+					message: $scope.newPost.message,
+					latitude: geo.latitude,
+					longitude: geo.longitude
 				}).then(function () {
 
 				}).catch(function (err) {

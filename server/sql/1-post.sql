@@ -5,6 +5,9 @@ CREATE TABLE "post"
    "user_id"           INT REFERENCES "user"("id") NOT NULL,
    "room_id"           INT REFERENCES "room"("id") NOT NULL,
    "location"          POINT,
+   "location_data"     JSONB,
+   "city"              TEXT,
+   "country"           TEXT,
    "previous_post_id"  INT REFERENCES "post"("id"),
    "created"           TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL);
 
