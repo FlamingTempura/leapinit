@@ -4,7 +4,7 @@
 angular.module('leapinit').config(function ($stateProvider) {
 	$stateProvider.state('scan', {
 		url: '/scan',
-		templateUrl: 'template/state/scan.html',
+		templateUrl: 'template/state.scan.html',
 		controller: function ($scope, $state, remote) {
 
 			if (typeof window.cordova !== 'undefined') {

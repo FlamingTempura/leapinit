@@ -1,0 +1,44 @@
+<div class="toolbar">
+	
+	<div class="toolbar-left" ng-if="title">
+		<a class="icon" onclick="window.history.go(-1)"><span class="fa fa-angle-left"></span></a>
+		<span class="title">{{ title }}</span>
+	</div>
+	<div class="toolbar-left" ng-if="!title">
+		<a class="icon" ui-sref="feed" ui-sref-active="active"><span class="fa fa-fire"></span></a>
+		<a class="icon" ui-sref="rooms" ui-sref-active="active"><span class="fa fa-users"></span></a>
+		<a class="icon" ui-sref="settings" ui-sref-active="active"><span class="fa fa-user"></span></a>
+	</div>
+
+	<div class="toolbar-right" ng-if="title">
+		<div ng-transclude></div>
+	</div>
+
+	<div class="toolbar-right" ng-if="!title">
+		<a class="icon" ui-sref="scan"><span class="fa fa-qrcode"></span></a>
+	</div>
+	
+<!-- 
+	<ul>
+		<li class="icon">/li>
+		<li class="back" ng-show="!add || !adding" ng-if="back"><a ng-click="goBack()">
+			<i class="fa fa-chevron-left"></i>
+		</a></li>
+		<li class="title" ng-show="!add || !adding" ng-click="goBack()">
+			{{ title }}
+		</li>
+		<li class="adding" ng-show="add && adding">
+			<ul><li>
+					<i class="fa fa-camera"></i><input type="file" name="files[]" multiple fileupload>
+				</li><li>
+					<i class="fa fa-video-camera"></i><input type="file" name="files[]" multiple fileupload>
+				</li><li>
+					<a ng-click="add.text()"><i class="fa fa-font"></i></a>
+			</li></ul>
+		</li>
+		<li class="icon icon-right" ng-if="add"><a ng-click="toggleAdd()">
+			<i class="fa fa-plus"></i>
+		</a>
+	</ul> -->
+
+</div>

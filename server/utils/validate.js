@@ -20,7 +20,6 @@ module.exports = Bluebird.method(function (schema) {
 				if (constraint.name === 'type') { return typeof value === constraint.value; }
 				if (constraint.name === 'min') { return typeof value === 'string' && value.length >= constraint.value; }
 				if (constraint.name === 'max') { return typeof value === 'string' && value.length <= constraint.value; }
-				if (constraint.name === 'email') { return typeof value === 'string' && /.+@.+\..+/.test(value); }
 			}).map(function (constraint) {
 				return { field: field, constraint: constraint };
 			}).value();

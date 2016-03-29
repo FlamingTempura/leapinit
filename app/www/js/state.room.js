@@ -5,7 +5,7 @@
 angular.module('leapinit').config(function ($stateProvider) {
 	$stateProvider.state('room', {
 		url: '/room/:roomId',
-		templateUrl: 'template/state/room.html',
+		templateUrl: 'template/state.room.html',
 		controller: function ($scope, $stateParams, remote) {
 			$scope.laoding = true;
 			remote.get('/room/' + $stateParams.roomId).then(function (room) {

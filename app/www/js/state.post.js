@@ -5,7 +5,7 @@
 angular.module('leapinit').config(function ($stateProvider) {
 	$stateProvider.state('post', {
 		url: '/room/:roomId/post/:postId',
-		templateUrl: 'template/state/post.html',
+		templateUrl: 'template/state.post.html',
 		controller: function ($scope, remote) {
 			var roomId = $routeParams.room,
 				postId = $routeParams.post,

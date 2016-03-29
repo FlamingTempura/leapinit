@@ -9,6 +9,35 @@ var _ = require('lodash'),
 // feed from subscribed rooms
 router.get('/', function (req, res) {
 
+	$person = R::load('person', intval($id));
+	$posts = [];
+
+	array_map(function (&$residence) use (&$posts) {
+		$ps = R::find('post', ' room_id = ? ', array($residence->room_id));
+		$posts = array_merge($posts, exportPosts($ps));
+	}, array_values($person->ownResidence));
+
+	$app->render(200, [
+	'result' =>  $posts
+	]);
+
+	validate({
+		userId: { value: req.body.userId, type: 'number' }, // todo: token
+		roomId: { value: req.body.roomId, type: 'number' },
+		message: { value: req.body.message }
+	}).then(function (params) {
+		var q = 'INSERT INTO post (user_id, room_id, message) VALUES ($1, $2, $3)';
+		return db.query(q, [params.userId, params.roomId, params.message]);
+	}).then(function () {
+		res.status(201).json({});
+	}).catch(function (err) {
+		if (err.name === 'Validation') {
+			res.status(400).json({ error: 'Validation', validation: err.validation });
+		} else { // todo: room not exist
+			log.error(err);
+			res.status(500).json({ error: 'Fatal' });
+		}
+	});
 });
 
 router.post('/', function (req, res) {

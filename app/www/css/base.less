@@ -6,6 +6,12 @@
 @nav-height: 48px;
 @padding: 12px;
 
+@leapWhite: #fff;
+@leapColor: #F89406;
+@leapBlack: rgba(0, 0, 0, 0.6);
+
+@shadow1: 0px 1px 4px rgba(0, 0, 0, 0.3);
+
 @font-face {
 	font-family: Questrial;
 	src: url(Questrial-Regular.ttf);
@@ -26,24 +32,63 @@
 body {
 	height:100%; width:100%;
 	margin: 0; padding: 0;
-	color: white;
 	//.user-select(none);
 	-webkit-touch-callout: none;
 	-webkit-text-size-adjust: none;
 }
 
-body, p, input {
+body, input {
 	font-family: Questrial, Verdana, sans-serif; 
+}
+
+body, a {
+	color: @leapBlack;
+}
+
+
+.toolbar {
+	background: @leapColor;
+	height: @nav-height;
+	position: absolute;
+	top: 0; left: 0; right: 0;
+	display: flex;
+	flex-direction: row;
+	box-shadow: @shadow1;
+	z-index: 40;
+	.title {
+		flex-grow: 1;
+		height: 100%;
+		font-size: 22px; 
+		padding-top: 12px;
+	}
+	.icon {
+		display: inline-block;
+		height: @nav-height;
+		width: @nav-height;
+		text-align: center;
+		font-size: 20px;
+		padding-top: 14px;
+		&.active {
+			color: @leapWhite;
+			border-bottom: 3px solid @leapWhite;
+		}
+	}
+	.toolbar-left {
+		margin-left: @padding;
+	}
+	.toolbar-right {
+		flex-grow: 1;
+		text-align: right;
+		margin-right: @padding;
+	}
 }
 
 .content {
 	position: absolute;
 	top: 0; left: 0; right: 0; bottom: 0;
 	padding: @padding;
-	text-align: center;
 	background: #f1f1f1;
 	font-size: 16px;
-	color: #222;
 	&.content-nav-top { padding-top: @nav-height + @padding; }
 	&.content-nav-bottom { padding-bottom: @nav-height + @padding; }
 }
@@ -68,7 +113,6 @@ h2 {
 
 a {
 	text-decoration: none;
-	color: #666;
 }
 
 button {
@@ -99,29 +143,18 @@ button {
 
 
 .msg {
-	//.input-dimensions;
-	margin-top: @padding;
-	background: fade(#111, 20%);
-	border: 1px solid fade(#111, 10%);
+	margin-bottom: @padding;
+	background: @leapWhite;
+	box-shadow: @shadow1;
 	padding: 10px;
 	color: #111;
-	border-radius: 3px;
-	line-height: 1.5em;
-	&.msg-error {
-		background: fade(@red, 15%);
-		border-color: fade(@red, 18%);
-		color: @red;
-		font-weight: bold;
-	}
-	&.msg-info {
-		background: fade(@blue, 15%);
-		border-color: fade(@blue, 18%);
-		color: @blue;
-	}
+	line-height: 1.4em;
+	&.msg-error h2, &.msg-error h3 { color: @red; }
+	&.msg-info h2, &.msg-info h3 { color: @blue; }
 }
 
 
-input[type=text], input[type=password], input[type=email], textarea {
+input[type=text], input[type=password], textarea {
 	display: block;
 	margin: 6px auto 14px;
 	width: 100%;
@@ -329,147 +362,6 @@ ul, li {
 	}
 }
 
-
-// Nav
-
-.nav-top {
-	background: white;
-	height: @nav-height;
-	position: absolute;
-	top: 0; left: 0; right: 0;
-	display: flex;
-	flex-direction: row;
-	color: #333;
-	box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.3);
-	z-index: 40;
-	.left-button {
-		display: block;
-		width: 48px;
-		flex-grow: 0;
-		height: 100%;
-		text-align: center;
-		padding-top: 13px;
-		font-size: 20px;
-	}
-	.title {
-		flex-grow: 1;
-		height: 100%;
-		font-size: 22px; 
-		padding-top: 12px;
-	}
-}
-
-.nav-bottom {
-	position: absolute;
-	bottom: 0; left: 0; right: 0;
-	display: flex;
-	flex-direction: row;
-	background: rgba(50, 50, 50, 0.9);
-	height: @nav-height;
-	font-size: 22px;
-	text-align: center;
-	z-index: 40;
-	box-shadow: 0px -1px 1px rgba(0, 0, 0, 0.3);
-	a {
-		flex-grow: 1;
-		display: block;
-		height: 100%;
-		color: #ddd;
-		padding-top: 12px;
-		&:nth-child(2) { background: fade(@orange, 90%); }
-		&.active { background: fade(#000000, 50%); }
-	}
-}
-
-
-.nav-side {
-	position: absolute;
-	//top: @nav-height; bottom: 0; left: 0; right: 0;
-	background-color: rgba(0, 0, 0, 0.3);
-	z-index: 70;
-	overflow-y: auto;
-	> ul {
-		width: 250px;
-		background: white;
-		border-right: 1px solid #ccc;
-		overflow: auto;
-		min-height: 100%;
-		> li {
-			a {
-				display: block;
-				width: 100%;
-				height: 100%;
-			}
-			i {
-				display: inline-block;
-				font-size: 18px;
-				//width: @nav-height;
-				text-align: center;
-				margin-right: 10px;
-			}
-			height: 70px;
-			line-height: 70px;
-			font-size: 18px; 
-			border-bottom: 1px solid #eee;
-		}
-	}
-
-
-	&.ng-hide-add, 
-	&.ng-hide-remove {
-		//.transition(left 0.4s ease, background-color 0.4s ease);
-		display: block !important;
-	}
-	&.ng-hide-add.ng-hide-add-active,
-	&.ng-hide-remove {
-		left: -320px;
-		background: rgba(0, 0, 0, 0.0);
-	}
-	 
-	&.ng-hide-add,
-	&.ng-hide-remove.ng-hide-remove-active {
-		left: 0;
-		background: rgba(0, 0, 0, 0.3);
-	}
-}
-
-
-// Other
-
-
-
-
-.fade {
-	&.ng-hide-add, 
-	&.ng-hide-remove {
-		//.transition(opacity 0.3s ease);
-		display: block !important;
-	}
-	&.ng-hide-add.ng-hide-add-active,
-	&.ng-hide-remove {
-		//.opacity(0);
-	}
-	 
-	&.ng-hide-add,
-	&.ng-hide-remove.ng-hide-remove-active {
-		//.opacity(1);
-	}
-}
-
-.fill-screen {
-	position: absolute;
-	top: 0; left: 0; right: 0; bottom: 0;
-}
-
-
-.media {
-	&.media-picture {
-		//.box-shadow(0px 1px 5px rgba(0,0,0,0.5));
-	}
-}
-
-.inline-container { display: inline; }
-
 .honeycomb {
 	position: absolute;
 	//top: @nav-height; bottom: @nav-height; left: 0; right: 0;
@@ -509,13 +401,6 @@ ul, li {
 			//.opacity(1);
 		}
 	}
-}
-
-.screen-room {
-	//.honeycomb { top: @nav-height + @header-height; }
-	//.residents { margin-top: @header-height; }
-	//.msg-info { margin-top: @header-height; }
-	//.msg-error { margin-top: @header-height; position: relative; z-index: 100; }
 }
 
 .header {
@@ -595,34 +480,6 @@ form {
 	position: relative;
 	//background: @bg;
 	z-index: 1;
-}
-
-@media screen and (min-aspect-ratio: 1/1) and (min-width:400px) {
-}
-
-.app.fakemobile {
-	position: absolute;
-	top: 0;
-	left: 0;
-	max-width: 320px;
-	max-height: 480px;
-	right: 0;
-	bottom: 0;
-	overflow: hidden;
-	.screen {
-		max-width: 320px;
-		max-height: 480px;
-	}
-}
-
-.posts-container {
-	height: 100%;
-}
-
-.nohoneycomb {
-	.posts-container {
-		display: inline;
-	}
 }
 
 .colors {
@@ -716,33 +573,5 @@ form {
 	}
 	div.person-biography {
 		line-height: 1.8em;
-	}
-}
-
-pre {
-	margin: 0;
-	margin-top: 7px;
-	font-size: 10px;
-	overflow: hidden;
-}
-
-
-.contact {
-	text-align: center;
-	margin-top: 20px;
-	>li {
-		display: inline-block;
-		width: 50px; height: 38px;
-		padding: 12px 10px;
-		background: white;
-		text-align: center;
-		margin: 2px;
-		font-size: 11px;
-		line-height: 20px;
-		i {
-			display: block;
-			font-size: 20px;
-			line-height: 26px;
-		}
 	}
 }

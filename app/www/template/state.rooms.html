@@ -1,9 +1,11 @@
-<nav-top title="'Rooms'"></nav-top>
+<toolbar></toolbar>
 
 <div class="content content-nav-top content-nav-bottom">
 
+	<h3>Rooms</h3>
+
 	<a ng-repeat="room in rooms" href="#/room/{{ room.id }}" style="display: block; padding: 10px;">
-		<span class="name">Room: {{ room.name }}</span>
+		<span class="name">{{ room.name }}</span>
 		<!-- <div ng-if="!noHoneycomb" ng-controller="rooms" ng-include="'templates/posts.html'"></div> -->
 	</a>
 
@@ -13,5 +15,3 @@
 	</li>
 
 </div>
-
-<nav-bottom></nav-bottom>

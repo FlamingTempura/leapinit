@@ -1,0 +1,21 @@
+<toolbar></toolbar>
+
+<div class="content content-nav-top content-nav-bottom">
+
+	<div ng-if="!user.name && !user.dismissedSignup" class="msg">
+		<a ng-click="user.dismissedSignup = true"><span class="fa fa-close"></span></a>
+		<h2>Create an account</h2>
+		<p>Leapin.it is more fun with an account</p>
+		<!-- pic of avatars -->
+		<button ui-sref="signup">Create account</button>
+		<a ui-sref="signin">I already have an account</a>
+	</div>
+
+	<post ng-repeat="post in posts track by post.id" post="post"></post>
+
+	<!-- <div ng-if="!posts.length" class="msg">
+		<h3>There are no posts to display in your feed!</h3>
+		<p>Press the orange button below to scan a barcode and start recieving posts.</p>
+	</div> -->
+	
+</div>

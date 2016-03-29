@@ -5,23 +5,15 @@ angular.module('leapinit', ['ui.router'])
 	.config(function ($urlRouterProvider) {
 		$urlRouterProvider.otherwise('/feed');
 	})
-	.directive('navTop', function () {
+	.directive('toolbar', function () {
 		return {
 			restrict: 'E',
-			templateUrl: 'template/nav-top.html',
+			templateUrl: 'template/partial.toolbar.html',
 			replace: true,
 			scope: { title: '=' },
 			link: function ($scope) {
 				console.log('ting', $scope)
 			}
-		};
-	})
-	.directive('navBottom', function () {
-		return {
-			restrict: 'E',
-			templateUrl: 'template/nav-bottom.html',
-			replace: true,
-			scope: { title: '=' }
 		};
 	})
 	.directive('post', function () {
@@ -31,49 +23,56 @@ angular.module('leapinit', ['ui.router'])
 			scope: { post: '=' }
 		};
 	})
-	/*.config(function ($routeProvider, $controllerProvider) {
-		
-		
+	.directive('fileupload', function ($rootScope) {
+		return {
+			link: function ($scope, element) {
+				var url = window.config.server + 'media/index.php',
+					button = element.parent();
 
-		$routeProvider.when('/', {
-			templateUrl: 'templates/screens/splash.html',
-			controller: function ($location, $rootScope) {
-				loadingScreens.then(function () {
-					$location.path($rootScope.user ? '/feed' : '/login');
-				});
+				element.fileupload({
+					url: url,
+					dataType: 'json',
+					send: function () {
+						button.addClass('loading');
+					},
+					done: function (e, data) {
+						button.removeClass('loading');
+						$rootScope.add.media('picture', data.result.files[0].url);
+					}
+				}).prop('disabled', !$.support.fileInput)
+					.parent().addClass($.support.fileInput ? undefined : 'disabled'); // TODO
 			}
-		});
-
-		$routeProvider.otherwise({ redirectTo: '/' });
-
-		loadingScreens.then(function (screens) {
-			_(screens).each(function (screen) {
-				$controllerProvider.register();
-				$routeProvider.when(screen.route, {
-					templateUrl: 'templates/screens/' + screen.name + '.html',
-					name: screen.name,
-					title: screen.title,
-					back: screen.back,
-					navbars: screen.navbars,
-					controller: screen.name + 'Screen'
-				});
-			});
-
-		});
-
+		};
 	})
-	.run(function ($location, $rootScope) {
-		$rootScope.$on('$routeChangeSuccess', function (event, current) {
-			if (!current.$$route) { return; }
-			_.extend($rootScope, {
-				name: current.$$route.name,
-				title: current.$$route.title,
-				navbars: current.$$route.navbars,
-				back: current.$$route.back,
-				add: false
-			});
-		});
-	})*/
+	.directive('slider', function () {
+		return {
+			restrict: 'A',
+			require: '?ngModel',
+			link: function ($scope, element, attr, ngModel) {
+				var $input = element,
+					title = attr.title,
+					$slider = $('<div class="slider">'),
+					$plus = $('<div class="btn btn-plus">')
+						.html('<i class="fa fa-plus"></i>')
+						.click(function () {
+							var val = Number(ngModel.$viewValue) + 1;
+							ngModel.$setViewValue(val);
+							$scope.$apply();
+						}),
+					$minus = $('<div class="btn btn-minus">')
+						.html('<i class="fa fa-minus"></i>')
+						.click(function () {
+							var val = Number(ngModel.$viewValue) - 1;
+							ngModel.$setViewValue(val);
+							$scope.$apply();
+						}),
+					$title = $('<div class="title">')
+						.html(title);
+				$slider.append($plus, $title, $minus);
+				$input.hide().after($slider);
+			}
+		};
+	})
 	.controller('App', function () {
 
 		//$rootScope.noHoneycomb = !window.config.honeycomb;
@@ -110,29 +109,4 @@ angular.module('leapinit', ['ui.router'])
 		$rootScope.goBack = function () {
 			history.back();
 		};*/
-	})
-	/*.directive('fixscroll', function () {
-		// Fixes scrolling bug in Android WebView - overflow-x doesn't work when position is intialised as absolute.
-		return {
-			restrict: 'A',
-			link: function ($scope, element) {
-				var reset = function () {
-					var position = element.css('position');
-					element.css({ 'position': 'static', 'opacity': 0 });
-					setTimeout(function () { 
-						element.css({ 'position': position, 'opacity': 1 });
-					}, 1);
-				};
-				setTimeout(reset, 1000);
-			}
-		};
-	})*//*
-	.directive('lazyload', function () {
-		// Fixes scrolling bug in Android WebView - overflow-x doesn't work when position is intialised as absolute.
-		return {
-			restrict: 'A',
-			link: function ($scope, element) {
-				element.lazyLoadXT();
-			}
-		};
-	})*/;
+	});

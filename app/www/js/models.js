@@ -1,123 +1,6 @@
-/* global angular, $, _, Backbone, moment */
 
-'use strict';
 
-angular.module('leapinit')
-	.factory('remote', function ($http) {
-		return {
-			request: function () {
-
-			}
-		};
-	})
-	.factory('auth', function (models) {
-		var server = window.config.server;
-
-		var ajax = function (url, method, data) {
-			return $.ajax({
-				url: server + url + '?token=' + (auth.token || ''),
-				method: method,
-				dataType: 'json',
-				data: JSON.stringify(data),
-				contentType: 'application/json; charset=utf-8',
-			});
-		};
-
-		var auth = _.extend({}, Backbone.Events, {
-
-			token: localStorage.getItem('token'),
-
-			check: function () {
-				if (!auth.token) { return; }
-				return ajax('api/auth/user', 'GET').then(function (response) {
-					auth.user = models.People.prototype.makeUser(response.result.user, auth);
-					auth.trigger('login');
-				}).fail(function () {
-					localStorage.removeItem('token');
-				});
-			},
-
-			login: function (o) {
-				return ajax('api/auth', 'POST', {
-					username: o.username,
-					password: o.password 
-				}).then(function (response) {
-					auth.token = response.result.token;
-					auth.user = models.People.prototype.makeUser(response.result.user, auth);
-					localStorage.setItem('token', auth.token);
-					auth.trigger('login');
-				});
-			},
-
-			logout: function () {
-				return ajax('api/auth/user', 'DELETE').always(function () {
-					localStorage.removeItem('token');
-					auth.trigger('logout');
-				});
-			}
-		});
-
-		return auth;
-	})
-
-	.factory('models', function ($rootScope) {
-		var server = window.config.server;
-
-		var blankcolor = 'f4f4f4';
-
-		var _sync = Backbone.sync;
-		Backbone.sync = function(method, model, options) {
-
-			options = _.extend({
-				url: _.result(model, 'url')
-			}, options);
-
-			var token = $rootScope.auth && $rootScope.auth.token;
-			if (token) {
-				options.url += ((options.url.indexOf('?') > -1) ? '&' : '?') + 'token=' + token;
-			}
-
-			return _sync.call(this, method, model, options);
-		};
-
-		var Model = Backbone.Model.extend({
-				parse: function (response) {
-					if (_.isObject(response.result)) {
-						return response.result;
-					} else {
-						return response;
-					}
-				},
-				fetch: function (options) {
-					var that = this;
-					this.fetching = true;
-					return Backbone.Model.prototype.fetch.call(this, options).then(function () {
-						that.fetching = false;
-					});
-				},
-			}),
-			Collection = Backbone.Collection.extend({
-				initialize: function (models, options) {
-					if (options && options.url) {
-						this.url = options.url;
-					}
- 				},
-				parse: function (response) {
-					return response.result;
-				},
-				fetch: function (options) {
-					var that = this;
-					this.fetching = true;
-					return Backbone.Collection.prototype.fetch.call(this, _.extend({ silent: true }, options)).then(function () {
-						that.trigger('reset');
-					}).always(function () {
-						that.fetching = false;
-					});
-				},
-				empty: function () {
-					return !this.fetching && this.models.length === 0;
-				}
-			});
+		
 
 
 		var Person = Model.extend({
@@ -134,20 +17,6 @@ angular.module('leapinit')
 						if (k !== 'bgcolor') { avatar[k] = Number(v); }
 					});
 					this.set('avatar', avatar);
-				},
-				parseContact: function () {
-					var that = this;
-					this.contact = {};
-					_.each(this.attributes, function (v, k) {
-						if (k.indexOf('cc') === 0 && v) {
-							that.contact[k.substr(2)] = v;
-						}
-					});
-				},
-				url: function () {
-					var url = _.result(this.collection, 'url');
-					if (!url) { url = server + 'api/person'; }
-					return url + '/' + (!this.has('id') ? '' : this.get('id'));
 				}
 			}),
 			People = Collection.extend({
@@ -162,52 +31,6 @@ angular.module('leapinit')
 					user.blocks = new People(undefined, { url: user.url() + '/block' });
 					user.feed = new Posts(undefined, { url: user.url() + '/feed' });
 					return user;
-				}
-			});
-
-		var Room = Model.extend({
-				url: function () {
-					return server + 'api/room/' + this.id;
-				},
-				initialize: function () {
-					var that = this;
-					Model.prototype.initialize.apply(this, arguments);
-					this.posts = new Posts(undefined, { url: _.result(this, 'url') + '/post' });
-					this.residents = new People();
-					this.on('change', this.updateResidents, this);
-					this.updateResidents();
-					if (this.has('preview')) {
-						this.preview = new Posts(undefined, { url: _.result(this, 'url') + '/post' });
-						this.preview.reset(this.get('preview'));
-						this.on('change:preview', function () {
-							that.preview.reset(that.get('preview'));
-						});
-					}
-				},
-				updateResidents: function () {
-					this.residents.reset(this.get('residents'));
-				},
-				leave: function () {
-					return this.destroy({
-						url: _.result(this.collection, 'url') + '/' + this.id
-					});
-				}
-			}),
-			Rooms = Collection.extend({
-				model: Room,
-				url: server + 'api/room',
-				fetchFromCode: function (code) {
-					var dfd = $.Deferred(),
-						room = new Room();
-					room.url = _.result(this, 'url') + '/?code=' + code;
-					this.add(room);
-					room.fetch().then(function () {
-						room.url = Room.prototype.url;
-						dfd.resolve(room);
-					}).fail(function (response) {
-						dfd.reject(response);
-					});
-					return dfd;
 				}
 			});
 
@@ -226,12 +49,6 @@ angular.module('leapinit')
 					return _.result(this, 'url') + '/data?preview=true' +
 						(size ? '&size=' + size : '') +
 						(cell ? '&cell=true' : '');
-				},
-				previewFull: function () {
-					return this.preview($('body > .app').width());
-				},
-				created: function () {
-					return moment(Number(this.get('created')) * 1000).fromNow();
 				}
 			}),
 			Posts = Collection.extend({
@@ -241,9 +58,6 @@ angular.module('leapinit')
 					this.generateHoneycomb();
 					this.on('change add remove reset', this.generateHoneycomb, this);
 					this.sort();
-				},
-				comparator: function (post) {
-					return -Number(post.get('created'));
 				},
 				generateHoneycomb: function (width) {
 					width = $('body > .app').width();
@@ -313,10 +127,3 @@ angular.module('leapinit')
 				}
 
 			});
-
-		return {
-			People: People,
-			Rooms: Rooms,
-			Posts: Posts
-		};
-	});

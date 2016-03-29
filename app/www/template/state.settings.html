@@ -1,6 +1,6 @@
-<toolbar title="'Avatar'"></toolbar>
+<toolbar></toolbar>
 
-<md-content layout-padding layout="row" layout-sm="column">
+<div class="content">
 	<div class="msg msg-error" ng-if="error">{{ error }}</div>
 
 	<div class="avatar avatar-medium" avatar="avatar" avatar-size="70"></div>
@@ -56,4 +56,59 @@
 	<div class="bottom">
 		<button type="submit" ng-click="save()" ng-class="{ loading: loading }">Save</button>
 	</div>
-</md-content>
+	
+	<div class="msg msg-error" ng-if="error">{{ error }}</div>
+
+	<div ng-show="!changePassword">
+		<button ng-click="changePassword = true">Change password</button>
+		<button ng-click="delete()" ng-class="{ loading: loading }" ng-disabled="loading">Delete account</button>
+	</div>
+
+	<div ng-show="changePassword">
+		<input type="password" placeholder="Password" ng-model="password1">
+		<input type="password" placeholder="Confirm" ng-model="password2">
+
+		<button ng-click="savePassword()" ng-class="{ loading: loading }" ng-disabled="loading">Save</button>
+		<button ng-click="changePassword = false">Cancel</button>
+	</div>
+
+	<div class="msg msg-error" ng-if="error">{{ error }}</div>
+
+	<div class="header">
+		<ul>
+
+			<li ng-if="own && !showEdit" ng-click="toggleEdit(true)">
+				<div class="number">Edit</div>
+				<div class="noun">profile</div>
+
+			</li><li ng-if="own && showEdit" ng-click="save()">
+				<div class="number">Save</div>
+				<div class="noun">profile</div>
+
+			</li>
+		</ul>
+	</div>
+
+	<div class="avatar avatar-medium" avatar="person.attributes.avatar" ng-if="!own"></div>
+	<div class="avatar avatar-medium" avatar="person.attributes.avatar" ng-if="own" ng-click="go('/avatar')"></div>
+
+
+	<div class="person-info" ng-if="!showContact">
+		<div ng-if="!showEdit">
+			<div class="person-username">{{ person.attributes.username }}</div>
+			<div class="person-biography">{{ person.attributes.biography }}</div>
+		</div>
+		<div ng-if="own && showEdit">
+			<input type="text" ng-model="edit.username" class="person-username">
+			<textarea ng-model="edit.biography" class="person-biography"></textarea>
+		</div>
+	</div>
+
+	<ul class="contact" ng-if="showContact">
+		<li ng-repeat="(type, contact) in person.contact">
+			<i class="fa {{ contactIcon[type] }}"></i>
+			{{ type }}
+		</li>
+	</ul>
+</div>
+
