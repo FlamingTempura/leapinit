@@ -1,9 +1,0 @@
-<form ng-submit="submit()" ng-show="showForm">
-
-	<p>Enter the barcode value below.</p>
-	<input ng-model="code" type="text" name="inputCode" ng-disabled="loading" required>
-
-	<button type="submit" ng-class="{ loading: loading }"  ng-disabled="loading">Scan</button>
-</form>
-
-<div class="msg msg-error" ng-if="error">{{ error }}</div>

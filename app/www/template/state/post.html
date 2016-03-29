@@ -1,0 +1,11 @@
+<toolbar title="'Posts'"></toolbar>
+
+<md-content layout-padding layout="row" layout-sm="column">
+	<ul class="posts" ng-if="!error">
+		<li class="post" ng-include="'templates/post.html'"></li>
+	</ul>
+
+	<div class="msg msg-error" ng-if="error">
+		{{ error }}
+	</div>
+</md-content>

@@ -1,0 +1,18 @@
+<toolbar title="'Settings'"></toolbar>
+
+<md-content layout-padding layout="row" layout-sm="column">
+	<div class="msg msg-error" ng-if="error">{{ error }}</div>
+
+	<div ng-show="!changePassword">
+		<button ng-click="changePassword = true">Change password</button>
+		<button ng-click="delete()" ng-class="{ loading: loading }" ng-disabled="loading">Delete account</button>
+	</div>
+
+	<div ng-show="changePassword">
+		<input type="password" placeholder="Password" ng-model="password1">
+		<input type="password" placeholder="Confirm" ng-model="password2">
+
+		<button ng-click="savePassword()" ng-class="{ loading: loading }" ng-disabled="loading">Save</button>
+		<button ng-click="changePassword = false">Cancel</button>
+	</div>
+</md-content>

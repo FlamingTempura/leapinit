@@ -1,0 +1,14 @@
+<div class="content">
+	<img class="logo" src="img/logo.svg">
+
+	<form ng-submit="submit()">
+		<input type="email" ng-model="email" placeholder="Email" ng-disabled="loading" required>
+		<input type="password" ng-model="password" placeholder="Password" ng-disabled="loading" required>
+		<button type="submit" ng-class="{ loading: loading }" ng-disabled="loading">Log in</button>
+		<div class="msg msg-error" ng-if="error">{{ error }}</div>
+	</form>
+
+	<div class="bottom bottom-no-nav">
+		<a ui-sref="signup" ng-disabled="loading">Create an account</a>
+	</div>
+</div>

@@ -1,8 +1,15 @@
-(function (angular, $, _, Backbone, moment) {
-	'use strict';
-	
-	angular.module('leapinit')
+/* global angular, $, _, Backbone, moment */
 
+'use strict';
+
+angular.module('leapinit')
+	.factory('remote', function ($http) {
+		return {
+			request: function () {
+
+			}
+		};
+	})
 	.factory('auth', function (models) {
 		var server = window.config.server;
 
@@ -21,6 +28,7 @@
 			token: localStorage.getItem('token'),
 
 			check: function () {
+				if (!auth.token) { return; }
 				return ajax('api/auth/user', 'GET').then(function (response) {
 					auth.user = models.People.prototype.makeUser(response.result.user, auth);
 					auth.trigger('login');
@@ -312,4 +320,3 @@
 			Posts: Posts
 		};
 	});
-}(this.angular, this.jQuery, this._, this.Backbone, this.moment));
