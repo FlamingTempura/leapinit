@@ -1,6 +1,6 @@
 /* global angular, moment */
-
 'use strict';
+
 angular.module('leapinit', ['ui.router'])
 	.config(function ($urlRouterProvider) {
 		$urlRouterProvider.otherwise('/feed');
@@ -22,7 +22,7 @@ angular.module('leapinit', ['ui.router'])
 			scope: { room: '=' }
 		};
 	})
-	.directive('post', function (remote) {
+	.directive('post', function () {
 		return {
 			restrict: 'E',
 			replace: true,
@@ -87,38 +87,4 @@ angular.module('leapinit', ['ui.router'])
 	})
 	.controller('App', function () {
 
-		//$rootScope.noHoneycomb = !window.config.honeycomb;
-		//$rootScope.cordova = typeof cordova !== 'undefined';
-		//$rootScope.fakeMobile = !$rootScope.cordova;
-
-		//$rootScope.auth = auth;
-
-		/*auth.check();
-
-		auth.on('login', function () {
-			$rootScope.user = auth.user;
-		}).on('logout', function () {
-			delete $rootScope.user;
-		}).on('login logout', function () {
-			$rootScope.go('/');
-		});
-
-		$rootScope.safeApply = function ($scope) {
-			if (!$scope) { $scope = $rootScope; }
-			if(!$scope.$$phase) {
-				$scope.$apply();
-			} else {
-				_.defer(function () {
-					$scope.$apply();
-				});
-			}
-		};
-
-		$rootScope.go = function (path) {
-			$location.path(path);
-			$rootScope.safeApply($scope);
-		};
-		$rootScope.goBack = function () {
-			history.back();
-		};*/
 	});
