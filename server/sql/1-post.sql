@@ -8,7 +8,7 @@ CREATE TABLE "post"
    "location_data"     JSONB,
    "city"              TEXT,
    "country"           TEXT,
-   "previous_post_id"  INT REFERENCES "post"("id"),
+   "parent_post_id"    INT REFERENCES "post"("id"),
    "created"           TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL);
 
 CREATE INDEX "post_room_index"

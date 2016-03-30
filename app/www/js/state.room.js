@@ -1,5 +1,4 @@
 /* global angular */
-
 'use strict';
 
 angular.module('leapinit').config(function ($stateProvider) {
@@ -11,7 +10,7 @@ angular.module('leapinit').config(function ($stateProvider) {
 				$scope.loading = true;
 				remote.get('/room/' + $stateParams.roomId).then(function (room) {
 					$scope.room = room;
-					return remote.get('/post?roomId' + $stateParams.roomId);
+					return remote.get('/post?roomId=' + $stateParams.roomId);
 				}).then(function (posts) {
 					$scope.posts = posts;
 				}).catch(function (err) {
@@ -32,7 +31,7 @@ angular.module('leapinit').config(function ($stateProvider) {
 					latitude: geo.latitude,
 					longitude: geo.longitude
 				}).then(function () {
-
+					refresh();
 				}).catch(function (err) {
 					$scope.newPost.error = err;
 				}).finally(function () {

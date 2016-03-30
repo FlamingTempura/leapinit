@@ -1,25 +1,33 @@
 /* global angular */
-
 'use strict';
 
 angular.module('leapinit').config(function ($stateProvider) {
 	$stateProvider.state('post', {
-		url: '/room/:roomId/post/:postId',
+		url: '/post/:postId',
 		templateUrl: 'template/state.post.html',
-		controller: function ($scope, remote) {
-			var roomId = $routeParams.room,
-				postId = $routeParams.post,
-				rooms = new models.Rooms({ id: roomId }),
-				room = rooms.at(0);
-			
-			room.posts.reset([{ id: postId }]);
-			$scope.post = room.posts.at(0);
+		controller: function ($scope, remote, $stateParams) {
+			var refresh = function () {
+				$scope.loading = true;
+				remote.get('/post/' + $stateParams.postId).then(function (post) {
+					$scope.post = post;
+				}).catch(function (err) {
+					$scope.error = err;
+				}).finally(function () {
+					delete $scope.loading;
+				});
+			};
+			refresh();
 
-			$scope.post.fetch().fail(function (r) {
-				$scope.error = r.responseJSON.msg;
-			}).always(function () {
-				$scope.$apply();
-			});
+			$scope.newReply = {};
+			$scope.postReply = function () {
+				remote.post('/post/', {
+					parentId: $scope.post.id,
+					roomId: $scope.post.roomId,
+					message: $scope.newReply.message
+				}).then(function () {
+					refresh();
+				});
+			};
 		}
 	});
 });

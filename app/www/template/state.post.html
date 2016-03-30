@@ -1,13 +1,8 @@
-<toolbar title="'Posts'">
-	<a ng-click="report"><span class="fa fa-exclamation-triangle"></span></a>
+<toolbar title="'Post'">
+	<a class="icon" ng-click="report"><span class="fa fa-exclamation-triangle"></span></a>
 </toolbar>
 
-<md-content layout-padding layout="row" layout-sm="column">
-	<ul class="posts" ng-if="!error">
-		<li class="post" ng-include="'templates/post.html'"></li>
-	</ul>
-
-	<div class="msg msg-error" ng-if="error">
-		{{ error }}
-	</div>
-</md-content>
+<div class="content">
+	<post post="post" class="card" reply-model="newReply" on-reply="postReply"></post>
+	<div class="msg msg-error" ng-if="error">{{ error }}</div>
+</div>

@@ -1,4 +1,4 @@
-//@import "../lib/lesshat/build/lesshat.less";
+@import 'font.less';
 
 @orange: #e69138;
 @blue: #3c78d8;
@@ -11,19 +11,7 @@
 @leapColor2: #03C9A9;
 @leapBlack: rgba(0, 0, 0, 0.6);
 
-@shadow1: 0px 1px 4px rgba(0, 0, 0, 0.3);
-
-@font-face {
-	font-family: Questrial;
-	src: url(Questrial-Regular.ttf);
-	font-weight: 200;
-}
-
-@font-face {
-	font-family: FugazOne;
-	src: url(FugazOne-Regular.ttf);
-	font-weight: 400;
-}
+@shadow1: 0px 1px 2px rgba(0, 0, 0, 0.4);
 
 * {
     -webkit-tap-highlight-color: transparent;
@@ -37,10 +25,14 @@ body {
 	-webkit-touch-callout: none;
 	-webkit-text-size-adjust: none;
 	overflow: hidden;
+	background: #f1f1f1;
 }
 
-body, input {
-	font-family: Questrial, Verdana, sans-serif; 
+body, textarea, input[type=button], input[type=submit], button {
+	font-family: 'Karla', sans-serif;
+}
+input[type=text], input[type=password], .toolbar, .below {
+	font-family: 'Questrial', sans-serif; 
 }
 
 body, a {
@@ -48,6 +40,9 @@ body, a {
 }
 
 h3 {
+	font-size: 16px;
+	text-transform: uppercase;
+	font-weight: normal;
 	color: @leapColor2;
 }
 
@@ -84,6 +79,10 @@ h3 {
 	flex-direction: row;
 	box-shadow: @shadow1;
 	z-index: 40;
+	& > * {
+		position: relative;
+		z-index: 60;
+	}
 	.title {
 		flex-grow: 1;
 		height: 100%;
@@ -102,21 +101,35 @@ h3 {
 		background: transparent;
 		color: @leapWhite;
 		box-shadow: none;
-		background: linear-gradient(rgba(0, 0, 0, 0.6), transparent);
 		.icon { color: @leapWhite; }
+		background-size: cover;
+		height: @nav-height * 3.5;
+		z-index: 50;
+		&::after {
+			content: '';
+			position: absolute;
+			top: 0; left: 0; right: 0; bottom: 0;
+			background: linear-gradient(rgba(0, 0, 0, 0.5), transparent 30%, transparent 68%, rgba(0, 0, 0, 0.6));
+		}
 	}
+}
+
+.toolbar-overlay {
+	position: absolute;
+	top: @nav-height * 2.8;
+	color: @leapWhite;
+	left: @padding + 8px;
+	z-index: 80;
+	font-size: 14px;
+	text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.4);
 }
 
 
 .header {
-	background: url('/img/test.jpg');
-	background-size: cover;
-	position: absolute;
-	top: 0; left: 0; right: 0;
-	padding-top: @nav-height * 3.5;
-	z-index: 30;
+	position: relative;
+	margin-top: @nav-height * 3.5;
+	z-index: 130;
 	box-shadow: @shadow1;
-	//background: @leapWhite;
 	input[type=text] {
 		margin: 0;
 		height: @nav-height;
@@ -127,20 +140,42 @@ h3 {
 	}
 	.camera-icon {
 		position: absolute;
-		bottom: 0;
+		top: 0;
 		right: 0;
 		color: #ddd;
+		padding-right: 8px;
+		input[type=file] {
+			position: absolute;
+			left: 0; top: 0; bottom: 0; right: 0;
+			opacity: 0;
+		}
 	}
 	button {
-		//display: none;
+		display: none;
+		background: @leapWhite;
+		color: @leapColor2;
+		margin: 0;
+		text-align: right;
+		padding-right: 22px;
+		border-radius: 0;
+		box-shadow: none;
 	}
+	&.active {
+		button { display: block; }
+	}
+}
+.header-blur {
+	position: absolute;
+	top: 0; left: 0; right: 0; bottom: 0;
+	background-color: rgba(0, 0, 0, 0.1);
+	z-index: 120;
+	transition: opacity ease 0.3s;
 }
 
 .content {
 	position: absolute;
 	top: 0; left: 0; right: 0; bottom: 0;
 	padding: @padding;
-	background: #f1f1f1;
 	font-size: 16px;
 	padding-top: @nav-height + @padding;
 	overflow-y: auto;
@@ -157,7 +192,6 @@ h3 {
 
 h1 {
 	font-weight: normal;
-	font-family: FugazOne;
 	font-size: 32px;
 	margin: 3% 0 6%;
 }
@@ -182,14 +216,8 @@ button {
 	color: white;
 	padding: 12px 0 10px 0;
 	font-weight: bold;
-	box-shadow: 0px 4px 1px -1px rgba(0, 0, 0, 0.68);
 	border-radius: 3px;
-	font-family: FugazOne;
 	text-transform: uppercase;
-	transition: box-shadow 0.5s ease;
-	&[disabled] {
-		box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.68);
-	}
 	&.loading { color: transparent; }
 }
 
@@ -206,6 +234,7 @@ button {
 	padding: @padding;
 	color: #111;
 	line-height: 1.4em;
+	border-radius: 2px;
 	&.msg-error h2, &.msg-error h3 { color: @red; }
 	&.msg-info h2, &.msg-info h3 { color: @blue; }
 }
@@ -254,7 +283,6 @@ input[type=text] {
 textarea {
 	height: 100px;
 	text-indent: 0;
-	font-family: inherit;
 	font-size: 16px;
 	padding: 10px;
 	line-height: 1.8em;
@@ -295,9 +323,21 @@ textarea {
 		margin-top: 4px;
 		display: flex;
 		flex-direction: row;
+		& > div { width: 30%; }
+		.group-name { text-align: center; }
+		.replies { text-align: right; }
 		.created {
 			color: #999;
 		}
+	}
+}
+
+.replies {
+	margin-top: @padding;
+	.post {
+		border-top: 1px solid #eee;
+		margin: 0 -@padding;
+		padding: @padding;
 	}
 }
 

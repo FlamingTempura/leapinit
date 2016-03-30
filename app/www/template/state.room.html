@@ -1,12 +1,18 @@
-<toolbar title="room.name || 'New room'" class="toolbar-fade">
+<toolbar title="room.name || 'New room'" class="toolbar-fade" style="background-image: url('/img/test.jpg');">
 	<a ui-sref="room-settings({ roomId: room.id })" class="icon"><span class="fa fa-cog"></span></a> <!-- admin only codes, delete, name -->
 </toolbar>
 
-<div class="header">
+<div class="toolbar-overlay">
+	{{ room.residentCount }} people &bullet; Code: {{ room.userCode }}
+</div>
+
+<div class="header" ng-click="headerActive = true" ng-class="{ active: headerActive }">
 	<input type="text" ng-model="newPost.message" placeholder="Write something...">
-	<a class="icon camera-icon"><span class="fa fa-camera"></span></a>
+	<a class="icon camera-icon"><input type="file"><span class="fa fa-camera"></span></a>
 	<button ng-click="createPost()">Post</button>
 </div>
+
+<div class="header-blur" ng-show="headerActive" ng-click="headerActive = false"></div>
 
 <div class="content content-header">
 	<div class="msg msg-error" ng-if="error">{{ error }}</div>
@@ -22,36 +28,10 @@
 	</div>
 
 	<div ng-if="room.name">
-		
-
-		<!-- <a>Residents: {{ room.residents }}</a><br>
-		<a>Codes: {{ room.codes }}</a> -->
-
-		<post ng-repeat="post in posts track by post.id" post="post"></post>
-
+		<post ng-repeat="post in posts track by post.id" post="post" summary="true" class="card"></post>
 		<div ng-if="!posts.length">
 			<p><strong>There are no posts in this room.</strong></p>
 			<p>Why not add something by tapping <i class="fa fa-plus"></i> above?</p>
 		</div>
-<!-- 
-		<div class="scroller">
-			<div class="header" ng-show="showResidents">
-				<ul><li ng-click="showResidents = false">
-						<div class="number">Back</div>
-						<div class="noun">to posts</div>
-						<i class="fa fa-chevron-left"></i>
-					</li><li ng-click="leave()">
-						<div class="number">Leave</div>
-						<div class="noun">this room</div>
-					</li>
-				</ul>
-			</div>
-
-			<div class="residents" ng-show="showResidents">
-				<ul class="people">
-					<li class="person" ng-repeat="person in room.residents.models" ng-include="'templates/person.html'"></li>
-				</ul>
-			</div>
-		</div> -->
 	</div>
 </div>

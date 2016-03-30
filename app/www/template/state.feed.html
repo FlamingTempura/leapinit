@@ -11,7 +11,7 @@
 		<a ui-sref="signin">I already have an account</a>
 	</div> -->
 
-	<post ng-repeat="post in posts track by post.id" post="post"></post>
+	<post ng-repeat="post in posts track by post.id" post="post" summary="true" class="card"></post>
 
 	<!-- <div ng-if="!posts.length" class="msg">
 		<h3>There are no posts to display in your feed!</h3>

@@ -2,13 +2,13 @@
 
 <div class="content">
 
-	<h3>Rooms</h3>
+	<h3>Rooms you are in</h3>
 
-	<a ng-repeat="room in rooms" href="#/room/{{ room.id }}" class="room"><!-- TODO: leave room -->
-		<div class="icon"><span class="fa fa-shopping-bag"></span></div>
-		<div class="name">{{ room.name }}</div>
-		<div ng-if="room.unseen > 0"><div class="label">{{ room.unseen }}</div></div>
-	</a>
+	<room room="room" ng-repeat="room in rooms.residence"></room>
+
+	<h3>Popular rooms</h3>
+
+	<room room="room" ng-repeat="room in rooms.popular"></room>
 
 	<li ng-if="!rooms.length" class="msg msg-info">
 		<p><strong>You are not in any rooms.</strong></p>

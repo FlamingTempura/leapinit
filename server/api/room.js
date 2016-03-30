@@ -6,7 +6,7 @@ var router = require('express').Router(),
 	user = require('./user'),
 	log = require('../utils/log').create('Room', 'cyan');
 
-// get all rooms that the user is a resident of
+// get all rooms relevent to the user in lists (rooms they are in, popular rooms)
 router.get('', function (req, res) {
 	validate({
 		authorization: { value: req.get('Authorization') },
@@ -70,20 +70,25 @@ router.post('/from_code', function (req, res) {
 
 // Get details about a room
 router.get('/:roomId', function (req, res) {
-	// TODO check user is allowed to view room
 	validate({
+		authorization: { value: req.get('Authorization') },
 		roomId: { value: Number(req.params.roomId), type: 'number' }
 	}).then(function (params) {
-		var q = 'SELECT id, name, ' + 
-				'  (SELECT COUNT(*) FROM resident WHERE room_id = $1) AS residents, ' +
-				'  (SELECT array_agg(code) FROM code WHERE room_id = $1) AS codes ' +
-				'FROM room WHERE id = $1';
-		return db.query(q, [params.roomId]);
+		return user.getUserFromAuthHeader(params.authorization).then(function (userId) {
+			var q = 'SELECT id, name, ' + 
+					'  (SELECT COUNT(*) FROM resident WHERE room_id = $1) AS "residentCount", ' +
+					'  (SELECT code FROM code JOIN resident ON (code_id = code.id) WHERE user_id = $2 AND resident.room_id = $1) AS "userCode", ' +
+					'  (SELECT array_agg(code) FROM code WHERE room_id = $1) AS codes ' +
+					'FROM room WHERE id = $1';
+			return db.query(q, [params.roomId, userId]);
+		});
 	}).then(function (result) {
 		if (result.rows.length === 0) { throw { name: 'NotFound' }; }
 		res.status(200).json(result.rows[0]);
 	}).catch(function (err) {
-		if (err.name === 'Validation') {
+		if (err.name === 'Authentication') {
+			res.status(401).json({ error: 'Authentication' });
+		} else if (err.name === 'Validation') {
 			res.status(400).json({ error: 'Validation', validation: err.validation });
 		} else if (err.name === 'NotFound') {
 			res.status(404).json({ error: 'NotFound' });
@@ -121,10 +126,6 @@ router.put('/:roomId', function (req, res) {
 			res.status(500).json({ error: 'Fatal' });
 		}
 	});
-});
-
-router.get('/room/:roomId/post', function (req, res) {
-
 });
 
 module.exports = router;

@@ -10,22 +10,24 @@ var _ = require('lodash'),
 	request = Bluebird.promisifyAll(require('request')),
 	config = require('../config.js');
 
-// get posts from a room if specified, else the user's feed
+// get posts from a room, else the user's feed
 router.get('/', function (req, res) {
 	validate({
 		authorization: { value: req.get('Authorization') },
-		roomId: { value: req.params.roomId, type: 'number', optional: true }
+		roomId: { value: Number(req.query.roomId), type: 'number', optional: true }
 	}).then(function (params) {
 		return user.getUserFromAuthHeader(params.authorization).then(function (userId) {
-			var q = 'SELECT post.id, "user".username, room.id AS "roomId", room.name AS "roomName", message, city, country, post.created ' + 
+			var q = 'SELECT post.id, "user".username, room.id AS "roomId", room.name AS "roomName", message, city, country, post.created, ' + 
+					'   (SELECT COUNT(*) FROM post AS post2 WHERE parent_post_id = post.id) AS "replyCount" ' +
 					'FROM post ' +
 					'JOIN "user" ON ("user".id = user_id) ' +
-					'JOIN "room" ON (room.id = room_id) ';
+					'JOIN "room" ON (room.id = room_id) ' +
+					'WHERE parent_post_id IS NULL ';
 			if (params.roomId) {
-				q += 'WHERE room_id = $1';
+				q += 'AND room_id = $1';
 				return db.query(q, [params.roomId]);
 			} else {
-				q += 'WHERE room_id IN (SELECT room_id FROM resident WHERE user_id = $1)';
+				q += 'AND room_id IN (SELECT room_id FROM resident WHERE user_id = $1)';
 				return db.query(q, [userId]);
 			}
 		});
@@ -51,11 +53,11 @@ router.post('/', function (req, res) {
 		message: { value: req.body.message },
 		latitude: { value: req.body.latitude, type: 'number', optional: true },
 		longitude: { value: req.body.longitude, type: 'number', optional: true },
-		replyToPostId: { value: req.body.replyToPostId, type: 'number', optional: true }
+		parentId: { value: req.body.parentId, type: 'number', optional: true }
 	}).then(function (params) {
 		return user.getUserFromAuthHeader(params.authorization).then(function (userId) {
-			var q = 'INSERT INTO post (user_id, room_id, message) VALUES ($1, $2, $3) RETURNING id';
-			return db.query(q, [userId, params.roomId, params.message]);
+			var q = 'INSERT INTO post (user_id, room_id, parent_post_id, message) VALUES ($1, $2, $3, $4) RETURNING id';
+			return db.query(q, [userId, params.roomId, params.parentId, params.message]);
 		}).then(function (result) {
 			if (params.latitude && params.longitude) {
 				log.log('reverse geocoding', params.latitude + ',' + params.longitude);
@@ -84,12 +86,45 @@ router.post('/', function (req, res) {
 });
 
 // get post and its replies
-router.get('/:id', function (req, res) {
-
+router.get('/:postId', function (req, res) {
+	validate({
+		authorization: { value: req.get('Authorization') },
+		postId: { value: Number(req.params.postId), type: 'number' }
+	}).then(function (params) {
+		log.log('getting post with id', params.postId);
+		return user.getUserFromAuthHeader(params.authorization).then(function (userId) {
+			var q = 'SELECT post.id, "user".username, room.id AS "roomId", room.name AS "roomName", message, city, country, post.created ' + 
+					'FROM post ' +
+					'JOIN "user" ON ("user".id = user_id) ' +
+					'JOIN "room" ON (room.id = room_id) ' +
+					'WHERE post.id = $1 AND parent_post_id IS NULL ';
+			return db.query(q, [params.postId]);
+		});
+	}).then(function (result) {
+		var post = result.rows[0];
+		if (!post) { throw { name: 'NotFound' }; }
+		var q = 'SELECT "user".username, message, post.created FROM post JOIN "user" ON ("user".id = user_id) ' +
+				'WHERE parent_post_id = $1'; // get replies
+		return db.query(q, [post.id]).then(function (result) {
+			post.replies = result.rows;
+			res.status(201).json(post);
+		});
+	}).catch(function (err) {
+		if (err.name === 'Authentication') {
+			res.status(401).json({ error: 'Authentication' });
+		} else if (err.name === 'Validation') {
+			res.status(400).json({ error: 'Validation', validation: err.validation });
+		} else if (err.name === 'NotFound') {
+			res.status(404).json({ error: 'NotFound' });
+		} else {
+			log.error(err);
+			res.status(500).json({ error: 'Fatal' });
+		}
+	});
 });
 
 // delete a post
-router.delete('/:id', function (req, res) {
+router.delete('/:postId', function (req, res) {
 
 });
 

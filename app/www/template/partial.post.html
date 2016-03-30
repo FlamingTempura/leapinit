@@ -1,12 +1,21 @@
-<a ui-sref="post({ postId: post.id })" class="card post">
-	<div class="pic" ng-if="post.picture" style="background-image: url({{ post.picture }});"></div>
+<div ui-sref="post({ postId: post.id })" class="post">
+	<div class="pic" ng-if="!reply && post.picture" style="background-image: url({{ post.picture }});"></div>
 	<div class="user" ng-if="post.username">{{ post.username }}</div>
-	<div class="location" ng-if="post.city"><span class="fa fa-map-marker"></span>{{ post.city }}, {{ post.country }}</div>
+	<div class="location" ng-if="!reply && post.city"><span class="fa fa-map-marker"></span>{{ post.city }}, {{ post.country }}</div>
 	<div class="message">{{ post.message }}</div>
 	<div class="below">
 		<div class="created">{{ post.created | fromNow }}</div>
-		<div class="room" ui-sref="room({ roomId: post.roomId })">in {{ post.roomName }}</div>
-		<div class="reply">{{ replies.length }} replies</div>
+		<div class="room-name" ng-if="!reply" ui-sref="room({ roomId: post.roomId })">in {{ post.roomName }}</div>
+		<div class="replies" ng-if="!reply && summary">{{ post.replyCount }} {{ post.replyCount === 1 ? 'reply' : 'replies' }}</div>
 	</div>
 	<div>{{ score }}</div>
-</a>
+	<div class="replies" ng-if="!summary">
+		<post ng-repeat="reply in post.replies" post="reply" summary="true" reply="true"></post>
+
+		<form class="post" ng-click="headerActive = true" ng-class="{ active: headerActive }">
+			<input type="text" ng-model="replyModel.message" placeholder="Write a reply...">
+			<button ng-click="onReply()">Post</button>
+		</form>
+
+	</div>
+</div>

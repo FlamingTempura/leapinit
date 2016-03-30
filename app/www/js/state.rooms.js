@@ -1,5 +1,4 @@
-/* global angular */
-
+/* global angular, _ */
 'use strict';
 
 angular.module('leapinit').config(function ($stateProvider) {

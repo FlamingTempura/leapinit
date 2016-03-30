@@ -14,16 +14,23 @@ angular.module('leapinit', ['ui.router'])
 			scope: { title: '=' }
 		};
 	})
-	.directive('post', function () {
+	.directive('room', function () {
+		return {
+			restrict: 'E',
+			replace: true,
+			templateUrl: 'template/partial.room.html',
+			scope: { room: '=' }
+		};
+	})
+	.directive('post', function (remote) {
 		return {
 			restrict: 'E',
 			replace: true,
 			templateUrl: 'template/partial.post.html',
-			scope: { post: '=' },
+			scope: { post: '=', summary: '=', reply: '=', replyModel: '=', onReply: '=' },
 			link: function ($scope) {
 				_.extend($scope.post, {
-					picture: Math.random() > 0.5 ? '/img/test.jpg' : 0,
-					replies: 1
+					picture: Math.random() > 0.5 ? '/img/test.jpg' : 0
 				})
 			}
 		};
