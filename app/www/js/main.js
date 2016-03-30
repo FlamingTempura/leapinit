@@ -56,35 +56,6 @@ angular.module('leapinit', ['ui.router'])
 			}
 		};
 	})
-	.directive('slider', function () {
-		return {
-			restrict: 'A',
-			require: '?ngModel',
-			link: function ($scope, element, attr, ngModel) {
-				var $input = element,
-					title = attr.title,
-					$slider = $('<div class="slider">'),
-					$plus = $('<div class="btn btn-plus">')
-						.html('<i class="fa fa-plus"></i>')
-						.click(function () {
-							var val = Number(ngModel.$viewValue) + 1;
-							ngModel.$setViewValue(val);
-							$scope.$apply();
-						}),
-					$minus = $('<div class="btn btn-minus">')
-						.html('<i class="fa fa-minus"></i>')
-						.click(function () {
-							var val = Number(ngModel.$viewValue) - 1;
-							ngModel.$setViewValue(val);
-							$scope.$apply();
-						}),
-					$title = $('<div class="title">')
-						.html(title);
-				$slider.append($plus, $title, $minus);
-				$input.hide().after($slider);
-			}
-		};
-	})
 	.factory('geo', function () {
 		var geo = {
 			watch: function () {
