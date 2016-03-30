@@ -1,12 +1,12 @@
 'use strict';
 
 var uuid = require('uuid'),
+	Bluebird = require('bluebird'),
 	router = require('express').Router(),
 	log = require('../utils/log').create('Auth', 'yellow'),
 	db = require('../utils/db'),
 	validate = require('../utils/validate'),
 	config = require('../config.js');
-
 
 var issueToken = function (userId) {
 	var tokenUuid = uuid.v4(),
@@ -54,17 +54,29 @@ router.post('/', function (req, res) {
 // login
 router.post('/login', function (req, res) {
 	validate({
+		authorization: { value: req.get('Authorization') }, // token of user to merge into existing account
 		username: { value: req.body.username, type: 'string', max: 1000 },
 		password: { value: req.body.password, type: 'string', min: 6, max: 1000 }
 	}).then(function (params) {
-		log.info('checking username and password...');
-		var q = 'SELECT id FROM "user"  WHERE username = $1 AND password_hash = crypt($2, password_hash)';
-		return db.query(q, [params.username, params.password]);
-	}).then(function (result) {
-		if (result.rows.length === 0) { throw { name: 'LoginFailure' }; }
-		return issueToken(result.rows[0].id);
-	}).then(function (token) {
-		res.status(200).json({ token: token });
+		return getUserFromAuthHeader(params.authorization).then(function (fromUserId) {
+			log.info('checking username and password...');
+			var q = 'SELECT id FROM "user"  WHERE username = $1 AND password_hash = crypt($2, password_hash)';
+			return db.query(q, [params.username, params.password]).then(function (result) {
+				if (result.rows.length === 0) { throw { name: 'LoginFailure' }; }
+				var toUserId = result.rows[0].id;
+				// transfer all data to existing user
+				return Bluebird.all([
+					db.query('UPDATE post SET user_id = $2 WHERE user_id = $1', [fromUserId, toUserId]),
+					db.query('UPDATE flag SET user_id = $2 WHERE user_id = $1', [fromUserId, toUserId]),
+					db.query('UPDATE token SET user_id = $2 WHERE user_id = $1', [fromUserId, toUserId]),
+					db.query('UPDATE resident SET user_id = $2 WHERE user_id = $1', [fromUserId, toUserId])
+				]).then(function () {
+					return db.query('DELETE FROM user WHERE id = $1', [fromUserId]); // delete old user
+				});
+			});
+		});
+	}).then(function () {
+		res.status(200).json({});
 	}).catch(function (err) {
 		if (err.name === 'LoginFailure') {
 			res.status(401).json({ error: 'LoginFailure' });

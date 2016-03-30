@@ -28,7 +28,7 @@
 	</div>
 
 	<div ng-if="room.name">
-		<post ng-repeat="post in posts track by post.id" post="post" summary="true" class="card"></post>
+		<post ng-repeat="post in posts track by post.id" post="post" summary="true" class="card" hide-room="true"></post>
 		<div ng-if="!posts.length">
 			<p><strong>There are no posts in this room.</strong></p>
 			<p>Why not add something by tapping <i class="fa fa-plus"></i> above?</p>

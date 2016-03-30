@@ -5,7 +5,7 @@
 	<div class="message">{{ post.message }}</div>
 	<div class="below">
 		<div class="created">{{ post.created | fromNow }}</div>
-		<div class="room-name" ng-if="!reply" ui-sref="room({ roomId: post.roomId })">in {{ post.roomName }}</div>
+		<div class="room-name" ng-if="!reply && !hideRoom" ui-sref="room({ roomId: post.roomId })">in {{ post.roomName }}</div>
 		<div class="replies" ng-if="!reply && summary">{{ post.replyCount }} {{ post.replyCount === 1 ? 'reply' : 'replies' }}</div>
 	</div>
 	<div>{{ score }}</div>

@@ -27,7 +27,7 @@ angular.module('leapinit', ['ui.router'])
 			restrict: 'E',
 			replace: true,
 			templateUrl: 'template/partial.post.html',
-			scope: { post: '=', summary: '=', reply: '=', replyModel: '=', onReply: '=' },
+			scope: { post: '=', summary: '=', reply: '=', replyModel: '=', onReply: '=', hideRoom: '=' },
 			link: function ($scope) {
 				_.extend($scope.post, {
 					picture: Math.random() > 0.5 ? '/img/test.jpg' : 0
