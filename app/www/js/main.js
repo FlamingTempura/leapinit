@@ -22,10 +22,8 @@ angular.module('leapinit', ['ui.router'])
 			scope: { post: '=' },
 			link: function ($scope) {
 				_.extend($scope.post, {
-					picture: '/img/test.jpg',
-					location: 'London, UK',
-					replies: 1,
-					room: { name: 'Batman', id: 1 }
+					picture: Math.random() > 0.5 ? '/img/test.jpg' : 0,
+					replies: 1
 				})
 			}
 		};

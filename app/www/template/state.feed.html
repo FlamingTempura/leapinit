@@ -2,14 +2,14 @@
 
 <div class="content content-nav-top content-nav-bottom">
 
-	<div ng-if="!user.name && !user.dismissedSignup" class="msg">
+	<!-- <div ng-if="!user.name && !user.dismissedSignup" class="msg">
 		<a ng-click="user.dismissedSignup = true"><span class="fa fa-close"></span></a>
 		<h2>Create an account</h2>
 		<p>Leapin.it is more fun with an account</p>
 		<span class="fa fa-users"></span>
 		<button ui-sref="signup">Create account</button>
 		<a ui-sref="signin">I already have an account</a>
-	</div>
+	</div> -->
 
 	<post ng-repeat="post in posts track by post.id" post="post"></post>
 

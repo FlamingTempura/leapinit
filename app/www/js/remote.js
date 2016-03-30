@@ -1,10 +1,11 @@
 /* global angular, _ */
 'use strict';
 
-angular.module('leapinit').factory('remote', function ($http, $state) {
+angular.module('leapinit').factory('remote', function ($http, $state, $rootScope) {
 	var token;
 
 	var request = function (options) {
+		delete $rootScope.offline;
 		// TODO: if 401, deauth
 		options = _.cloneDeep(options) || {};
 		options.url = 'http://127.0.0.1:9122' + options.url;
@@ -19,21 +20,27 @@ angular.module('leapinit').factory('remote', function ($http, $state) {
 		}).then(function (result) {
 			return result.data;
 		}).catch(function (err) {
-			console.log('fff', err.status === 401)
+			console.log('fff', err.status)
 			if (err.status === 401) { // token was invalidated
 				console.log('invalidating token')
 				localStorage.removeItem('token');
 				token = undefined;
 				$state.go('feed');
 			}
-			throw err;
+			if (err.status <= 0) {
+				$rootScope.offline = true;
+			}
+			throw err.data;
 		});
 	};
-	var get = function (url, params) {
-		return request({ method: 'GET', url: url, data: params });
+	var get = function (url, params, authenticate) {
+		return request({ method: 'GET', url: url, data: params, authenticate: authenticate });
 	};
 	var post = function (url, data, authenticate) {
 		return request({ method: 'POST', url: url, data: data, authenticate: authenticate });
+	};
+	var put = function (url, data, authenticate) {
+		return request({ method: 'PUT', url: url, data: data, authenticate: authenticate });
 	};
 
 	var authRequest;
@@ -54,8 +61,8 @@ angular.module('leapinit').factory('remote', function ($http, $state) {
 			localStorage.setItem('token', token);
 			return token;
 		}).catch(function (err) {
-			// offline?
 			console.error('critical failure', err);
+			throw err;
 		});
 		return authRequest;
 	});
@@ -64,6 +71,7 @@ angular.module('leapinit').factory('remote', function ($http, $state) {
 		request: request,
 		get: get,
 		post: post,
+		put: put,
 		auth: auth
 	};
 });

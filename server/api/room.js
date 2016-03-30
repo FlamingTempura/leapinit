@@ -1,44 +1,63 @@
 'use strict';
 
-var _ = require('lodash'),
-	router = require('express').Router(),
+var router = require('express').Router(),
 	db = require('../utils/db'),
 	validate = require('../utils/validate'),
+	user = require('./user'),
 	log = require('../utils/log').create('Room', 'cyan');
 
 // get all rooms that the user is a resident of
 router.get('', function (req, res) {
-	var q = 'SELECT *, (SELECT COUNT(*) FROM post WHERE room_id = room.id) AS unseen FROM room';
-	db.query(q).then(function (result) {
+	validate({
+		authorization: { value: req.get('Authorization') },
+	}).then(function (params) {
+		return user.getUserFromAuthHeader(params.authorization).then(function (userId) {
+			log.log('getting rooms for user', userId);
+			var q = 'SELECT id, name, created, (SELECT COUNT(*) FROM post WHERE room_id = room.id) AS unseen ' + 
+					'FROM room WHERE id IN (SELECT room_id FROM resident WHERE user_id = $1)';
+			return db.query(q, [userId]);
+		});
+	}).then(function (result) {
 		res.status(200).json(result.rows);
 	}).catch(function (err) {
-		log.error(err);
-		res.status(500).json({ error: 'Fatal' });
+		if (err.name === 'Authentication') {
+			res.status(401).json({ error: 'Authentication' });
+		} else {
+			log.error(err);
+			res.status(500).json({ error: 'Fatal' });
+		}
 	});
 });
 
 // Get the room for a code (or create it if it doesn't exist)
 router.post('/from_code', function (req, res) {
-	// TODO check authed
 	validate({
+		authorization: { value: req.get('Authorization') },
 		code: { value: req.body.code, type: 'string', min: 2 }
 	}).then(function (params) {
-		var q = 'SELECT * FROM room JOIN code ON (room.id = room_id) WHERE code = $1';
-		return db.query(q, [params.code]).then(function (result) {
-			if (result.rows.length === 0) { // create room from code
-				var q = 'INSERT INTO room (name) VALUES (\'Untitled\') RETURNING id';
-				return db.query(q).then(function (result) {
-					var q = 'INSERT INTO code (code, room_id) VALUES ($1, $2) RETURNING room_id';
-					return db.query(q, [params.code, result.rows[0].id]);
-				});
-			} else {
-				return result;
-			}
+		return user.getUserFromAuthHeader(params.authorization).then(function (userId) {
+			var q = 'SELECT room_id, code.id AS "code_id" FROM code JOIN room ON (room.id = room_id) WHERE code = $1';
+			return db.query(q, [params.code]).then(function (result) {
+				if (result.rows.length === 0) { // create room from code
+					var q = 'INSERT INTO room DEFAULT VALUES RETURNING id';
+					return db.query(q).then(function (result) {
+						var q = 'INSERT INTO code (code, room_id) VALUES ($1, $2) RETURNING room_id, id AS code_id';
+						return db.query(q, [params.code, result.rows[0].id]);
+					});
+				} else {
+					return result;
+				}
+			}).then(function (result) {
+				var q = 'INSERT INTO resident (user_id, room_id, code_id) VALUES ($1, $2, $3) RETURNING room_id';
+				return db.query(q, [userId, result.rows[0].room_id, result.rows[0].code_id]);
+			});
 		});
 	}).then(function (result) {
 		res.status(200).json({ roomId: result.rows[0].room_id });
 	}).catch(function (err) {
-		if (err.name === 'Validation') {
+		if (err.name === 'Authentication') {
+			res.status(401).json({ error: 'Authentication' });
+		} else if (err.name === 'Validation') {
 			res.status(400).json({ error: 'Validation', validation: err.validation });
 		} else if (err.name === 'NotFound') {
 			res.status(404).json({ error: 'NotFound' });
@@ -62,13 +81,7 @@ router.get('/:roomId', function (req, res) {
 		return db.query(q, [params.roomId]);
 	}).then(function (result) {
 		if (result.rows.length === 0) { throw { name: 'NotFound' }; }
-		var room = result.rows[0];
-		var q = 'SELECT id, user_id AS "userId", message, created FROM post WHERE room_id = $1';
-		return db.query(q, [room.id]).then(function (result) {
-			return _.extend(room, { posts: result.rows });
-		});
-	}).then(function (room) {
-		res.status(200).json(room);
+		res.status(200).json(result.rows[0]);
 	}).catch(function (err) {
 		if (err.name === 'Validation') {
 			res.status(400).json({ error: 'Validation', validation: err.validation });
@@ -83,17 +96,20 @@ router.get('/:roomId', function (req, res) {
 
 // Change name of room
 router.put('/:roomId', function (req, res) {
-	// TODO check user is allowed to view room
-
 	validate({
+		authorization: { value: req.get('Authorization') },
 		roomId: { value: Number(req.params.roomId), type: 'number' },
 		name: { value: req.body.name, type: 'string', max: 200 }
 	}).then(function (params) {
-		var q = 'UPDATE room SET name = $2 WHERE id = $1 ' +
-				'RETURNING *';
-		return db.query(q, [params.roomId, params.name]);
+		return user.getUserFromAuthHeader(params.authorization).then(function (userId) { // TODO check that user is allowed to modify name
+			var q = 'UPDATE room SET name = $2 WHERE id = $1 ' +
+					'RETURNING *';
+			return db.query(q, [params.roomId, params.name]).then(function (result) {
+				if (result.rows.length === 0) { throw { name: 'NotFound' }; }
+				return result;
+			});
+		});
 	}).then(function (result) {
-		if (result.rows.length === 0) { throw { name: 'NotFound' }; }
 		res.status(200).json(result.rows[0]);
 	}).catch(function (err) {
 		if (err.name === 'Validation') {

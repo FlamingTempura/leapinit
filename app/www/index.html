@@ -38,5 +38,8 @@
 </head>
 <body ng-controller="App">
 	<div ui-view></div>
+	<div class="offline" ng-show="offline">
+		Cannot connect to server
+	</div>
 </body>
 </html>

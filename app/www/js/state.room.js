@@ -7,14 +7,20 @@ angular.module('leapinit').config(function ($stateProvider) {
 		url: '/room/:roomId',
 		templateUrl: 'template/state.room.html',
 		controller: function ($scope, $stateParams, remote, geo) {
-			$scope.loading = true;
-			remote.get('/room/' + $stateParams.roomId).then(function (room) {
-				$scope.room = room;
-			}).catch(function (err) {
-				$scope.error = err;
-			}).finally(function () {
-				delete $scope.loading;
-			});
+			var refresh = function () {
+				$scope.loading = true;
+				remote.get('/room/' + $stateParams.roomId).then(function (room) {
+					$scope.room = room;
+					return remote.get('/post?roomId' + $stateParams.roomId);
+				}).then(function (posts) {
+					$scope.posts = posts;
+				}).catch(function (err) {
+					$scope.error = err;
+				}).finally(function () {
+					delete $scope.loading;
+				});
+			};
+			refresh();
 
 			$scope.newPost = {};
 			$scope.createPost = function () {
@@ -34,39 +40,19 @@ angular.module('leapinit').config(function ($stateProvider) {
 				});
 			};
 
-/*
-			room.fetch().catch(function (r) {
-				
-			}).finally(function () {
-				$rootScope.title = room.get('name') || 'New room';
-				$rootScope.safeApply($scope);
-			});
-
-			room.posts.fetch().catch(function (r) {
-				$scope.error = r.responseJSON.msg;
-			}).finally(function () {
-				$scope.posts = room.posts;
-				$rootScope.safeApply($scope);
-			});
-
-			room.posts.on('add remove reset change', function () {
-				$rootScope.title = room.get('name') || 'New room';
-				$rootScope.safeApply($scope);
-				$rootScope.safeApply();
-			});
-
-			$rootScope.title = room.get('name') || 'New room';
-					
-
+			$scope.newName = {};
 			$scope.setName = function () {
-				room.save({ 'name': room.newName }, { wait: true }).fail(function (response) {
-					$scope.error = response.responseJSON.msg;
-				}).always(function () {
-					$rootScope.title = room.get('name') || 'New room';
+				delete $scope.newName.error;
+				remote.put('/room/' + $stateParams.roomId, { 'name': $scope.newName.name }).then(function () {
+					refresh();
+				}).catch(function (err) {
+					$scope.newName.error = err;
+				}).finally(function () {
 					$scope.loading = false;
-					$rootScope.safeApply($scope);
 				});
 			};
+
+/*
 
 			$scope.leave = function () {
 				if (window.confirm('Are you sure you wish to permanently leave the room?')) {
@@ -78,21 +64,6 @@ angular.module('leapinit').config(function ($stateProvider) {
 						$rootScope.safeApply($scope);
 					});
 				}
-			};
-
-			var create = function (post) {
-				$scope.loading = true;
-				var model = new models.Posts.prototype.model(post);
-				room.posts.add(model);
-				model.save(undefined, {wait: true}).fail(function (response) {
-					$scope.error = response.responseJSON.msg;
-					model.trigger('destroy');
-				}).then(function () {
-					console.log('SUCCESS');
-				}).always(function () {
-					$scope.loading = false;
-					$rootScope.safeApply($scope);
-				});
 			};
 
 			$rootScope.add = {

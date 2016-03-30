@@ -1,5 +1,5 @@
 CREATE TABLE "room"
   ("id"        SERIAL PRIMARY KEY NOT NULL,
-   "name"      TEXT NOT NULL,
+   "name"      TEXT,
    "created"   TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL);
 

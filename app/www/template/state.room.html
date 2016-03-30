@@ -1,4 +1,4 @@
-<toolbar title="room.name" class="toolbar-fade">
+<toolbar title="room.name || 'New room'" class="toolbar-fade">
 	<a ui-sref="room-settings({ roomId: room.id })" class="icon"><span class="fa fa-cog"></span></a> <!-- admin only codes, delete, name -->
 </toolbar>
 
@@ -11,14 +11,15 @@
 <div class="content content-header">
 	<div class="msg msg-error" ng-if="error">{{ error }}</div>
 
-	<!-- <div ng-if="!loading && !room.name">
-		<p><strong>You are the first resident in this room!</strong></p>
+	<div ng-if="!loading && !room.name">
+		<p><strong>You are the first person in this room!</strong></p>
 		<p>What you want to name this room?</p>
 		<form ng-submit="setName()">
-			<input type="text" placeholder="e.g., big planes" ng-model="room.newName">
+			<input type="text" placeholder="e.g., big planes" ng-model="newName.name">
 			<button type="submit">OK</button>
+			<div class="msg msg-error" ng-if="newName.error">{{ newName.error }}</div>
 		</form>
-	</div> -->
+	</div>
 
 	<div ng-if="room.name">
 		
@@ -26,9 +27,9 @@
 		<!-- <a>Residents: {{ room.residents }}</a><br>
 		<a>Codes: {{ room.codes }}</a> -->
 
-		<post ng-repeat="post in room.posts track by post.id" post="post"></post>
+		<post ng-repeat="post in posts track by post.id" post="post"></post>
 
-		<div ng-if="!room.posts.length">
+		<div ng-if="!posts.length">
 			<p><strong>There are no posts in this room.</strong></p>
 			<p>Why not add something by tapping <i class="fa fa-plus"></i> above?</p>
 		</div>

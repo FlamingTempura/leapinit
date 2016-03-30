@@ -10,19 +10,32 @@ var _ = require('lodash'),
 	request = Bluebird.promisifyAll(require('request')),
 	config = require('../config.js');
 
-// feed from subscribed rooms
+// get posts from a room if specified, else the user's feed
 router.get('/', function (req, res) {
 	validate({
-		userId: { value: req.body.userId, type: 'number' }, // todo: token
-		roomId: { value: req.body.roomId, type: 'number' },
-		message: { value: req.body.message }
+		authorization: { value: req.get('Authorization') },
+		roomId: { value: req.params.roomId, type: 'number', optional: true }
 	}).then(function (params) {
-		var q = 'INSERT INTO post (user_id, room_id, message) VALUES ($1, $2, $3)';
-		return db.query(q, [params.userId, params.roomId, params.message]);
-	}).then(function () {
-		res.status(201).json({});
+		return user.getUserFromAuthHeader(params.authorization).then(function (userId) {
+			var q = 'SELECT post.id, "user".username, room.id AS "roomId", room.name AS "roomName", message, city, country, post.created ' + 
+					'FROM post ' +
+					'JOIN "user" ON ("user".id = user_id) ' +
+					'JOIN "room" ON (room.id = room_id) ';
+			if (params.roomId) {
+				q += 'WHERE room_id = $1';
+				return db.query(q, [params.roomId]);
+			} else {
+				q += 'WHERE room_id IN (SELECT room_id FROM resident WHERE user_id = $1)';
+				return db.query(q, [userId]);
+			}
+		});
+	}).then(function (result) {
+		res.status(201).json(result.rows);
 	}).catch(function (err) {
-		if (err.name === 'Validation') {
+		// TODO 404 if no room
+		if (err.name === 'Authentication') {
+			res.status(401).json({ error: 'Authentication' });
+		} else if (err.name === 'Validation') {
 			res.status(400).json({ error: 'Validation', validation: err.validation });
 		} else { // todo: room not exist
 			log.error(err);

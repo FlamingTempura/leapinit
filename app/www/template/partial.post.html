@@ -1,11 +1,11 @@
 <a ui-sref="post({ postId: post.id })" class="card post">
 	<div class="pic" ng-if="post.picture" style="background-image: url({{ post.picture }});"></div>
 	<div class="user" ng-if="post.username">{{ post.username }}</div>
-	<div class="location" ng-if="post.location"><span class="fa fa-map-marker"></span>{{ post.location }}</div>
+	<div class="location" ng-if="post.city"><span class="fa fa-map-marker"></span>{{ post.city }}, {{ post.country }}</div>
 	<div class="message">{{ post.message }}</div>
 	<div class="below">
 		<div class="created">{{ post.created | fromNow }}</div>
-		<div class="room" ui-sref="room({ roomId: post.room.id })">in {{ post.room.name }}</div>
+		<div class="room" ui-sref="room({ roomId: post.roomId })">in {{ post.roomName }}</div>
 		<div class="reply">{{ replies.length }} replies</div>
 	</div>
 	<div>{{ score }}</div>
