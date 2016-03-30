@@ -25,7 +25,7 @@ angular.module('leapinit').config(function ($stateProvider) {
 			$scope.createPost = function () {
 				delete $scope.newPost.error;
 				$scope.newPost.loading = true;
-				remote.post('/post', {
+				remote.post('/post?mode=room', {
 					roomId: Number($stateParams.roomId),
 					message: $scope.newPost.message,
 					latitude: geo.latitude,

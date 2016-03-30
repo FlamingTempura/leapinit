@@ -12,7 +12,7 @@ angular.module('leapinit').config(function ($stateProvider) {
 		},
 		controller: function ($scope, remote) {
 			$scope.loading = true;
-			remote.get('/post').then(function (posts) {
+			remote.get('/post?mode=feed').then(function (posts) {
 				$scope.posts = posts;
 			}).catch(function (err) {
 				$scope.error = err;

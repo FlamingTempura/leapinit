@@ -10,7 +10,7 @@
 @blue: #3c78d8;
 @red: #cc4125;
 
-@shadow1: 0px 1px 2px rgba(0, 0, 0, 0.4);
+@shadow1: 0px 1px 3px rgba(0, 0, 0, 0.4);
 
 * {
     -webkit-tap-green-color: transparent;
@@ -24,7 +24,7 @@ body {
 	-webkit-touch-callout: none;
 	-webkit-text-size-adjust: none;
 	overflow: hidden;
-	background: #f1f1f1;
+	background: #fafafa;
 }
 
 body, textarea, input[type=button], input[type=submit], button {
@@ -45,23 +45,30 @@ h1 {
 	color: @green;
 }
 
-button {
+button, input[type=button], input[type=submit] {
 	margin: 6px auto 14px;
 	width: 100%;
 	margin-bottom: 15px;
 	font-size: 16px;
 	line-height: 20px;
-	background: #777;
+	//background: #777;
 	border: 0;
-	color: white;
+	//color: white;
+	background-color: transparent;
+	border: 1px solid #666;
+	color: #666;
 	padding: 12px 0 10px 0;
-	font-weight: bold;
+	font-weight: normal;
 	border-radius: 3px;
 	text-transform: uppercase;
 	&.loading { color: transparent; }
 }
+input[type=submit] {
+	border: 1px solid @green;
+	color: @green;
+}
 
-input[type=text] {
+input[type=text], input[type=password] {
 	display: block;
 	margin: 6px auto 14px;
 	width: 100%;
@@ -70,7 +77,7 @@ input[type=text] {
 	background: transparent;
 	color: @black;
 	border: 0;
-	border-bottom: 1px solid #eee;
+	border-bottom: 1px solid #ddd;
 	box-shadow: none;
 	text-indent: 10px;
 	&[disabled] {
@@ -213,6 +220,9 @@ input[type=text] {
 	overflow-y: auto;
 	&.content-header {
 		padding-top: @nav-height * 4.5 + @padding;
+	}
+	& > p {
+		padding: 0 10px;
 	}
 }
 

@@ -25,6 +25,7 @@ module.exports = Bluebird.method(function (schema) {
 				if (constraint.name === 'type') { return typeof value === constraint.value; }
 				if (constraint.name === 'min') { return typeof value === 'string' && value.length >= constraint.value; }
 				if (constraint.name === 'max') { return typeof value === 'string' && value.length <= constraint.value; }
+				if (constraint.name === 'oneOf') { return constraint.value.indexOf(value) > -1; }
 			}).map(function (constraint) {
 				return { field: field, constraint: constraint };
 			}).value();

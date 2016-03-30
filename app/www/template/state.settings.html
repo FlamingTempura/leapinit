@@ -1,18 +1,15 @@
 <toolbar></toolbar>
 
 <div class="content">
-	<div ng-if="!user.nickname">
+	<div ng-if="!user.username">
 		<h1>Anonymous</h1>
-
-		<a ui-sref="signup" class="item">Create a nickname</a>
-
-		<a ui-sref="signin" class="item">Use existing nickname</a>
+		<button ui-sref="signup">Create a nickname</button>
+		<button ui-sref="signin">Use existing nickname</button>
 	</div>
 
-	<div ng-if="user.nickname">
-		<h1>{{ user.nickname }}</h1>
-
-		<a ui-sref="password" class="item">Change password</a>
+	<div ng-if="user.username">
+		<h1>{{ user.username }}</h1>
+		<button ui-sref="password" class="item">Change password</button>
 	</div>
 
 	<!-- <a ui-sref="" class="item">Permissions</a> -->

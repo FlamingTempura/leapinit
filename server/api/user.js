@@ -97,7 +97,7 @@ router.put('/me', function (req, res) {
 		password: { value: req.body.password, type: 'string', min: 6, max: 1000 }
 	}).then(function (params) {
 		return getUserFromAuthHeader(params.authorization).then(function (userId) {
-			var q = 'UPDATE "user" SET username = $2, password_hash = gen_salt(\'md5\') WHERE id = $1';
+			var q = 'UPDATE "user" SET username = $2, password_hash =  crypt($3, gen_salt(\'md5\')) WHERE id = $1';
 			return db.query(q, [userId, params.username, params.password]);
 		});
 	}).then(function () {

@@ -1,7 +1,6 @@
 'use strict';
 
-var _ = require('lodash'),
-	Bluebird = require('bluebird'),
+var Bluebird = require('bluebird'),
 	router = require('express').Router(),
 	db = require('../utils/db'),
 	validate = require('../utils/validate'),
@@ -14,7 +13,8 @@ var _ = require('lodash'),
 router.get('/', function (req, res) {
 	validate({
 		authorization: { value: req.get('Authorization') },
-		roomId: { value: Number(req.query.roomId), type: 'number', optional: true }
+		mode: { value: req.query.mode || 'feed', oneOf: ['feed', 'room', 'user'] },
+		roomId: { value: Number(req.query.roomId), type: 'number', optional: req.query.mode === 'room' }
 	}).then(function (params) {
 		return user.getUserFromAuthHeader(params.authorization).then(function (userId) {
 			var q = 'SELECT post.id, "user".username, room.id AS "roomId", room.name AS "roomName", message, city, country, post.created, ' + 
@@ -23,9 +23,12 @@ router.get('/', function (req, res) {
 					'JOIN "user" ON ("user".id = user_id) ' +
 					'JOIN "room" ON (room.id = room_id) ' +
 					'WHERE parent_post_id IS NULL ';
-			if (params.roomId) {
+			if (params.mode === 'room') {
 				q += 'AND room_id = $1';
 				return db.query(q, [params.roomId]);
+			} else if (params.mode === 'user') {
+				q += 'AND user_id = $1';
+				return db.query(q, [userId]);
 			} else {
 				q += 'AND room_id IN (SELECT room_id FROM resident WHERE user_id = $1)';
 				return db.query(q, [userId]);

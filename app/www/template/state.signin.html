@@ -1,8 +1,9 @@
 <toolbar title="'Use existing nickname'"></toolbar>
 
 <form class="content" ng-submit="submit()">
-	<input type="text" ng-model="nickname" placeholder="Nickname" ng-disabled="loading" required>
+	<p>Enter your existing nickname and password.</p>
+	<input type="text" ng-model="username" placeholder="Nickname" ng-disabled="loading" required>
 	<input type="password" ng-model="password" placeholder="Password" ng-disabled="loading" required>
-	<button type="submit" ng-class="{ loading: loading }" ng-disabled="loading">Continue</button>
+	<input type="submit" ng-class="{ loading: loading }" ng-disabled="loading" value="Continue">
 	<div class="msg msg-error" ng-if="error">{{ error }}</div>
 </form>

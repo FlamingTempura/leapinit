@@ -10,12 +10,20 @@ var router = require('express').Router(),
 router.get('', function (req, res) {
 	validate({
 		authorization: { value: req.get('Authorization') },
+		mode: { value: req.query.mode || 'user', oneOf: ['user', 'popular'] }
 	}).then(function (params) {
 		return user.getUserFromAuthHeader(params.authorization).then(function (userId) {
 			log.log('getting rooms for user', userId);
-			var q = 'SELECT id, name, created, (SELECT COUNT(*) FROM post WHERE room_id = room.id) AS unseen ' + 
-					'FROM room WHERE id IN (SELECT room_id FROM resident WHERE user_id = $1)';
-			return db.query(q, [userId]);
+			var q = 'SELECT id, name, created, (SELECT COUNT(*) FROM post WHERE room_id = room.id) AS "unseenCount",' +
+					'  (SELECT COUNT(*) FROM post WHERE room_id = room.id) AS "postCount" ' + 
+					'FROM room ';
+			if (params.mode === 'user') {
+				q += 'WHERE id IN (SELECT room_id FROM resident WHERE user_id = $1)';
+				return db.query(q, [userId]);
+			} else {
+				q += 'ORDER BY "postCount" LIMIT 10';
+				return db.query(q);
+			}
 		});
 	}).then(function (result) {
 		res.status(200).json(result.rows);

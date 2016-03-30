@@ -1,9 +1,10 @@
 <toolbar title="'Create a nickname'"></toolbar>
 
 <form class="content" ng-submit="submit()">
-	<input ng-model="nickname" type="text" placeholder="Nickname" ng-disabled="loading" required>
+	<p>Create a nickname so others can see who you are</p>
+	<input ng-model="username" type="text" placeholder="Nickname" ng-disabled="loading" required>
 	<input ng-model="password" type="password" placeholder="Password" ng-disabled="loading" required>
 	<input ng-model="password2" type="password" placeholder="Confirm password" ng-disabled="loading" required>
-	<button type="submit" ng-class="{ loading: loading }" ng-disabled="loading">Create</button>
+	<input type="submit" ng-class="{ loading: loading }" ng-disabled="loading" value="Create">
 	<div class="msg msg-error" ng-if="error">{{ error }}</div>
 </form>
