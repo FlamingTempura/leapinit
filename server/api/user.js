@@ -95,12 +95,17 @@ router.post('/login', function (req, res) {
 router.put('/me', function (req, res) {
 	validate({
 		authorization: { value: req.get('Authorization') },
-		username: { value: req.body.username, type: 'string', max: 1000 },
+		username: { value: req.body.username, type: 'string', max: 1000, optional: true },
 		password: { value: req.body.password, type: 'string', min: 6, max: 1000 }
 	}).then(function (params) {
 		return getUserFromAuthHeader(params.authorization).then(function (userId) {
-			var q = 'UPDATE "user" SET username = $2, password_hash =  crypt($3, gen_salt(\'md5\')) WHERE id = $1';
-			return db.query(q, [userId, params.username, params.password]);
+			if (params.username) {
+				var q = 'UPDATE "user" SET username = $2, password_hash =  crypt($3, gen_salt(\'md5\')) WHERE id = $1';
+				return db.query(q, [userId, params.username, params.password]);
+			} else {
+				var q2 = 'UPDATE "user" SET password_hash =  crypt($2, gen_salt(\'md5\')) WHERE id = $1';
+				return db.query(q2, [userId, params.password]);
+			}
 		});
 	}).then(function () {
 		res.status(201).json({});

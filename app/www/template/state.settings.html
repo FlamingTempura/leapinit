@@ -3,13 +3,13 @@
 <div class="content">
 	<div ng-if="!user.username">
 		<h1>Anonymous</h1>
-		<button ui-sref="signup">Create a nickname</button>
+		<button ui-sref="edituser">Create a nickname</button>
 		<button ui-sref="signin">Use existing nickname</button>
 	</div>
 
 	<div ng-if="user.username">
 		<h1>{{ user.username }}</h1>
-		<button ui-sref="password" class="item">Change password</button>
+		<button ui-sref="edituser" class="item">Change password</button>
 	</div>
 
 	<!-- <a ui-sref="" class="item">Permissions</a> -->

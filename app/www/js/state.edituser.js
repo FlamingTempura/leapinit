@@ -3,10 +3,11 @@
 'use strict';
 
 angular.module('leapinit').config(function ($stateProvider) {
-	$stateProvider.state('signup', {
-		url: '/signup',
-		templateUrl: 'template/state.signup.html',
-		controller: function ($scope, $state, remote) {
+	$stateProvider.state('edituser', {
+		url: '/edituser?signup',
+		templateUrl: 'template/state.edituser.html',
+		controller: function ($scope, $state, $stateParams, remote) {
+			$scope.signup = $stateParams.signup;
 			$scope.submit = function () {
 				delete $scope.error;
 				if ($scope.password !== $scope.password2) {
@@ -15,7 +16,7 @@ angular.module('leapinit').config(function ($stateProvider) {
 				}
 				$scope.loading = true;
 				remote.put('/user/me', {
-					username: $scope.username,
+					username: $scope.signup ? $scope.username : undefined,
 					password: $scope.password
 				}).then(function () {
 					window.history.go(-1);
