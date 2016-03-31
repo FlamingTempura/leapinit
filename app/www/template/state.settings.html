@@ -1,6 +1,6 @@
 <toolbar></toolbar>
 
-<div class="content">
+<div class="content" ng-class="{ loading: loading }">
 	<div ng-if="!user.username">
 		<h1>Anonymous</h1>
 		<button ui-sref="edituser">Create a nickname</button>
