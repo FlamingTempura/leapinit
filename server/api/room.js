@@ -88,7 +88,8 @@ router.get('/:roomId', function (req, res) {
 			var q = 'SELECT id, name, ' + 
 					'  (SELECT COUNT(*) FROM resident WHERE room_id = $1) AS "residentCount", ' +
 					'  (SELECT code FROM code JOIN resident ON (code_id = code.id) WHERE user_id = $2 AND resident.room_id = $1) AS "userCode", ' +
-					'  (SELECT array_agg(code) FROM code WHERE room_id = $1) AS codes ' +
+					'  (SELECT array_agg(code) FROM code WHERE room_id = $1) AS codes, ' +
+					'  (SELECT filename FROM post WHERE room_id = $1 AND filename IS NOT NULL LIMIT 1) AS picture ' +
 					'FROM room WHERE id = $1';
 			return db.query(q, [params.roomId, userId]);
 		});

@@ -1,14 +1,14 @@
 /* global angular, _ */
 'use strict';
 
-angular.module('leapinit').factory('remote', function ($http, $state, $rootScope) {
+angular.module('leapinit').factory('remote', function ($http, $state, $rootScope, config) {
 	var token;
 
 	var request = function (options) {
 		delete $rootScope.offline;
 		// TODO: if 401, deauth
 		options = _.cloneDeep(options) || {};
-		options.url = 'http://127.0.0.1:9122' + options.url;
+		options.url = config.serverRoot + options.url;
 		options.headers = options.headers || {};
 		return new Promise(function (resolve) {
 			if (options.authenticate === false) { return resolve(); }

@@ -51,6 +51,8 @@ angular.module('leapinit').config(function ($stateProvider) {
 					});
 				}).then(function () {
 					refresh();
+					delete $scope.headerActive;
+					$scope.newPost = {};
 				}).catch(function (err) {
 					$scope.newPost.error = err;
 				}).finally(function () {

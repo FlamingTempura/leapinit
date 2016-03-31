@@ -20,6 +20,7 @@ moment.updateLocale('en', {
 });
 
 angular.module('leapinit', ['ngAnimate', 'ui.router'])
+	.constant('config', { serverRoot: 'http://localhost:9122' })
 	.config(function ($urlRouterProvider) {
 		$urlRouterProvider.otherwise('/feed');
 	})
@@ -118,7 +119,7 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 		};
 		return geo;
 	})
-	.run(function (geo, remote, $rootScope) {
+	.run(function (geo, remote, $rootScope, config) {
 		Promise.setScheduler(function (cb) {
 			$rootScope.$evalAsync(cb);
 		});
@@ -132,6 +133,9 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 				.toggleClass('animate-down', urlDepth(to.url) < urlDepth(from.url))
 				.toggleClass('animate-right', urlDepth(to.url) === urlDepth(from.url));
 		});
+
+		$rootScope.config = config;
+		$rootScope.pah = 10
 
 		geo.watch();
 		remote.auth();
