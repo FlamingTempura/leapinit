@@ -9,6 +9,13 @@ var Bluebird = require('bluebird'),
 	request = Bluebird.promisifyAll(require('request')),
 	config = require('../config.js');
 
+var exportFields =  'post.id, "user".username, room.id AS "roomId", room.name AS "roomName", message, ' + 
+					'location[0] AS latitude, location[1] AS longitude,city, country, post.created, ' + 
+					'(SELECT COUNT(*) FROM post AS post2 WHERE parent_post_id = post.id) AS "replyCount", ' +
+					'(SELECT type FROM reaction WHERE post_id = post.id AND user_id = $1) AS "userReaction", ' +
+					'(SELECT COUNT(*) FROM reaction WHERE post_id = post.id AND type = \'love\') AS "loveCount", ' +
+					'(SELECT COUNT(*) FROM reaction WHERE post_id = post.id AND type = \'hate\') AS "hateCount" ';
+
 // get posts from a room, else the user's feed
 router.get('/', function (req, res) {
 	validate({
@@ -17,16 +24,15 @@ router.get('/', function (req, res) {
 		roomId: { value: Number(req.query.roomId), type: 'number', optional: req.query.mode !== 'room' }
 	}).then(function (params) {
 		return user.getUserFromAuthHeader(params.authorization).then(function (userId) {
-			var q = 'SELECT post.id, "user".username, room.id AS "roomId", room.name AS "roomName", message, city, country, post.created, ' + 
-					'   (SELECT COUNT(*) FROM post AS post2 WHERE parent_post_id = post.id) AS "replyCount" ' +
+			var q = 'SELECT ' + exportFields +
 					'FROM post ' +
 					'JOIN "user" ON ("user".id = user_id) ' +
 					'JOIN "room" ON (room.id = room_id) ' +
 					'WHERE parent_post_id IS NULL ';
 			if (params.mode === 'room') {
 				log.log('getting posts for room', params.roomId);
-				q += 'AND room_id = $1 ORDER BY created DESC';
-				return db.query(q, [params.roomId]);
+				q += 'AND room_id = $2 ORDER BY created DESC';
+				return db.query(q, [userId, params.roomId]);
 			} else if (params.mode === 'user') {
 				q += 'AND user_id = $1 ORDER BY created DESC';
 				return db.query(q, [userId]);
@@ -97,12 +103,12 @@ router.get('/:postId', function (req, res) {
 	}).then(function (params) {
 		log.log('getting post with id', params.postId);
 		return user.getUserFromAuthHeader(params.authorization).then(function (userId) {
-			var q = 'SELECT post.id, "user".username, room.id AS "roomId", room.name AS "roomName", message, city, country, post.created ' + 
+			var q = 'SELECT ' + exportFields + 
 					'FROM post ' +
 					'JOIN "user" ON ("user".id = user_id) ' +
 					'JOIN "room" ON (room.id = room_id) ' +
-					'WHERE post.id = $1 AND parent_post_id IS NULL ';
-			return db.query(q, [params.postId]);
+					'WHERE post.id = $2 AND parent_post_id IS NULL ';
+			return db.query(q, [userId, params.postId]);
 		});
 	}).then(function (result) {
 		var post = result.rows[0];

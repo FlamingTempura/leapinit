@@ -9,7 +9,7 @@
 @black: rgba(0, 0, 0, 0.6);
 @blue: #3c78d8;
 @red: #cc4125;
-@bg: #fafafa;
+@bg: #f8f8f8;
 
 @shadow1: 0px 1px 3px rgba(0, 0, 0, 0.4);
 
@@ -38,11 +38,15 @@ body, a { color: @black; }
 
 a { text-decoration: none; }
 
-h1 {
+h1, h2 {
 	font-size: 16px;
 	text-transform: uppercase;
 	font-weight: normal;
 	color: @green;
+}
+h2 {
+	color: #666;
+	font-size: 14px;
 }
 
 button, input[type=button], input[type=submit] {
@@ -117,8 +121,6 @@ div[ui-view] {
 		&.ng-leave-active { transform: translate(0, 20%); opacity: 0; }
 	}
 }
-
-
 
 .icon {
 	display: inline-block;
@@ -305,6 +307,7 @@ div[ui-view] {
 	color: #111;
 	line-height: 1.4em;
 	border-radius: 2px;
+	min-height: 80px;
 	&.msg-error h2, &.msg-error h3 { color: @red; }
 	&.msg-info h2, &.msg-info h3 { color: @blue; }
 }
@@ -326,29 +329,53 @@ div[ui-view] {
 }
 
 .post {
+	margin-bottom: @padding * 2;
 	.pic {
 		height: 120px;
-		margin: -@padding -@padding @padding -@padding;
+		margin: 0 -@padding @padding -@padding;
 		background-size: cover;
-		border-radius: 3px 3px 0 0;
 	}
 	.location {
 		color: @green;
-		font-size: 14px;
-		margin-bottom: 4px;
-		.fa { margin-right: 4px; }
+		//color: #999;
 	}
-	.below {
-		font-size: 14px;
-		margin-top: 4px;
-		display: flex;
-		flex-direction: row;
-		& > div { width: 30%; }
-		.group-name { text-align: center; }
-		.replies { text-align: right; }
+	.above {
+		font-size: 12px;
+		position: relative;
+		.user {
+			font-size: 14px;
+			font-weight: bold;
+		}
 		.created {
 			color: #999;
 		}
+		.right {
+			position: absolute;
+			top: 0; right: 0;
+		}
+	}
+	.message {
+		margin: 6px 0 12px;
+	}
+	.below {
+		font-size: 14px;
+		margin-top: @padding;
+		display: flex;
+		flex-direction: row;
+		& > div {
+			text-align: center;
+			width: 25%;
+			flex-grow: 0;
+			flex-shrink: 0;
+			.count {
+				font-size: 12px;
+				color: #aaa;
+				margin-bottom: -8px;
+			}
+		}
+	}
+	&.reply .message {
+		margin-bottom: 0;
 	}
 }
 
@@ -371,4 +398,27 @@ div[ui-view] {
 	text-align: center;
 	line-height: 21px;
 }
+.hexagon {
+	display: inline-block;
+	background-image: url('/img/hexagon.svg');
+	background-size: 100% 100%;
+	width: 30px;
+	height: 35px;
+	.active & {
+		.fa {
+			color: @green;
+		}
+	}
+	.fa {
+		color: #aaa;
+		margin-top: 10px;
+		font-size: 15px;
+	}
+}
 
+.end {
+	text-align: center;
+	color: #ccc;
+	font-size: 26px;
+	margin-top: -16px;
+}

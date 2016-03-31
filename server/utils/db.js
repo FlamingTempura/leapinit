@@ -9,6 +9,8 @@ var _ = require('lodash'),
 	pooler = require('generic-pool'),
 	crypto = require('crypto');
 
+pg.defaults.parseInt8 = true; // this means result of COUNT(*) will be an integer
+
 var poolSize = 15;
 
 var Client = function (client, done, native) {

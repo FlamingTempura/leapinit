@@ -1,8 +1,8 @@
 <toolbar title="'Post'">
-	<a class="icon" ng-click="report"><span class="fa fa-exclamation-triangle"></span></a>
+	<!-- <a class="icon" ng-click="report"><span class="fa fa-exclamation-triangle"></span></a> -->
 </toolbar>
 
 <div class="content">
-	<post post="post" class="card" reply-model="newReply" on-reply="postReply"></post>
+	<post post="post" reply-model="newReply" on-reply="postReply"></post>
 	<div class="msg msg-error" ng-if="error">{{ error }}</div>
 </div>

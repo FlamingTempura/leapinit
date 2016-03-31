@@ -33,14 +33,8 @@ angular.module('leapinit').factory('remote', function ($http, $state, $rootScope
 			throw err.data;
 		});
 	};
-	var get = function (url, params, authenticate) {
-		return request({ method: 'GET', url: url, data: params, authenticate: authenticate });
-	};
 	var post = function (url, data, authenticate) {
 		return request({ method: 'POST', url: url, data: data, authenticate: authenticate });
-	};
-	var put = function (url, data, authenticate) {
-		return request({ method: 'PUT', url: url, data: data, authenticate: authenticate });
 	};
 
 	var authRequest;
@@ -69,9 +63,16 @@ angular.module('leapinit').factory('remote', function ($http, $state, $rootScope
 
 	return {
 		request: request,
-		get: get,
 		post: post,
-		put: put,
+		get: function (url, params, authenticate) {
+			return request({ method: 'GET', url: url, data: params, authenticate: authenticate });
+		},
+		put: function (url, data, authenticate) {
+			return request({ method: 'PUT', url: url, data: data, authenticate: authenticate });
+		},
+		delete: function (url, data, authenticate) {
+			return request({ method: 'DELETE', url: url, data: data, authenticate: authenticate });
+		},
 		auth: auth
 	};
 });
