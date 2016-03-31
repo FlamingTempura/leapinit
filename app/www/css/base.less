@@ -9,6 +9,7 @@
 @black: rgba(0, 0, 0, 0.6);
 @blue: #3c78d8;
 @red: #cc4125;
+@bg: #fafafa;
 
 @shadow1: 0px 1px 3px rgba(0, 0, 0, 0.4);
 
@@ -24,7 +25,7 @@ body {
 	-webkit-touch-callout: none;
 	-webkit-text-size-adjust: none;
 	overflow: hidden;
-	background: #fafafa;
+	background: @bg;
 }
 
 body, textarea, input[type=button], input[type=submit], button {
@@ -51,9 +52,7 @@ button, input[type=button], input[type=submit] {
 	margin-bottom: 15px;
 	font-size: 16px;
 	line-height: 20px;
-	//background: #777;
 	border: 0;
-	//color: white;
 	background-color: transparent;
 	border: 1px solid #666;
 	color: #666;
@@ -63,6 +62,7 @@ button, input[type=button], input[type=submit] {
 	text-transform: uppercase;
 	&.loading { color: transparent; }
 }
+
 input[type=submit] {
 	border: 1px solid @green;
 	color: @green;
@@ -224,6 +224,35 @@ input[type=text], input[type=password] {
 	& > p {
 		padding: 0 10px;
 	}
+	&::before {
+		content: '';
+		position: absolute;
+		top: 0; bottom: 0; left: 0; right: 0;
+		background: @bg;
+		display: none;
+	}
+	&::after {
+		content: '';
+		position: absolute;
+		top: 48%; left: 50%;
+		width: 0; height: 0;
+		border: 10px solid rgba(0, 0, 0, 0.3);
+		border-radius: 50%;
+		animation: scale-pulse 1s ease-in-out infinite alternate;
+		display: none;
+	}
+	&.loading{
+		overflow: hidden;
+		&::before, &::after {
+			display: block;
+			opacity: 1;
+		}
+	}
+}
+
+@keyframes scale-pulse {
+	0% { transform: scale(1); }
+	100% { transform: scale(2); }
 }
 
 .logo {
@@ -263,9 +292,10 @@ input[type=text], input[type=password] {
 
 .post {
 	.pic {
-		height: 100px;
+		height: 120px;
 		margin: -@padding -@padding @padding -@padding;
 		background-size: cover;
+		border-radius: 3px 3px 0 0;
 	}
 	.location {
 		color: @green;

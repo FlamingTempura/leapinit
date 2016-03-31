@@ -1,6 +1,6 @@
 <toolbar></toolbar>
 
-<div class="content">
+<div class="content"  ng-class="{ loading: loading }">
 
 	<h1>Rooms you are in</h1>
 	<room room="room" ng-repeat="room in userRooms"></room>

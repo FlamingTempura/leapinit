@@ -21,7 +21,7 @@ router.get('', function (req, res) {
 				q += 'WHERE id IN (SELECT room_id FROM resident WHERE user_id = $1)';
 				return db.query(q, [userId]);
 			} else {
-				q += 'ORDER BY "postCount" LIMIT 10';
+				q += 'ORDER BY "postCount" DESC LIMIT 10';
 				return db.query(q);
 			}
 		});

@@ -14,7 +14,7 @@
 
 <div class="header-blur" ng-show="headerActive" ng-click="headerActive = false"></div>
 
-<div class="content content-header">
+<div class="content content-header" ng-class="{ loading: loading }">
 	<div class="msg msg-error" ng-if="error">{{ error }}</div>
 
 	<div ng-if="!loading && !room.name">
