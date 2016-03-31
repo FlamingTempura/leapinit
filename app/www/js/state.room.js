@@ -10,7 +10,7 @@ angular.module('leapinit').config(function ($stateProvider) {
 				$scope.loading = true;
 				remote.get('/room/' + $stateParams.roomId).then(function (room) {
 					$scope.room = room;
-					return remote.get('/post?roomId=' + $stateParams.roomId);
+					return remote.get('/post?mode=room&roomId=' + $stateParams.roomId);
 				}).then(function (posts) {
 					$scope.posts = posts;
 				}).catch(function (err) {

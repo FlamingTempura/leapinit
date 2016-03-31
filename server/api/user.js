@@ -60,18 +60,20 @@ router.post('/login', function (req, res) {
 	}).then(function (params) {
 		return getUserFromAuthHeader(params.authorization).then(function (fromUserId) {
 			log.info('checking username and password...');
-			var q = 'SELECT id FROM "user"  WHERE username = $1 AND password_hash = crypt($2, password_hash)';
+			var q = 'SELECT id FROM "user" WHERE username = $1 AND password_hash = crypt($2, password_hash)';
 			return db.query(q, [params.username, params.password]).then(function (result) {
 				if (result.rows.length === 0) { throw { name: 'LoginFailure' }; }
 				var toUserId = result.rows[0].id;
+				if (fromUserId === toUserId) { return; } // already been done
 				// transfer all data to existing user
 				return Bluebird.all([
 					db.query('UPDATE post SET user_id = $2 WHERE user_id = $1', [fromUserId, toUserId]),
-					db.query('UPDATE flag SET user_id = $2 WHERE user_id = $1', [fromUserId, toUserId]),
+					//db.query('UPDATE flag SET user_id = $2 WHERE user_id = $1', [fromUserId, toUserId]),
 					db.query('UPDATE token SET user_id = $2 WHERE user_id = $1', [fromUserId, toUserId]),
 					db.query('UPDATE resident SET user_id = $2 WHERE user_id = $1', [fromUserId, toUserId])
 				]).then(function () {
-					return db.query('DELETE FROM user WHERE id = $1', [fromUserId]); // delete old user
+					log.log('deleting user', fromUserId);
+					return db.query('DELETE FROM "user" WHERE id = $1', [fromUserId]); // delete old user
 				});
 			});
 		});

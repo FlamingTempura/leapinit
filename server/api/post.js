@@ -14,7 +14,7 @@ router.get('/', function (req, res) {
 	validate({
 		authorization: { value: req.get('Authorization') },
 		mode: { value: req.query.mode || 'feed', oneOf: ['feed', 'room', 'user'] },
-		roomId: { value: Number(req.query.roomId), type: 'number', optional: req.query.mode === 'room' }
+		roomId: { value: Number(req.query.roomId), type: 'number', optional: req.query.mode !== 'room' }
 	}).then(function (params) {
 		return user.getUserFromAuthHeader(params.authorization).then(function (userId) {
 			var q = 'SELECT post.id, "user".username, room.id AS "roomId", room.name AS "roomName", message, city, country, post.created, ' + 
@@ -24,13 +24,14 @@ router.get('/', function (req, res) {
 					'JOIN "room" ON (room.id = room_id) ' +
 					'WHERE parent_post_id IS NULL ';
 			if (params.mode === 'room') {
-				q += 'AND room_id = $1';
+				log.log('getting posts for room', params.roomId);
+				q += 'AND room_id = $1 ORDER BY created DESC';
 				return db.query(q, [params.roomId]);
 			} else if (params.mode === 'user') {
-				q += 'AND user_id = $1';
+				q += 'AND user_id = $1 ORDER BY created DESC';
 				return db.query(q, [userId]);
 			} else {
-				q += 'AND room_id IN (SELECT room_id FROM resident WHERE user_id = $1)';
+				q += 'AND room_id IN (SELECT room_id FROM resident WHERE user_id = $1) ORDER BY created DESC';
 				return db.query(q, [userId]);
 			}
 		});
