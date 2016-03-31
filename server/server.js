@@ -16,6 +16,8 @@ Bluebird.config({
 	cancellation: true
 });
 
+app.use('/files', express.static('uploads'));
+
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(hpp({ checkBody: false, checkQuery: true })); // protect against HTTP Parameter Pollution attacks on query
 

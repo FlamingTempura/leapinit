@@ -9,6 +9,7 @@ CREATE TABLE "post"
    "city"              TEXT,
    "country"           TEXT,
    "parent_post_id"    INT REFERENCES "post"("id"),
+   "filename"          TEXT,
    "created"           TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL);
 
 CREATE INDEX "post_room_index"

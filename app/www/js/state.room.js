@@ -25,11 +25,30 @@ angular.module('leapinit').config(function ($stateProvider) {
 			$scope.createPost = function () {
 				delete $scope.newPost.error;
 				$scope.newPost.loading = true;
-				remote.post('/post?mode=room', {
-					roomId: Number($stateParams.roomId),
-					message: $scope.newPost.message,
-					latitude: geo.latitude,
-					longitude: geo.longitude
+				var upload;
+				// upload the file if there is one
+				if ($scope.newPost.file) {
+					var formData = new FormData();
+					formData.append('file', $scope.newPost.file);
+					upload = remote.request({
+						url: '/file',
+						method: 'POST',
+						data: formData,
+						contentType: false,
+						processData: false,
+						headers: { 'Content-Type': undefined }
+					});
+				} else {
+					upload = Promise.resolve();
+				}
+				upload.then(function (file) {
+					return remote.post('/post', {
+						roomId: Number($stateParams.roomId),
+						message: $scope.newPost.message,
+						latitude: geo.latitude,
+						longitude: geo.longitude,
+						file: file ? file.name : undefined
+					});
 				}).then(function () {
 					refresh();
 				}).catch(function (err) {
@@ -37,6 +56,11 @@ angular.module('leapinit').config(function ($stateProvider) {
 				}).finally(function () {
 					delete $scope.newPost.loading;
 				});
+			};
+			$scope.selectFile = function (file) {
+				console.log('got file', file);
+				$scope.newPost.file = file;
+				$scope.newPost.fileURL = window.URL.createObjectURL(file);
 			};
 
 			$scope.newName = {};
@@ -51,31 +75,6 @@ angular.module('leapinit').config(function ($stateProvider) {
 				});
 			};
 
-/*
-
-			$scope.leave = function () {
-				if (window.confirm('Are you sure you wish to permanently leave the room?')) {
-					room.leave().then(function () {
-						$rootScope.go('/rooms');
-					}).fail(function (r) {
-						$scope.error = r.responseJSON.msg;
-					}).always(function () {
-						$rootScope.safeApply($scope);
-					});
-				}
-			};
-
-			$rootScope.add = {
-				text: function () {
-					var text = window.prompt('Enter you text below');
-					if (text) {
-						create({ type: 'text', text: text });
-					}
-				},
-				media: function (type, url) {
-					create({ type: type, text: 'testing', url: url });
-				}
-			};*/
 		}
 	});
 });

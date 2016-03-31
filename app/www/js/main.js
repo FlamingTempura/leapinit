@@ -55,10 +55,7 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 
 				$scope.$watch('post', function (post) {
 					if (!post) { return; }
-					_.extend(post, {
-						picture: Math.random() > 0.5 ? '/img/test.jpg' : 0,
-						distance: geo.distanceTo($scope.post.latitude, $scope.post.longitude, 'miles')
-					});
+					post.distance = geo.distanceTo($scope.post.latitude, $scope.post.longitude, 'miles');
 				});
 
 				$scope.reaction = function (type) {
@@ -78,24 +75,15 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 			}
 		};
 	})
-	.directive('fileupload', function ($rootScope) {
+	.directive('onSelectFile', function () {
 		return {
+			restrict: 'A',
+			scope: { onSelectFile: '=' },
 			link: function ($scope, element) {
-				var url = window.config.server + 'media/index.php',
-					button = element.parent();
-
-				element.fileupload({
-					url: url,
-					dataType: 'json',
-					send: function () {
-						button.addClass('loading');
-					},
-					done: function (e, data) {
-						button.removeClass('loading');
-						$rootScope.add.media('picture', data.result.files[0].url);
-					}
-				}).prop('disabled', !$.support.fileInput)
-					.parent().addClass($.support.fileInput ? undefined : 'disabled'); // TODO
+				element.on('change', function () {
+					$scope.onSelectFile(element[0].files[0]);
+					$scope.$apply();
+				});
 			}
 		};
 	})

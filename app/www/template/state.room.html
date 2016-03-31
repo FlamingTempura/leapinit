@@ -8,8 +8,10 @@
 
 <div class="header" ng-click="headerActive = true" ng-class="{ active: headerActive }">
 	<input type="text" ng-model="newPost.message" placeholder="Write something...">
-	<a class="icon camera-icon"><input type="file"><span class="fa fa-camera"></span></a>
+	<label for="file" class="icon camera-icon"><span class="fa fa-camera"></span></label>
 	<button ng-click="createPost()">Post</button>
+	<input type="file" name="file" id="file" on-select-file="selectFile">
+	<img class="preview" ng-src="{{ newPost.fileURL }}" ng-if="newPost.fileURL">
 </div>
 
 <div class="header-blur" ng-show="headerActive" ng-click="headerActive = false"></div>

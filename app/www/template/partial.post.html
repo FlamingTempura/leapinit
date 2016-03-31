@@ -1,5 +1,5 @@
 <div>
-	<h2 class="rooma-name" ng-if="!reply && !hideRoom" ui-sref="room({ roomId: post.roomId })">Posted in {{ post.roomName }}:</h2>
+	<h2 class="rooma-name" ng-if="!reply && !hideRoom" ui-sref="room({ roomId: post.roomId })">Posted in <strong>{{ post.roomName }}</strong>:</h2>
 	<div class="post" ng-class="{ card: !reply, reply: reply }">
 		<div class="above">
 			<span class="user" ng-if="post.username">{{ post.username }}</span>
@@ -13,7 +13,7 @@
 			</div>
 		</div>
 		<div class="message" ui-sref="post({ postId: post.id })">{{ post.message }}</div>
-		<div class="pic" ng-if="!reply && post.picture" style="background-image: url({{ post.picture }});" ui-sref="post({ postId: post.id })"></div>
+		<div class="pic" ng-if="!reply && post.picture" style="background-image: url('http://localhost:9122/files/{{ post.picture }}');" ui-sref="post({ postId: post.id })"></div>
 		<div class="below" ng-if="!reply">
 			<div class="love" ng-click="reaction('love')" ng-class="{ active: post.userReaction === 'love' }">
 				<div class="hexagon"><span class="fa fa-heart"></span></div>

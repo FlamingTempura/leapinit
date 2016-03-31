@@ -219,11 +219,6 @@ div[ui-view] {
 		right: 0;
 		color: #ddd;
 		padding-right: 8px;
-		input[type=file] {
-			position: absolute;
-			left: 0; top: 0; bottom: 0; right: 0;
-			opacity: 0;
-		}
 	}
 	button {
 		display: none;
@@ -237,6 +232,18 @@ div[ui-view] {
 	}
 	&.active {
 		button { display: block; }
+	}
+	input[type=file] {
+		position: absolute;
+		left: 0; top: 0; bottom: 0; right: 0;
+		opacity: 0;
+	}
+	.preview {
+		position: absolute;
+		max-width: 360px;
+		max-height: 36px;
+		top: 48px;
+		left: 20px;
 	}
 }
 

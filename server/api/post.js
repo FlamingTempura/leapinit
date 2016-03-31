@@ -7,10 +7,12 @@ var Bluebird = require('bluebird'),
 	log = require('../utils/log').create('Room', 'blue'),
 	user = require('./user.js'),
 	request = Bluebird.promisifyAll(require('request')),
+	fs = Bluebird.promisifyAll(require('fs')),
 	config = require('../config.js');
 
 var exportFields =  'post.id, "user".username, room.id AS "roomId", room.name AS "roomName", message, ' + 
 					'location[0] AS latitude, location[1] AS longitude,city, country, post.created, ' + 
+					'filename AS picture, ' +
 					'(SELECT COUNT(*) FROM post AS post2 WHERE parent_post_id = post.id) AS "replyCount", ' +
 					'(SELECT type FROM reaction WHERE post_id = post.id AND user_id = $1) AS "userReaction", ' +
 					'(SELECT COUNT(*) FROM reaction WHERE post_id = post.id AND type = \'love\') AS "loveCount", ' +
@@ -63,11 +65,22 @@ router.post('/', function (req, res) {
 		message: { value: req.body.message },
 		latitude: { value: req.body.latitude, type: 'number', optional: true },
 		longitude: { value: req.body.longitude, type: 'number', optional: true },
-		parentId: { value: req.body.parentId, type: 'number', optional: true }
+		parentId: { value: req.body.parentId, type: 'number', optional: true },
+		filename: { value: req.body.file, type: 'string', optional: true, match: /\w{8}-\w{4}-4\w{3}-\w{4}-\w{12}\.\w+/ }
 	}).then(function (params) {
 		return user.getUserFromAuthHeader(params.authorization).then(function (userId) {
-			var q = 'INSERT INTO post (user_id, room_id, parent_post_id, message) VALUES ($1, $2, $3, $4) RETURNING id';
-			return db.query(q, [userId, params.roomId, params.parentId, params.message]);
+			var checkFile;
+			if (params.filename) {
+				checkFile = fs.statAsync('uploads/' + params.filename).catch(function () { // check that file exists
+					throw { name: 'NoSuchFile' };
+				});
+			} else {
+				checkFile = Bluebird.resolve();
+			}
+			return checkFile.then(function () {
+				var q = 'INSERT INTO post (user_id, room_id, parent_post_id, message, filename) VALUES ($1, $2, $3, $4, $5) RETURNING id';
+				return db.query(q, [userId, params.roomId, params.parentId, params.message, params.filename]);
+			});
 		}).then(function (result) {
 			if (params.latitude && params.longitude) {
 				log.log('reverse geocoding', params.latitude + ',' + params.longitude);
@@ -84,7 +97,9 @@ router.post('/', function (req, res) {
 	}).then(function () {
 		res.status(201).json({});
 	}).catch(function (err) {
-		if (err.name === 'Authentication') {
+		if (err.name === 'NoSuchFile') {
+			res.status(400).json({ error: 'NoSuchFile' });
+		} else if (err.name === 'Authentication') {
 			res.status(401).json({ error: 'Authentication' });
 		} else if (err.name === 'Validation') {
 			res.status(400).json({ error: 'Validation', validation: err.validation });
