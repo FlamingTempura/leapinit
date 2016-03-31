@@ -4,7 +4,7 @@
 
 angular.module('leapinit').config(function ($stateProvider) {
 	$stateProvider.state('signin', {
-		url: '/signin',
+		url: '/user/signin',
 		templateUrl: 'template/state.signin.html',
 		controller: function ($scope, $state, remote) {
 			$scope.submit = function () {

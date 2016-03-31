@@ -4,7 +4,7 @@
 
 angular.module('leapinit').config(function ($stateProvider) {
 	$stateProvider.state('edituser', {
-		url: '/edituser?signup',
+		url: '/user/edit?signup',
 		templateUrl: 'template/state.edituser.html',
 		controller: function ($scope, $state, $stateParams, remote) {
 			$scope.signup = $stateParams.signup;

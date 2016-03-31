@@ -3,7 +3,7 @@
 
 angular.module('leapinit').config(function ($stateProvider) {
 	$stateProvider.state('post', {
-		url: '/post/:postId',
+		url: '/room/post/:postId',
 		templateUrl: 'template/state.post.html',
 		controller: function ($scope, remote, $stateParams) {
 			var refresh = function () {

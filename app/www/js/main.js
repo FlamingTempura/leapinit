@@ -1,7 +1,7 @@
-/* global angular, moment */
+/* global angular, moment, _ */
 'use strict';
 
-angular.module('leapinit', ['ui.router'])
+angular.module('leapinit', ['ngAnimate', 'ui.router'])
 	.config(function ($urlRouterProvider) {
 		$urlRouterProvider.otherwise('/feed');
 	})
@@ -77,6 +77,17 @@ angular.module('leapinit', ['ui.router'])
 		Promise.setScheduler(function (cb) {
 			$rootScope.$evalAsync(cb);
 		});
+
+		var urlDepth = function (url) {
+			return _.compact(url.split('?')[0].split('/')).length;
+		};
+		$rootScope.$on('$stateChangeStart', function (event, to, toParams, from) {
+			angular.element(document.body)
+				.toggleClass('animate-up', urlDepth(to.url) > urlDepth(from.url))
+				.toggleClass('animate-down', urlDepth(to.url) < urlDepth(from.url))
+				.toggleClass('animate-right', urlDepth(to.url) === urlDepth(from.url));
+		});
+
 		geo.watch();
 		remote.auth();
 	})

@@ -25,7 +25,6 @@ body {
 	-webkit-touch-callout: none;
 	-webkit-text-size-adjust: none;
 	overflow: hidden;
-	background: @bg;
 }
 
 body, textarea, input[type=button], input[type=submit], button {
@@ -84,6 +83,42 @@ input[type=text], input[type=password] {
 		background: #eee;
 	}
 }
+
+div[ui-view] {
+	position:absolute; top:0px; left:0px; bottom: 0px;
+	width: 100%;
+	height: 100%;
+	-webkit-backface-visibility: hidden;
+	transition: transform .3s ease-out, opacity .3s ease-in-out;
+	background: @bg;
+	&:nth-child(1) { // the first (incoming) ui-view should be above the second (outgoing)
+		z-index: 1;
+	};
+	body.animate-right & {
+		&.ng-enter { transform: translate(100%, 0); }
+		&.ng-enter-active, &.ng-leave { transform: translate(0, 0); }
+		&.ng-leave-active { transform: translate(-100%, 0); }
+	}
+	body.animate-left & {
+		&.ng-enter { transform: translate(-100%, 0); }
+		&.ng-enter-active, &.ng-leave { transform: translate(0, 0); }
+		&.ng-leave-active { transform: translate(100%, 0); }
+	}
+	body.animate-up & {
+		&.ng-leave { z-index: 0; }
+		&.ng-enter { z-index: 1; }
+		&.ng-enter { transform: translate(0, 20%); opacity: 0; }
+		&.ng-enter-active, &.ng-leave, &.ng-leave-active { transform: translate(0, 0); opacity: 1; }
+	}
+	body.animate-down & {
+		&.ng-leave { z-index: 1; }
+		&.ng-enter { z-index: 0; }
+		&.ng-enter, &.ng-enter-active, &.ng-leave { transform: translate(0, 0); opacity: 1; }
+		&.ng-leave-active { transform: translate(0, 20%); opacity: 0; }
+	}
+}
+
+
 
 .icon {
 	display: inline-block;

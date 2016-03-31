@@ -3,7 +3,7 @@
 
 angular.module('leapinit').config(function ($stateProvider) {
 	$stateProvider.state('scan', {
-		url: '/scan',
+		url: '/scan/select',
 		templateUrl: 'template/state.scan.html',
 		controller: function ($scope, $state, remote) {
 
