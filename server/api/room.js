@@ -52,12 +52,14 @@ router.post('/from_code', function (req, res) {
 						var q = 'INSERT INTO code (code, room_id) VALUES ($1, $2) RETURNING room_id, id AS code_id';
 						return db.query(q, [params.code, result.rows[0].id]);
 					});
-				} else {
-					return result;
 				}
+				return result;
 			}).then(function (result) {
 				var q = 'INSERT INTO resident (user_id, room_id, code_id) VALUES ($1, $2, $3) RETURNING room_id';
-				return db.query(q, [userId, result.rows[0].room_id, result.rows[0].code_id]);
+				return db.query(q, [userId, result.rows[0].room_id, result.rows[0].code_id]).catch(function (err) {
+					if (err.constraint === 'resident_unique_index') { return result; } // user is already in this room
+					throw err;
+				});
 			});
 		});
 	}).then(function (result) {
