@@ -259,7 +259,7 @@ div[ui-view] {
 }
 
 .content {
-	position: absolute;
+	position: absolute !important;
 	top: 0; left: 0; right: 0; bottom: 0;
 	padding: @padding;
 	font-size: 16px;
@@ -317,8 +317,10 @@ div[ui-view] {
 	line-height: 1.4em;
 	border-radius: 2px;
 	min-height: 80px;
-	&.msg-error h2, &.msg-error h3 { color: @red; }
-	&.msg-info h2, &.msg-info h3 { color: @blue; }
+}
+
+.error {
+	h1 { color: @red; }
 }
 
 .room {
@@ -339,6 +341,7 @@ div[ui-view] {
 
 .post {
 	margin-bottom: @padding * 2;
+	min-height: 80px;
 	.pic {
 		height: 120px;
 		margin: 0 -@padding @padding -@padding;

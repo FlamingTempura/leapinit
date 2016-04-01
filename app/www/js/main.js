@@ -41,41 +41,51 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 			scope: { room: '=' }
 		};
 	})
+	.directive('error', function () {
+		return {
+			restrict: 'E',
+			replace: true,
+			scope: { error: '=' },
+			templateUrl: 'template/partial.error.html'
+		};
+	})
 	.directive('post', function (remote, geo, config) {
 		return {
 			restrict: 'E',
 			replace: true,
 			templateUrl: 'template/partial.post.html',
 			scope: { id: '=', showReplies: '=', showRoom: '=', showCard: '=', showInteraction: '=' },
-			link: function ($scope) {
-				var listener = remote.listen('post', { id: Number($scope.id) });
-			
-				listener.on('receive', function (post) {
-					delete $scope.error;
-					post.distance = geo.distanceTo(post.latitude, post.longitude, 'miles');
-					$scope.post = post;
-				});
-				listener.on('error', function (error) {
-					$scope.error = error;
-				});
-
-				$scope.$on('$destroy', listener.destroy);
-
-				if ($scope.showReplies) {
-					var replyListener = remote.listen('posts', { type: 'replies', postId: Number($scope.id) });
-
-					replyListener.on('receive', function (replies) {
-						$scope.replies = replies;
+			link: function ($scope, element) {
+				var load = function () {
+					var listener = remote.listen('post', { id: Number($scope.id) });
+				
+					listener.on('receive', function (post) {
+						delete $scope.error;
+						post.distance = geo.distanceTo(post.latitude, post.longitude, 'miles');
+						$scope.post = post;
 					});
 					listener.on('error', function (error) {
-						//$scope.error = error;
+						$scope.error = error;
 					});
 
-					$scope.$on('$destroy', replyListener.destroy);
-				}
+					$scope.$on('$destroy', listener.destroy);
+
+					if ($scope.showReplies) {
+						var replyListener = remote.listen('posts', { type: 'replies', postId: Number($scope.id) });
+
+						replyListener.on('receive', function (replies) {
+							$scope.replies = replies;
+						});
+						listener.on('error', function (error) {
+							//$scope.error = error;
+						});
+
+						$scope.$on('$destroy', replyListener.destroy);
+					}
+				};
 
 				$scope.reaction = function (type) {
-					remote.send('reaction', { postId: $scope.post.id, type: type }).catch(function (err) {
+					remote.request('create_reaction', { postId: $scope.post.id, type: type }).catch(function (err) {
 						console.error('error!', err);
 					}).finally(function () {
 						//delete $scope.reactionLoading;
@@ -95,7 +105,7 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 
 				$scope.newReply = {};
 				$scope.postReply = function () {
-					remote.post('/post/', {
+					remote.request('create_post', {
 						parentId: $scope.post.id,
 						roomId: $scope.post.roomId,
 						message: $scope.newReply.message
@@ -103,6 +113,19 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 						$scope.newReply.error = error;
 					});
 				};
+
+				var loadIfAboveFold = _.throttle(function () {
+					var isAboveFold = element.offset().top < element.parent().scrollTop() + element.parent().innerHeight();
+					console.log(isAboveFold);
+					if (isAboveFold) {
+						load();
+						element.parent().off('scroll', loadIfAboveFold);
+					}
+				}, 1000);
+
+				setTimeout(loadIfAboveFold);
+				element.parent().on('scroll', loadIfAboveFold);
+
 			}
 		};
 	})
@@ -167,7 +190,7 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 		$rootScope.config = config;
 
 		geo.watch();
-		remote.auth();
+		//remote.auth();
 	})
 	.filter('fromNow', function () {
 		return function (value) {

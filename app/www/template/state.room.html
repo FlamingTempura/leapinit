@@ -1,12 +1,16 @@
-<toolbar title="room.name || 'New room'" class="toolbar-fade" style="background-image: url('{{ config.serverRoot + '/files/' + room.picture }}');">
-	<a ui-sref="room-settings({ roomId: room.id })" class="icon"><span class="fa fa-cog"></span></a> <!-- admin only codes, delete, name -->
+<toolbar ng-if="!room" title="'Room'"></toolbar>
+
+<toolbar ng-if="room" title="room.name || 'New room'" class="toolbar-fade" style="background-image: url('{{ config.serverRoot + '/files/' + room.picture }}');">
+	<!-- <a ui-sref="room-settings({ roomId: room.id })" class="icon"><span class="fa fa-cog"></span></a> --> <!-- admin only codes, delete, name -->
 </toolbar>
 
-<div class="toolbar-overlay">
+<div ng-if="!room && !error" class="content loading"></div>
+
+<div ng-if="room" class="toolbar-overlay">
 	{{ room.residentCount }} people<span ng-if="room.userCode"> &bullet; Code: {{ room.userCode }}</span>
 </div>
 
-<div class="header" ng-click="headerActive = true" ng-class="{ active: headerActive }">
+<div ng-if="room" class="header" ng-click="headerActive = true" ng-class="{ active: headerActive }">
 	<input type="text" ng-model="newPost.message" placeholder="Write something...">
 	<label for="file" class="icon camera-icon"><span class="fa fa-camera"></span></label>
 	<button ng-click="createPost()">Post</button>
@@ -14,9 +18,9 @@
 	<img class="preview" ng-src="{{ newPost.fileURL }}" ng-if="newPost.fileURL">
 </div>
 
-<div class="header-blur" ng-show="headerActive" ng-click="headerActive = false"></div>
+<div ng-if="room" class="header-blur" ng-show="headerActive" ng-click="headerActive = false"></div>
 
-<div class="content content-header" ng-class="{ loading: loading }">
+<div ng-if="room" class="content content-header" ng-class="{ loading: loading }">
 	<div class="msg msg-error" ng-if="error">{{ error }}</div>
 
 	<div ng-if="!loading && !room.name">
@@ -28,13 +32,15 @@
 			<div class="msg msg-error" ng-if="newName.error">{{ newName.error }}</div>
 		</form>
 	</div>
-
-	<div ng-if="room.name">
-		<post ng-repeat="id in feed" id="id" show-card="true" show-interaction="true"></post>
-		<div ng-if="!feed.length">
-			<p><strong>There are no posts in this room.</strong></p>
-			<p>Why not add something by tapping <i class="fa fa-plus"></i> above?</p>
-		</div>
-		<div ng-if="feed.length" class="end">&bullet;</div>
+		
+	<div ng-if="room.name && !feed.length">
+		<p><strong>There are no posts in this room.</strong></p>
+		<p>Why not add something by tapping <i class="fa fa-plus"></i> above?</p>
 	</div>
+
+	<post ng-repeat="id in feed" id="id" show-card="true" show-interaction="true"></post>
+
+	<div ng-if="feed.length" class="end">&bullet;</div>
 </div>
+
+<error error="error" class="content"></error>

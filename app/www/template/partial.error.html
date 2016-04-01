@@ -1,0 +1,13 @@
+<div ng-if="error" class="error">
+	<div ng-switch="error.error">
+		<div ng-switch-when="NotFound">
+			<h1>Not found</h1>
+			<button onclick="window.history.go(-1)">Go back</button>
+		</div>
+		<div ng-switch-default>
+			<h1>Error: {{ error.error }}</h1>
+			<div>Details:</div>
+			<pre>{{ error }}</pre>
+		</div>
+	</div>
+</div>

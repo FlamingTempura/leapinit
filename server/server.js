@@ -3,12 +3,12 @@
 var express = require('express'),
 	bodyParser = require('body-parser'),
 	Bluebird = require('bluebird'),
-	api = require('./api'),
-	_ = require('lodash'),
 	app = express(),
 	hpp = require('hpp'),
 	config = require('./config.js'),
 	log = require('./utils/log').create('REST', 'green');
+
+require('./api');
 
 Bluebird.config({
 	warnings: false,//true,
@@ -38,10 +38,6 @@ app.use(function (req, res, next) {
 	} else {
 		next();
 	}
-});
-
-_.each(api, function (router, name) {
-	app.use('/' + name, router);
 });
 
 app.listen(config.port, /*config.host, */function () {

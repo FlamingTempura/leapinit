@@ -2,7 +2,7 @@
 	
 	<div ng-if="error">{{ error }}</div>
 
-	<h2 ng-if="post && showRoom" ui-sref="room({ roomId: post.roomId })">Posted in <strong>{{ post.roomName }}</strong>:</h2>
+	<h2 ng-if="post && showRoom" ui-sref="room({ id: post.roomId })">Posted in <strong>{{ post.roomName }}</strong>:</h2>
 
 	<div ng-if="post" class="post" ng-class="{ card: showCard }">
 		<div class="above">
@@ -41,8 +41,9 @@
 			<post ng-repeat="id in replies" id="id"></post>
 
 			<form class="post" ng-click="headerActive = true" ng-class="{ active: headerActive }">
-				<input type="text" ng-model="replyModel.message" placeholder="Write a reply...">
-				<button ng-click="onReply()">Post</button>
+				<input type="text" ng-model="newReply.message" placeholder="Write a reply...">
+				<button ng-click="postReply()">Post</button>
+				<div ng-if="newReply.error">{{ newReply.error }}</div>
 			</form>
 
 		</div>

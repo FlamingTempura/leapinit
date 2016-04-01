@@ -6,38 +6,31 @@ angular.module('leapinit').config(function ($stateProvider) {
 		url: '/settings',
 		templateUrl: 'template/state.settings.html',
 		controller: function ($scope, remote) {
-			$scope.loading = true;
-			Promise.props({
-				user: remote.get('/user/me'),
-				posts: remote.get('/post?mode=user')
-			}).then(function (resolves) {
-				$scope.user = resolves.user;
-				$scope.posts = resolves.posts;
-			}).catch(function (err) {
-				$scope.error = err; // 'Failed to load room list.'
-			}).finally(function () {
-				delete $scope.loading;
-			});
 
-			var userRoomsListener = remote.listen('rooms', { type: 'user' }),
-				popularRoomsListener = remote.listen('rooms', { type: 'popular' });
+			var userListener = remote.listen('user'),
+				postsListener;
 		
-			userRoomsListener.on('update', function (rooms) {
+			userListener.on('receive', function (user) {
+				console.log('got user', user)
 				delete $scope.error;
-				$scope.userRooms = rooms;
-			}).on('error', function (error) {
+				$scope.user = user;
+				if (!postsListener) {
+					postsListener = remote.listen('posts', { type: 'user', userId: user.id });
+					postsListener.on('receive', function (posts) {
+						delete $scope.error;
+						$scope.posts = posts;
+					});
+					postsListener.on('error', function (error) {
+						$scope.error = error;
+					});
+					$scope.$on('$destroy', postsListener.destroy);
+				}
+			});
+			userListener.on('error', function (error) {
 				$scope.error = error;
 			});
 
-			popularRoomsListener.on('update', function (rooms) {
-				delete $scope.error;
-				$scope.popularRooms = rooms;
-			}).on('error', function (error) {
-				$scope.error = error;
-			});
-
-			$scope.$on('$destroy', userRoomsListener.destroy);
-			$scope.$on('$destroy', popularRoomsListener.destroy);
+			$scope.$on('$destroy', userListener.destroy);			
 			
 		}
 	});
