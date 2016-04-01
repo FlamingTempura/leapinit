@@ -9,12 +9,12 @@ var Bluebird = require('bluebird'),
 // login
 socket.client.on('login', function (userId, data, emit, socket) {
 	validate({
-		username: { value: data.username, type: 'string', max: 1000 },
-		password: { value: data.password, type: 'string', min: 6, max: 1000 }
+		nickname: { value: data.nickname, type: 'string', max: 1000 },
+		password: { value: data.password, type: 'string', max: 1000 }
 	}).then(function (params) {
 		log.info('checking username and password...');
 		var q = 'SELECT id FROM "user" WHERE username = $1 AND password_hash = crypt($2, password_hash)';
-		return db.query(q, [params.username, params.password]).then(function (result) {
+		return db.query(q, [params.nickname, params.password]).then(function (result) {
 			if (result.rows.length === 0) { throw { name: 'LoginFailure' }; }
 			var toUserId = result.rows[0].id;
 			if (userId === toUserId) { return; } // already been done
@@ -48,24 +48,29 @@ socket.client.on('login', function (userId, data, emit, socket) {
 // change username or password (subsequently converting from a guest account)
 socket.client.on('update_user', function (userId, data, emit) {
 	validate({
-		username: { value: data.username, type: 'string', max: 1000, optional: true },
+		nickname: { value: data.nickname, type: 'string', min: 3, max: 1000, optional: true },
 		password: { value: data.password, type: 'string', min: 6, max: 1000 }
 	}).then(function (params) {
-		if (params.username) {
+		console.log('setting', params);
+		if (params.nickname) {
 			var q = 'UPDATE "user" SET username = $2, password_hash =  crypt($3, gen_salt(\'md5\')) WHERE id = $1';
-			return db.query(q, [userId, params.username, params.password]);
+			return db.query(q, [userId, params.nickname, params.password]);
 		} else {
-			var q2 = 'UPDATE "user" SET password_hash =  crypt($2, gen_salt(\'md5\')) WHERE id = $1';
-			return db.query(q2, [userId, params.password]);
+			var q2 = 'UPDATE "user" SET password_hash =  crypt($2, gen_salt(\'md5\')) WHERE id = $1 AND username IS NOT NULL';
+			return db.query(q2, [userId, params.password]).catch(function (result) {
+				if (result.rows.length === 0) { throw { name: 'NoUsername' }; }
+			});
 		}
 	}).then(function () {
 		emit();
 		db.emit('user:' + userId);
 	}).catch(function (err) {
-		if (err.constraint === 'user_username_hash_key') {
+		if (err.constraint === 'user_username_key') {
 			emit({ error: 'UsernameConflict' });
 		} else if (err.name === 'Validation') {
 			emit({ error: 'Validation', validation: err.validation });
+		} else if (err.name === 'NoUsername') {
+			emit({ error: 'NoUsername' });
 		} else { // todo: room not exist
 			log.error(err);
 			emit({ error: 'Fatal' });

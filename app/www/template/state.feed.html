@@ -1,8 +1,8 @@
 <toolbar></toolbar>
 
-<div class="content loading" ng-if="!user && !error"></div>
+<div class="content loading" ng-if="!feed && !error"></div>
 
-<div class="content" ng-if="user">
+<div class="content" ng-if="feed">
 
 	<!-- <div ng-if="!user.name && !user.dismissedSignup" class="msg">
 		<a ng-click="user.dismissedSignup = true"><span class="fa fa-close"></span></a>
@@ -13,9 +13,7 @@
 		<a ui-sref="signin">I already have an account</a>
 	</div> -->
 
-	<!-- <div infinite-scroll="more()" infinite-scroll-distance="2" infinite-scroll-immediate-check="false" infinite-scroll-listen-for-event="got_feed"> -->
-	<post ng-repeat="id in feed" id="id" show-card="true" show-interaction="true"></post>
-	
+	<post ng-repeat="id in feed" id="id" show-card="true" show-interaction="true"></post>	
 
 	<div ng-if="!feed.length" class="msg">
 		<h1>There are no posts to display in your feed!</h1>

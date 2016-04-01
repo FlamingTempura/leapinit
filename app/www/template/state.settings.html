@@ -5,7 +5,7 @@
 <div class="content" ng-if="user">
 	<div ng-if="!user.username">
 		<h1>Anonymous</h1>
-		<button ui-sref="edituser">Create a nickname</button>
+		<button ui-sref="edituser({ signup: true })">Create a nickname</button>
 		<button ui-sref="signin">Use existing nickname</button>
 	</div>
 

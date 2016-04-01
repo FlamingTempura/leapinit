@@ -3,11 +3,9 @@
 <form class="content" ng-submit="submit()">
 	<p ng-if="signup">Create a nickname so others can see who you are</p>
 	<p ng-if="!signup">Change your password</p>
-	<input ng-model="username" type="text" placeholder="Nickname" ng-disabled="loading" required ng-if="signup">
-	<input ng-model="password" type="password" placeholder="Password" ng-disabled="loading" required>
-	<input ng-model="password2" type="password" placeholder="Confirm password" ng-disabled="loading" required>
-	<input type="submit" ng-class="{ loading: loading }" ng-disabled="loading" value="{{ signup ? 'Create' : 'Change' }}">
-	<div class="msg msg-error" ng-if="error">{{ error }}</div>
+	<input ng-model="form.nickname" type="text" placeholder="Nickname" ng-disabled="loading" required ng-if="signup">
+	<input ng-model="form.password" type="password" placeholder="Password" ng-disabled="loading" required>
+	<input ng-model="form.password2" type="password" placeholder="Confirm password" ng-disabled="loading" required>
+	<input type="submit" ng-disabled="loading" value="{{ signup ? 'Create' : 'Change' }}">
+	<error error="error"></error>
 </form>
-
-<error error="error"></error>

@@ -10,8 +10,8 @@ angular.module('leapinit').config(function ($stateProvider) {
 			$scope.submit = function () {
 				delete $scope.error;
 				$scope.loading = true;
-				remote.post('/user/login', {
-					username: $scope.username,
+				remote.request('login', {
+					nickname: $scope.nickname,
 					password: $scope.password 
 				}).then(function () {
 					window.history.go(-1);

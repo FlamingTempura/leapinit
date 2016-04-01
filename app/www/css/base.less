@@ -63,7 +63,10 @@ button, input[type=button], input[type=submit] {
 	font-weight: normal;
 	border-radius: 3px;
 	text-transform: uppercase;
-	&.loading { color: transparent; }
+	&[disabled] {
+		border: 1px solid #ccc;
+		color: #ccc
+	}
 }
 
 input[type=submit] {
@@ -72,6 +75,7 @@ input[type=submit] {
 }
 
 input[type=text], input[type=password] {
+	outline: none;
 	display: block;
 	margin: 6px auto 14px;
 	width: 100%;
@@ -84,7 +88,11 @@ input[type=text], input[type=password] {
 	box-shadow: none;
 	text-indent: 10px;
 	&[disabled] {
-		background: #eee;
+		color: #ccc;
+		border-bottom: 1px solid #ccc;
+	}
+	&:focus {
+		border-bottom: 2px solid @green;
 	}
 }
 

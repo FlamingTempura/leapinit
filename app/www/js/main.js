@@ -197,6 +197,12 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 			return moment(value).fromNow(true);
 		};
 	})
+	.filter('capitalizeFirst', function () {
+		return function (str) {
+			if (!_.isString(str) || str.length === 0) { return str; }
+			return str.slice(0, 1).toLocaleUpperCase() + str.slice(1);
+		};
+	})
 	.controller('App', function () {
 
 	});

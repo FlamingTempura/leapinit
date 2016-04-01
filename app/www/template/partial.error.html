@@ -1,13 +1,32 @@
-<div ng-if="error" class="error">
-	<div ng-switch="error.error">
-		<div ng-switch-when="NotFound">
-			<h1>Not found</h1>
-			<button onclick="window.history.go(-1)">Go back</button>
+<div ng-if="error" class="error" ng-switch="error.error">
+	<div ng-switch-when="NotFound">
+		<h1>Not found</h1>
+		<button onclick="window.history.go(-1)">Go back</button>
+	</div>
+	<div ng-switch-when="PasswordMismatch">
+		<h1>Passwords do not match</h1>
+	</div>
+	<div ng-switch-when="Validation">
+		<div ng-repeat="problem in error.validation" ng-switch="problem.constraint">
+			<h1 ng-switch-when="min">{{ problem.field | capitalizeFirst }} should be a at least {{ problem.expect }} characters.</h1>
+			<h1 ng-switch-when="max">{{ problem.field | capitalizeFirst }} should be a at most {{ problem.expect }} characters.</h1>
+			<h1 ng-switch-when="type">{{ problem.field | capitalizeFirst }} is invalid.</h1>
+			<h1 ng-switch-when="oneOf">{{ problem.field | capitalizeFirst }} must be one of the following: {{ problem.expect }}.</h1>
+			<h1 ng-switch-when="match">{{ problem.field | capitalizeFirst }} is invalid.</h1>
+			<h1 ng-switch-when="defined">{{ problem.field | capitalizeFirst }} must be provided.</h1>
+			<h1 ng-switch-when="notEmpty">{{ problem.field | capitalizeFirst }} must be provided.</h1>
+			<h1 ng-switch-default>{{ problem.field | capitalizeFirst }} is incorrected.</h1>
 		</div>
-		<div ng-switch-default>
-			<h1>Error: {{ error.error }}</h1>
-			<div>Details:</div>
-			<pre>{{ error }}</pre>
-		</div>
+	</div>
+	<div ng-switch-when="LoginFailure">
+		<h1>Nickname or password incorrect</h1>
+	</div>
+	<div ng-switch-when="UsernameConflict">
+		<h1>That nickname is already in use</h1>
+	</div>
+	<div ng-switch-default>
+		<h1>Error: {{ error.error }}</h1>
+		<div>Details:</div>
+		<pre>{{ error }}</pre>
 	</div>
 </div>

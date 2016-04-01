@@ -1,3 +1,5 @@
+create extension citext;
+
 LeapIn.it
 =========
 

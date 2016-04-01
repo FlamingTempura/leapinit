@@ -28,7 +28,7 @@ module.exports = Bluebird.method(function (schema) {
 				if (constraint.name === 'oneOf') { return constraint.value.indexOf(value) > -1; }
 				if (constraint.name === 'match') { return constraint.value.test(value); }
 			}).map(function (constraint) {
-				return { field: field, constraint: constraint };
+				return { field: field, constraint: constraint.name, expect: constraint.value };
 			}).value();
 		}
 		if (errors.length > 0) {
