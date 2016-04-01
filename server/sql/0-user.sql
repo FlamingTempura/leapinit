@@ -6,4 +6,4 @@ CREATE TABLE "user"
    "banned"              BOOLEAN DEFAULT FALSE NOT NULL);
 
 CREATE INDEX "user_auth_index"
-  ON "user"("email_hash", "password_hash");
+  ON "user"("username", "password_hash");

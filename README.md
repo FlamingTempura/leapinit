@@ -16,31 +16,29 @@ API keys
 --------
 You will need to obtain API keys for the following:
 * [AlchemyAPI](http://www.alchemyapi.com/)
-* [Faroo](http://www.faroo.com/)
 
 Server
 ------
 
 Requirements:
-* Apache 2
-* PHP 5 with php-gd
-* MySQL
-* [Composer](https://getcomposer.org/download/)
+* Nginx
+* Node.js with npm
+* Postgresql
 
-Steps:
-* Enable mod_rewrite and mod_headers:
-```
-sudo a2enmod rewrite
-sudo a2enmod headers
-sudo apache2ctl restart
-```
-* Create a database and user.
-```
-sudo mysql -u root -p
-CREATE DATABASE leapinit;
-CREATE USER 'leapinit'@'localhost' IDENTIFIED BY 'mypassword';
-GRANT ALL PRIVILEGES ON leapinit.* TO 'leapinit'@'localhost';
-exit
+1. Clone repository `git clone git@github.com:FlamingTempura/leapinit.git`
+2. Using a postgresql client (e.g. `sudo -u postgres psql`), create a database and user:
+
+
+    ```sql
+    CREATE DATABASE leap;
+    -- switch to leap database. in psql use "\c leap"
+    CREATE EXTENSION pgcrypto;
+    CREATE EXTENSION citext;
+    CREATE USER leap WITH LOGIN PASSWORD 'blahblahblah';
+    GRANT ALL ON DATABASE leap TO leap;
+    ```
+
+
 ```
 * Edit `config.php`:
 ```
@@ -52,12 +50,6 @@ $config = [
 		"user" => "leapinit",
 		"pass" => "mypassword"
 	],
-	"server" => [
-		"url" => "http://mywebsite.com/subdirectory/"
-	],
-	"apis" => [
-		"alchemyapi" => "alchemy api key"
-	]
 ];
 ```
 * Install libraries.

@@ -25,8 +25,8 @@ angular.module('leapinit').config(function ($stateProvider) {
 			$scope.scan = function (code) {
 				delete $scope.error;
 				$scope.loading = true;
-				remote.post('/room/from_code', { code: code }).then(function (result) {
-					$state.go('room', { roomId: result.roomId });
+				remote.request('room_from_code', { code: code }).then(function (data) {
+					$state.go('room', { roomId: data.roomId });
 				}).catch(function (err) {
 					$scope.error = err;
 				}).finally(function () {
