@@ -44,6 +44,6 @@ _.each(api, function (router, name) {
 	app.use('/' + name, router);
 });
 
-app.listen(config.port, config.host, function () {
+app.listen(config.port, /*config.host, */function () {
 	log.log('Server is listening on http://' + config.host + ':' + config.port);
 });

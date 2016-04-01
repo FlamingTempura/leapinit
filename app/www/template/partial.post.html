@@ -13,7 +13,7 @@
 			</div>
 		</div>
 		<div class="message" ui-sref="post({ postId: post.id })">{{ post.message }}{{pah}}</div>
-		<div class="pic" ng-if="!reply && post.picture" style="background-image: url('{{ $root.config.serverRoot + '/files/' + post.picture }}');" ui-sref="post({ postId: post.id })"></div>
+		<div class="pic" ng-if="!reply && post.picture" style="background-image: url('{{ $root.config.serverRoot + '/files/' + post.picture }}');" ui-sref="post({ postId: post.id })" ng-click="openPicture()"></div>
 		<div class="below" ng-if="!reply">
 			<div class="love" ng-click="reaction('love')" ng-class="{ active: post.userReaction === 'love' }">
 				<div class="hexagon"><span class="fa fa-heart"></span></div>

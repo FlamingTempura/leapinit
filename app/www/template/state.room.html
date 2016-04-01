@@ -3,7 +3,7 @@
 </toolbar>
 
 <div class="toolbar-overlay">
-	{{ room.residentCount }} people &bullet; Code: {{ room.userCode }}
+	{{ room.residentCount }} people<span ng-if="room.userCode"> &bullet; Code: {{ room.userCode }}</span>
 </div>
 
 <div class="header" ng-click="headerActive = true" ng-class="{ active: headerActive }">

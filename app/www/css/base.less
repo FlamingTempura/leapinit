@@ -4,7 +4,7 @@
 @padding: 12px;
 
 @white: #fff;
-@orange: #F89406;
+@orange: #FF9500;
 @green: #03C9A9;
 @black: rgba(0, 0, 0, 0.6);
 @blue: #3c78d8;
@@ -179,13 +179,14 @@ div[ui-view] {
 		box-shadow: none;
 		.icon { color: @white; }
 		background-size: cover;
+		background-position: 50% 50%;
 		height: @nav-height * 3.5;
 		z-index: 50;
 		&::after {
 			content: '';
 			position: absolute;
 			top: 0; left: 0; right: 0; bottom: 0;
-			background: linear-gradient(rgba(0, 0, 0, 0.5), transparent 30%, transparent 68%, rgba(0, 0, 0, 0.6));
+			background: linear-gradient(rgba(0, 0, 0, 0.3), transparent 40%, transparent 58%, rgba(0, 0, 0, 0.3));
 		}
 	}
 }
@@ -205,6 +206,7 @@ div[ui-view] {
 	margin-top: @nav-height * 3.5;
 	z-index: 130;
 	box-shadow: @shadow1;
+	background: white;
 	input[type=text] {
 		margin: 0;
 		height: @nav-height;
@@ -342,6 +344,7 @@ div[ui-view] {
 		height: 120px;
 		margin: 0 -@padding @padding -@padding;
 		background-size: cover;
+		background-position: 50% 50%;
 	}
 	.location {
 		color: @green;

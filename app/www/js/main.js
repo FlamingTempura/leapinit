@@ -20,7 +20,7 @@ moment.updateLocale('en', {
 });
 
 angular.module('leapinit', ['ngAnimate', 'ui.router'])
-	.constant('config', { serverRoot: 'http://localhost:9122' })
+	.constant('config', { serverRoot: 'http://192.168.1.66:9122' })
 	.config(function ($urlRouterProvider) {
 		$urlRouterProvider.otherwise('/feed');
 	})
@@ -41,7 +41,7 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 			scope: { room: '=' }
 		};
 	})
-	.directive('post', function (remote, geo) {
+	.directive('post', function (remote, geo, config) {
 		return {
 			restrict: 'E',
 			replace: true,
@@ -72,6 +72,14 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 				};
 				$scope.share = function () {
 
+				};
+				$scope.openPicture = function () {
+					var url = config.serverRoot + '/files/' + $scope.post.picture;
+					if (window.PhotoViewer) {
+						window.PhotoViewer.show(url);
+					} else {
+						window.open(url);
+					}
 				};
 			}
 		};
@@ -148,3 +156,9 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 	.controller('App', function () {
 
 	});
+
+document.addEventListener('deviceready', function () {
+	if (cordova.platformId === 'android') {
+		StatusBar.backgroundColorByHexString('#EB8A00');
+	}
+});
