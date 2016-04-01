@@ -54,7 +54,7 @@ socket.client.on('room_from_code', function (userId, data, emit) {
 			});
 		});
 	}).then(function (result) {
-		emit({ roomId: result.rows[0].room_id });
+		emit(null, { roomId: result.rows[0].room_id });
 	}).catch(function (err) {
 		if (err.name === 'Validation') {
 			emit({ error: 'Validation', validation: err.validation });

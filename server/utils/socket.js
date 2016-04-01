@@ -8,7 +8,8 @@ var http = require('http').createServer(),
 	log = require('./log').create('Socket', 'yellow'),
 	config = require('../config');
 
-http.listen(config.port + 1, config.host);
+//http.listen(config.port + 1, config.host);
+http.listen(config.port + 1);
 
 io.use(function (socket, next) {
 	validate({
