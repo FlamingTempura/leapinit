@@ -114,17 +114,18 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 					});
 				};
 
-				var loadIfAboveFold = _.throttle(function () {
-					var isAboveFold = element.offset().top < element.parent().scrollTop() + element.parent().innerHeight();
-					console.log(isAboveFold);
-					if (isAboveFold) {
-						load();
-						element.parent().off('scroll', loadIfAboveFold);
-					}
-				}, 1000);
+				var content = element.parents('.content'),
+					loadIfAboveFold = _.throttle(function () {
+						var isAboveFold = element.offset().top < element.parent().scrollTop() + element.parent().innerHeight();
+						console.log(isAboveFold, element.offset().top);
+						if (isAboveFold) {
+							load();
+							content.off('scroll', loadIfAboveFold);
+						}
+					}, 1000);
 
 				setTimeout(loadIfAboveFold);
-				element.parent().on('scroll', loadIfAboveFold);
+				content.on('scroll', loadIfAboveFold);
 
 			}
 		};

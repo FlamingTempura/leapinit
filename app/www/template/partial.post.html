@@ -1,6 +1,6 @@
 <div ng-class="{ loading: !post && !error }">
 	
-	<div ng-if="error">{{ error }}</div>
+	<error error="error"></error>
 
 	<h2 ng-if="post && showRoom" ui-sref="room({ id: post.roomId })">Posted in <strong>{{ post.roomName }}</strong>:</h2>
 
