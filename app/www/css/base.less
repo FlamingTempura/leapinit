@@ -271,6 +271,12 @@ div[ui-view] {
 	& > p {
 		padding: 0 10px;
 	}
+}
+
+.loading {
+	overflow: hidden;
+	min-height: 80px;
+	position: relative;
 	&::before {
 		content: '';
 		position: absolute;
@@ -283,17 +289,10 @@ div[ui-view] {
 		position: absolute;
 		top: 48%; left: 50%;
 		width: 0; height: 0;
-		border: 10px solid rgba(0, 0, 0, 0.3);
+		border: 7px solid rgba(0, 0, 0, 0.2);
 		border-radius: 50%;
 		animation: scale-pulse 1s ease-in-out infinite alternate;
-		display: none;
-	}
-	&.loading{
-		overflow: hidden;
-		&::before, &::after {
-			display: block;
-			opacity: 1;
-		}
+		display: block;
 	}
 }
 

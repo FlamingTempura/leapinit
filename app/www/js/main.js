@@ -46,26 +46,37 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 			restrict: 'E',
 			replace: true,
 			templateUrl: 'template/partial.post.html',
-			scope: { post: '=', summary: '=', reply: '=', replyModel: '=', onReply: '=', hideRoom: '=' },
+			scope: { id: '=', showReplies: '=', showRoom: '=', showCard: '=', showInteraction: '=' },
 			link: function ($scope) {
-				var refresh = function () {
-					remote.get('/post/' + $scope.post.id).then(function (post) {
-						$scope.post = post;
-					});
-				};
-
-				$scope.$watch('post', function (post) {
-					if (!post) { return; }
-					post.distance = geo.distanceTo($scope.post.latitude, $scope.post.longitude, 'miles');
+				var listener = remote.listen('post', { id: Number($scope.id) });
+			
+				listener.on('receive', function (post) {
+					delete $scope.error;
+					post.distance = geo.distanceTo(post.latitude, post.longitude, 'miles');
+					$scope.post = post;
+				});
+				listener.on('error', function (error) {
+					$scope.error = error;
 				});
 
+				$scope.$on('$destroy', listener.destroy);
+
+				if ($scope.showReplies) {
+					var replyListener = remote.listen('posts', { type: 'replies', postId: Number($scope.id) });
+
+					replyListener.on('receive', function (replies) {
+						$scope.replies = replies;
+					});
+					listener.on('error', function (error) {
+						//$scope.error = error;
+					});
+
+					$scope.$on('$destroy', replyListener.destroy);
+				}
+
 				$scope.reaction = function (type) {
-					//$scope.reactionLoading = true;
-					remote.post('/reaction', { postId: $scope.post.id, type: type }).then(function () {
-						refresh();
-						//toast();
-					}).catch(function (err) {
-						console.error('error!', err)
+					remote.send('reaction', { postId: $scope.post.id, type: type }).catch(function (err) {
+						console.error('error!', err);
 					}).finally(function () {
 						//delete $scope.reactionLoading;
 					});
@@ -80,6 +91,17 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 					} else {
 						window.open(url);
 					}
+				};
+
+				$scope.newReply = {};
+				$scope.postReply = function () {
+					remote.post('/post/', {
+						parentId: $scope.post.id,
+						roomId: $scope.post.roomId,
+						message: $scope.newReply.message
+					}).catch(function (error) {
+						$scope.newReply.error = error;
+					});
 				};
 			}
 		};
@@ -143,7 +165,6 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 		});
 
 		$rootScope.config = config;
-		$rootScope.pah = 10
 
 		geo.watch();
 		remote.auth();

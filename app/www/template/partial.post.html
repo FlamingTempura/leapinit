@@ -1,10 +1,14 @@
-<div>
-	<h2 class="rooma-name" ng-if="!reply && !hideRoom" ui-sref="room({ roomId: post.roomId })">Posted in <strong>{{ post.roomName }}</strong>:</h2>
-	<div class="post" ng-class="{ card: !reply, reply: reply }">
+<div ng-class="{ loading: !post && !error }">
+	
+	<div ng-if="error">{{ error }}</div>
+
+	<h2 ng-if="post && showRoom" ui-sref="room({ roomId: post.roomId })">Posted in <strong>{{ post.roomName }}</strong>:</h2>
+
+	<div ng-if="post" class="post" ng-class="{ card: showCard }">
 		<div class="above">
 			<span class="user" ng-if="post.username">{{ post.username }}</span>
 			<div class="right">
-				<span class="location" ng-if="!reply && post.distance">
+				<span class="location" ng-if="post.distance">
 					<span class="fa fa-map-marker"></span> {{ post.distance | number : 1 }}mi &nbsp;
 				</span>
 				<span class="created">
@@ -12,9 +16,9 @@
 				</span>
 			</div>
 		</div>
-		<div class="message" ui-sref="post({ postId: post.id })">{{ post.message }}{{pah}}</div>
-		<div class="pic" ng-if="!reply && post.picture" style="background-image: url('{{ $root.config.serverRoot + '/files/' + post.picture }}');" ui-sref="post({ postId: post.id })" ng-click="openPicture()"></div>
-		<div class="below" ng-if="!reply">
+		<div class="message" ui-sref="post({ id: post.id })">{{ post.message }}{{pah}}</div>
+		<div class="pic" ng-if="post.picture" style="background-image: url('{{ $root.config.serverRoot + '/files/' + post.picture }}');" ui-sref="post({ id: post.id })" ng-click="openPicture()"></div>
+		<div class="below" ng-if="showInteraction">
 			<div class="love" ng-click="reaction('love')" ng-class="{ active: post.userReaction === 'love' }">
 				<div class="hexagon"><span class="fa fa-heart"></span></div>
 				<div class="count">{{ post.loveCount }} loves</div>
@@ -23,7 +27,7 @@
 				<div class="hexagon"><span class="fa fa-frown-o"></span></div>
 				<div class="count">{{ post.hateCount }} dislikes</div>
 			</div>
-			<div class="reply" ui-sref="post({ postId: post.id })">
+			<div class="reply" ui-sref="post({ id: post.id })">
 				<div class="hexagon"><span class="fa fa-comments"></span></div>
 				<div class="count">{{ post.replyCount }} reply</div>
 			</div>
@@ -33,8 +37,8 @@
 			</div>
 		</div>
 		<div>{{ score }}</div>
-		<div class="replies" ng-if="!summary">
-			<post ng-repeat="reply in post.replies" post="reply" summary="true" reply="true"></post>
+		<div class="replies" ng-if="showReplies">
+			<post ng-repeat="id in replies" id="id"></post>
 
 			<form class="post" ng-click="headerActive = true" ng-class="{ active: headerActive }">
 				<input type="text" ng-model="replyModel.message" placeholder="Write a reply...">
@@ -43,4 +47,5 @@
 
 		</div>
 	</div>
+
 </div>

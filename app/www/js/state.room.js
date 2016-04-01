@@ -6,20 +6,25 @@ angular.module('leapinit').config(function ($stateProvider) {
 		url: '/room/:roomId',
 		templateUrl: 'template/state.room.html',
 		controller: function ($scope, $stateParams, remote, geo) {
-			var refresh = function () {
-				$scope.loading = true;
-				remote.get('/room/' + $stateParams.roomId).then(function (room) {
-					$scope.room = room;
-					return remote.get('/post?mode=room&roomId=' + $stateParams.roomId);
-				}).then(function (posts) {
-					$scope.posts = posts;
-				}).catch(function (err) {
-					$scope.error = err;
-				}).finally(function () {
-					delete $scope.loading;
-				});
-			};
-			refresh();
+			var roomListener = remote.listen('room', { id: $scope.id }),
+				feedListener = remote.listen('feed', { room: $scope.id });
+		
+			roomListener.on('update', function (room) {
+				delete $scope.error;
+				$scope.room = room;
+			}).on('error', function (error) {
+				$scope.error = error;
+			});
+
+			feedListener.on('update', function (feed) {
+				delete $scope.error;
+				$scope.feed = feed;
+			}).on('error', function (error) {
+				$scope.error = error;
+			});
+
+			$scope.$on('$destroy', roomListener.destroy);
+			$scope.$on('$destroy', feedListener.destroy);
 
 			$scope.newPost = {};
 			$scope.createPost = function () {

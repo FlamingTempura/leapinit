@@ -8,15 +8,10 @@ var Bluebird = require('bluebird'),
 	user = require('./user.js'),
 	request = Bluebird.promisifyAll(require('request')),
 	fs = Bluebird.promisifyAll(require('fs')),
-	config = require('../config.js');
+	config = require('../config.js'),
+	socket = require('../utils/socket'),
+	_ = require('lodash');
 
-var exportFields =  'post.id, "user".username, room.id AS "roomId", room.name AS "roomName", message, ' + 
-					'location[0] AS latitude, location[1] AS longitude,city, country, post.created, ' + 
-					'filename AS picture, ' +
-					'(SELECT COUNT(*) FROM post AS post2 WHERE parent_post_id = post.id) AS "replyCount", ' +
-					'(SELECT type FROM reaction WHERE post_id = post.id AND user_id = $1) AS "userReaction", ' +
-					'(SELECT COUNT(*) FROM reaction WHERE post_id = post.id AND type = \'love\') AS "loveCount", ' +
-					'(SELECT COUNT(*) FROM reaction WHERE post_id = post.id AND type = \'hate\') AS "hateCount" ';
 
 // get posts from a room, else the user's feed
 router.get('/', function (req, res) {
@@ -55,6 +50,73 @@ router.get('/', function (req, res) {
 			log.error(err);
 			res.status(500).json({ error: 'Fatal' });
 		}
+	});
+});
+
+socket.client.listen('posts', function (userId, data, emit, onClose) {
+	var emitPosts = function () {
+		var q = 'SELECT post.id FROM post ' +
+				(data.type === 'room'    ? 'WHERE parent_post_id IS NULL AND room_id = $1 ' :
+				 data.type === 'user'    ? 'WHERE parent_post_id IS NULL AND user_id = $1 ' :
+				 data.type === 'replies' ? 'WHERE parent_post_id = $1 ' :
+				 /* feed */           'WHERE parent_post_id IS NULL AND room_id IN (SELECT room_id FROM resident WHERE user_id = $1) ') +
+				'ORDER BY post.created DESC LIMIT 10';
+		return db.query(q, data.type === 'room' ? [data.roomId] :
+						   data.type === 'replies' ? [data.postId] :
+						   [userId]).then(function (result) {
+			console.log('pjjk', result.rows, q)
+			emit(null, _.map(result.rows, 'id'));
+		}).catch(function (err) {
+			if (err.name === 'Authentication') {
+				emit({ error: 'Authentication' });
+			} else if (err.name === 'Validation') {
+				emit({ error: 'Validation', validation: err.validation });
+			} else { // todo: room not exist
+				log.error(err);
+				emit({ error: 'Fatal' });
+			}
+		});
+	};
+	// db.listen
+	emitPosts();
+	onClose(function () {
+		// db.unlisten
+	});
+});
+
+socket.client.listen('post', function (userId, data, emit, onClose) {
+	var emitPosts = function () {
+		var q = 'SELECT post.id, "user".username, room.id AS "roomId", room.name AS "roomName", message, ' + 
+				'  location[0] AS latitude, location[1] AS longitude,city, country, post.created, ' + 
+				'  filename AS picture, ' +
+				'  (SELECT COUNT(*) FROM post AS post2 WHERE parent_post_id = post.id) AS "replyCount", ' +
+				'  (SELECT type FROM reaction WHERE post_id = post.id AND user_id = $1) AS "userReaction", ' +
+				'  (SELECT COUNT(*) FROM reaction WHERE post_id = post.id AND type = \'love\') AS "loveCount", ' +
+				'  (SELECT COUNT(*) FROM reaction WHERE post_id = post.id AND type = \'hate\') AS "hateCount" ' +
+				'FROM post ' +
+				'JOIN "user" ON ("user".id = user_id) ' +
+				'JOIN "room" ON (room.id = room_id) ' +
+				'WHERE post.id = $2';
+		return db.query(q, [userId, data.id]).then(function (result) {
+			if (result.rows.length === 0) { throw { name: 'NotFound' }; }
+			emit(null, result.rows[0]);
+		}).catch(function (err) {
+			if (err.name === 'Authentication') {
+				emit({ error: 'Authentication' });
+			} else if (err.name === 'Validation') {
+				emit({ error: 'Validation', validation: err.validation });
+			} else if (err.name === 'NotFound') {
+				emit({ error: 'NotFound' });
+			} else {
+				log.error(err);
+				emit({ error: 'Fatal' });
+			}
+		});
+	};
+	// db.listen
+	emitPosts();
+	onClose(function () {
+		// db.unlisten
 	});
 });
 

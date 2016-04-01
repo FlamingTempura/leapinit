@@ -6,18 +6,27 @@ angular.module('leapinit').config(function ($stateProvider) {
 		url: '/room',
 		templateUrl: 'template/state.rooms.html',
 		controller: function ($scope, remote) {
-			$scope.loading = true;
-			Promise.props({
-				userRooms: remote.get('/room?mode=user'),
-				popularRooms: remote.get('/room?mode=popular')
-			}).then(function (resolves) {
-				$scope.userRooms = resolves.userRooms;
-				$scope.popularRooms = resolves.popularRooms;
-			}).catch(function (err) {
-				$scope.error = err; // 'Failed to load room list.'
-			}).finally(function () {
-				delete $scope.loading;
+
+			var userRoomsListener = remote.listen('rooms', { type: 'user' }),
+				popularRoomsListener = remote.listen('rooms', { type: 'popular' });
+		
+			userRoomsListener.on('update', function (rooms) {
+				delete $scope.error;
+				$scope.userRooms = rooms;
+			}).on('error', function (error) {
+				$scope.error = error;
 			});
+
+			popularRoomsListener.on('update', function (rooms) {
+				delete $scope.error;
+				$scope.popularRooms = rooms;
+			}).on('error', function (error) {
+				$scope.error = error;
+			});
+
+			$scope.$on('$destroy', userRoomsListener.destroy);
+			$scope.$on('$destroy', popularRoomsListener.destroy);
+			
 		}
 	});
 });

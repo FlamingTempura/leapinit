@@ -5,19 +5,21 @@ angular.module('leapinit').config(function ($stateProvider) {
 	$stateProvider.state('feed', {
 		url: '/feed',
 		templateUrl: 'template/state.feed.html',
-		onEnter: function ($state, remote) {
-			console.log('lo');
-			console.log('lods', remote.auth())
-			if (!remote.auth()) { $state.go('signin'); }
-		},
 		controller: function ($scope, remote) {
-			$scope.loading = true;
-			remote.get('/post?mode=feed').then(function (posts) {
-				$scope.posts = posts;
-			}).catch(function (err) {
-				$scope.error = err;
-			}).finally(function () {
-				delete $scope.loading;
+			var listener = remote.listen('posts', { type: 'feed' });
+
+			listener.on('receive', function (feed) { // feed is just an array of post ids
+				$scope.feed = feed;
+				console.log('GOT FEED', feed);
+			});
+			listener.on('error', function (error) {
+				$scope.error = error;
+			});
+
+			// on scroll: listener.emit('20');
+
+			$scope.$on('$destroy', function () {
+				listener.destroy();
 			});
 		}
 	});

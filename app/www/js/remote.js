@@ -1,4 +1,4 @@
-/* global angular, _ */
+/* global angular, _, io */
 'use strict';
 
 angular.module('leapinit').factory('remote', function ($http, $state, $rootScope, config) {
@@ -61,6 +61,10 @@ angular.module('leapinit').factory('remote', function ($http, $state, $rootScope
 		return authRequest;
 	});
 
+	var socket = io('http://localhost:3251', {
+		query: 'token=' + localStorage.getItem('token') // FIXME: need this set on load
+	});
+
 	return {
 		request: request,
 		post: post,
@@ -73,6 +77,41 @@ angular.module('leapinit').factory('remote', function ($http, $state, $rootScope
 		delete: function (url, data, authenticate) {
 			return request({ method: 'DELETE', url: url, data: data, authenticate: authenticate });
 		},
-		auth: auth
+		auth: auth,
+		listen: function (name, data) {
+			var callbacks = {},
+				trigger = function (event, data) {
+					_.each(callbacks && callbacks[event], function (callback) { callback(data); });
+					$rootScope.$apply();
+				};
+			data = _.clone(data) || {};
+			data.listenerId = Math.random() * 10000000; // TODO: uuid
+			socket.emit('listen:' + name, data);
+			socket.on(name + '#' + data.listenerId, function (data) { trigger('receive', data); });
+			socket.on(name + '!error#' + data.listenerId, function (data) { trigger('error', data); });
+			return {
+				on: function (event, callback) {
+					if (!callbacks.hasOwnProperty(event)) { callbacks[event] = []; }
+					callbacks[event].push(callback);
+				},
+				destroy: function () {
+					socket.emit('unlisten:' + name, data);
+					socket.off(name + '#' + data.listenerId);
+					socket.off(name + '!error#' + data.listenerId);
+				}
+			};
+		},
+		send: function (name, data) {
+			data = _.clone(data) || {};
+			data.listenerId = Math.random() * 10000000; // TODO: uuid
+			socket.emit('send:' + name, data);
+			return new Promise(function (resolve, reject) {
+				socket.on('sent:' + name + '#' + data.listenerId, resolve);
+				socket.on('sent:' + name + '!error#' + data.listenerId, reject);
+			}).finally(function () {
+				socket.off('sent:' + name + '#' + data.listenerId);
+				socket.off('sent:' + name + '!error#' + data.listenerId);
+			});
+		}
 	};
 });
