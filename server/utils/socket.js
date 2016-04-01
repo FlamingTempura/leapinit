@@ -5,9 +5,10 @@ var http = require('http').createServer(),
 	_ = require('lodash'),
 	auth = require('./auth'),
 	validate = require('./validate'),
-	log = require('./log').create('Socket', 'yellow');
+	log = require('./log').create('Socket', 'yellow'),
+	config = require('../config');
 
-http.listen(3251, '127.0.0.1');
+http.listen(config.port + 1, config.host);
 
 io.use(function (socket, next) {
 	validate({
