@@ -18,18 +18,11 @@ socket.client.listen('posts', function (userId, data, emit, onClose) {
 				 data.type === 'replies' ? 'WHERE parent_post_id = $1  ORDER BY post.created ASC ' :
 				 /* feed */           'WHERE parent_post_id IS NULL AND room_id IN (SELECT room_id FROM resident WHERE user_id = $1) ORDER BY post.created DESC ') +
 				'LIMIT 100';
-		return db.query(q, data.type === 'room' ? [data.roomId] :
-						   data.type === 'replies' ? [data.postId] :
-						   [userId]).then(function (result) {
-			emit(null, _.map(result.rows, 'id'));
-		}).catch(function (err) {
-			if (err.name === 'Authentication') {
-				emit({ error: 'Authentication' });
-			} else { // todo: room not exist
-				log.error(err);
-				emit({ error: 'Fatal' });
-			}
-		});
+		emit(db.query(q, data.type === 'room' ? [data.roomId] :
+				data.type === 'replies' ? [data.postId] :
+				[userId]).then(function (result) {
+			return _.map(result.rows, 'id');
+		}));
 	};
 	db.on('feed', emitPosts); // FIXME: this will fire too often
 	emitPosts();
@@ -51,17 +44,10 @@ socket.client.listen('post', function (userId, data, emit, onClose) {
 				'JOIN "user" ON ("user".id = user_id) ' +
 				'JOIN "room" ON (room.id = room_id) ' +
 				'WHERE post.id = $2';
-		return db.query(q, [userId, data.id]).then(function (result) {
+		return emit(db.query(q, [userId, data.id]).then(function (result) {
 			if (result.rows.length === 0) { throw { name: 'NotFound' }; }
-			emit(null, result.rows[0]);
-		}).catch(function (err) {
-			if (err.name === 'NotFound') {
-				emit({ error: 'NotFound' });
-			} else {
-				log.error(err);
-				emit({ error: 'Fatal' });
-			}
-		});
+			return result.rows[0];
+		}));
 	};
 	db.on('post:' + data.id, emitPosts);
 	emitPosts();
@@ -70,50 +56,39 @@ socket.client.listen('post', function (userId, data, emit, onClose) {
 	});
 });
 
-socket.client.on('create_post', function (userId, data, emit) {
-	validate({
-		roomId: { value: data.roomId, type: 'number' },
-		message: { value: data.message },
-		latitude: { value: data.latitude, type: 'number', optional: true },
-		longitude: { value: data.longitude, type: 'number', optional: true },
-		parentId: { value: data.parentId, type: 'number', optional: true },
-		filename: { value: data.file, type: 'string', optional: true, match: /\w{8}-\w{4}-4\w{3}-\w{4}-\w{12}\.\w+/ }
-	}).then(function (params) {
-		var checkFile;
-		if (params.filename) {
-			checkFile = fs.statAsync('uploads/' + params.filename).catch(function () { // check that file exists
-				throw { name: 'NoSuchFile' };
-			});
-		} else {
-			checkFile = Bluebird.resolve();
-		}
-		return checkFile.then(function () {
-			var q = 'INSERT INTO post (user_id, room_id, parent_post_id, message, filename) VALUES ($1, $2, $3, $4, $5) RETURNING id';
-			return db.query(q, [userId, params.roomId, params.parentId, params.message, params.filename]);
-		}).then(function (result) {
-			if (params.latitude && params.longitude) {
-				log.log('reverse geocoding', params.latitude + ',' + params.longitude);
-				var url = 'http://api.opencagedata.com/geocode/v1/json?query=' + params.latitude + ',' + params.longitude + '&key=' + config.opencageKey;
-				request.getAsync(url).then(function (response) {
-					var data = JSON.parse(response.body);
-					var q = 'UPDATE post SET location = POINT($2,$3), location_data = $4, country = $5, city = $6 WHERE id = $1';
-					log.log('got address', data);
-					var address = data.results[0].components;
-					return db.query(q, [result.rows[0].id, params.latitude, params.longitude, JSON.stringify(data.results), address.country, address.city]);
-				});
-			}
-		});
-	}).then(function () {
-		emit();
+socket.client.on('create_post', function (userId, data) {
+	validate(data, 'roomId', { type: 'number' });
+	validate(data, 'message', { type: 'string' });
+	validate(data, 'latitude', { type: 'number', optional: true });
+	validate(data, 'longitude', { type: 'number', optional: true });
+	validate(data, 'parentId', { type: 'number', optional: true });
+	validate(data, 'filename', { type: 'string', optional: true, match: /\w{8}-\w{4}-4\w{3}-\w{4}-\w{12}\.\w+/ });
+	return (data.filename ?
+		fs.statAsync('uploads/' + data.filename).catch(function () { throw { name: 'NoSuchFile' }; }) : // check that file exists
+		Bluebird.resolve()
+	).then(function () {
+		var q = 'INSERT INTO post (user_id, room_id, parent_post_id, message, filename) VALUES ($1, $2, $3, $4, $5) RETURNING id';
+		return db.query(q, [userId, data.roomId, data.parentId, data.message, data.filename]);
+	}).then(function (result) {
 		db.emit('feed');
-	}).catch(function (err) {
-		if (err.name === 'NoSuchFile') {
-			emit({ error: 'NoSuchFile' });
-		} else if (err.name === 'Validation') {
-			emit({ error: 'Validation', validation: err.validation });
-		} else { // todo: room not exist
-			log.error(err);
-			emit({ error: 'Fatal' });
-		}
+		var q = 'INSERT INTO resident (user_id, room_id) VALUES ($1, $2) RETURNING room_id';
+		return db.query(q, [userId, data.roomId]).then(function () {
+			db.emit('room:' + data.roomId);
+		}).catch(function (err) {
+			if (err.constraint === 'resident_unique_index') { return; } // user is already in this room
+			throw err;
+		}).return(result);
+	}).then(function (result) {
+		if (!data.latitude) { return null; }
+		log.log('reverse geocoding', data.latitude + ',' + data.longitude);
+		var url = 'http://api.opencagedata.com/geocode/v1/json?query=' + data.latitude + ',' + data.longitude + '&key=' + config.opencageKey;
+		request.getAsync(url).then(function (response) {
+			var results = JSON.parse(response.body).results,
+				address = results[0].components,
+				q = 'UPDATE post SET location = POINT($2,$3), location_data = $4, country = $5, city = $6 WHERE id = $1';
+			log.log('got address', results);
+			return db.query(q, [result.rows[0].id, data.latitude, data.longitude, JSON.stringify(results), address.country, address.city]);
+		});
+		return null;
 	});
 });

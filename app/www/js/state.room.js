@@ -6,7 +6,8 @@ angular.module('leapinit').config(function ($stateProvider) {
 		url: '/room/:id',
 		templateUrl: 'template/state.room.html',
 		controller: function ($scope, $stateParams, remote, geo) {
-			var roomListener = remote.listen('room', { id: $stateParams.id }),
+			var id = Number($stateParams.id),
+				roomListener = remote.listen('room', { id: id }),
 				feedListener;
 		
 			roomListener.on('receive', function (room) {
@@ -16,7 +17,7 @@ angular.module('leapinit').config(function ($stateProvider) {
 				$scope.$apply();
 				console.log('applied');
 				if (!feedListener) {
-					feedListener = remote.listen('posts', { type: 'room', roomId: $stateParams.id });
+					feedListener = remote.listen('posts', { type: 'room', roomId: id });
 					feedListener.on('receive', function (feed) {
 						delete $scope.error;
 						$scope.feed = feed;
@@ -35,10 +36,10 @@ angular.module('leapinit').config(function ($stateProvider) {
 			$scope.$on('$destroy', roomListener.destroy);
 
 			$scope.join = function () {
-				remote.request('join_room', { id: $stateParams.id });
+				remote.request('join_room', { id: id });
 			};
 			$scope.leave = function () {
-				remote.request('leave_room', { id: $stateParams.id });
+				remote.request('leave_room', { id: id });
 			};
 			
 			$scope.newPost = {};
@@ -63,15 +64,14 @@ angular.module('leapinit').config(function ($stateProvider) {
 					upload = Promise.resolve();
 				}
 				upload.then(function (file) {
-					return remote.post('/post', {
-						roomId: Number($stateParams.id),
+					return remote.request('create_post', {
+						roomId: id,
 						message: $scope.newPost.message,
 						latitude: geo.latitude,
 						longitude: geo.longitude,
 						file: file ? file.name : undefined
 					});
 				}).then(function () {
-					refresh();
 					delete $scope.headerActive;
 					$scope.newPost = {};
 				}).catch(function (err) {
@@ -90,7 +90,7 @@ angular.module('leapinit').config(function ($stateProvider) {
 			$scope.setName = function () {
 				delete $scope.newName.error;
 				remote.request('update_room', { 
-					id: $stateParams.id,
+					id: id,
 					name: $scope.newName.name
 				}).catch(function (err) {
 					$scope.newName.error = err;

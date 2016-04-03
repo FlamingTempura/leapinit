@@ -71,7 +71,7 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 					$scope.$on('$destroy', listener.destroy);
 
 					if ($scope.showReplies) {
-						var replyListener = remote.listen('posts', { type: 'replies', postId: Number($scope.id) });
+						var replyListener = remote.listen('posts', { type: 'replies', postId: $scope.post.id });
 
 						replyListener.on('receive', function (replies) {
 							$scope.replies = replies;

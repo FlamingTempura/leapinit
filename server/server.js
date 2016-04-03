@@ -1,5 +1,7 @@
 'use strict';
 
+Error.stackTraceLimit = Infinity;
+
 var express = require('express'),
 	bodyParser = require('body-parser'),
 	Bluebird = require('bluebird'),

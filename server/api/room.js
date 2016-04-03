@@ -3,7 +3,8 @@
 var db = require('../utils/db'),
 	validate = require('../utils/validate'),
 	log = require('../utils/log').create('Room', 'cyan'),
-	socket = require('../utils/socket');
+	socket = require('../utils/socket'),
+	Bluebird = require('bluebird');
 
 // get all rooms relevent to the user in lists (rooms they are in, popular rooms)
 socket.client.listen('rooms', function (userId, data, emit, onClose) {
@@ -16,13 +17,9 @@ socket.client.listen('rooms', function (userId, data, emit, onClose) {
 					'WHERE id IN (SELECT room_id FROM resident WHERE user_id = $1)' :
 					'WHERE id NOT IN (SELECT room_id FROM resident WHERE user_id = $1)' +
 					'ORDER BY "postCount" DESC LIMIT 100');
-
-		db.query(q, [userId]).then(function (result) {
-			emit(null, result.rows);
-		}).catch(function (err) {
-			log.error(err);
-			emit({ error: 'Fatal' });
-		});
+		emit(db.query(q, [userId]).then(function (result) {
+			return result.rows;
+		}));
 	};
 	db.on('room', emitRooms); // FIXME: this will fire too often
 	emitRooms();
@@ -32,49 +29,35 @@ socket.client.listen('rooms', function (userId, data, emit, onClose) {
 });
 
 // Get the room for a code (or create it if it doesn't exist)
-socket.client.on('room_from_code', function (userId, data, emit) {
-	validate({
-		code: { value: data.code, type: 'string', min: 2 }
-	}).then(function (params) {
-		var q = 'SELECT room_id, code.id AS "code_id" FROM code JOIN room ON (room.id = room_id) WHERE code = $1';
-		return db.query(q, [params.code]).then(function (result) {
-			if (result.rows.length === 0) { // create room from code
-				var q = 'INSERT INTO room DEFAULT VALUES RETURNING id';
-				return db.query(q).then(function (result) {
-					var q = 'INSERT INTO code (code, room_id) VALUES ($1, $2) RETURNING room_id, id AS code_id';
-					return db.query(q, [params.code, result.rows[0].id]);
-				});
-			}
-			return result;
-		}).then(function (result) {
-			var q = 'INSERT INTO resident (user_id, room_id, code_id) VALUES ($1, $2, $3) RETURNING room_id';
-			return db.query(q, [userId, result.rows[0].room_id, result.rows[0].code_id]).tap(function () {
-				db.emit('rooms'); // FIXME
-			}).catch(function (err) {
-				if (err.constraint === 'resident_unique_index') { return result; } // user is already in this room
-				throw err;
-			});
+socket.client.on('room_from_code', function (userId, data) {
+	validate(data, 'code', { type: 'string', min: 2 });
+	var q = 'SELECT room_id, code.id AS "code_id" FROM code JOIN room ON (room.id = room_id) WHERE code = $1';
+	return db.query(q, [data.code]).then(function (result) {
+		if (result.rows.length > 0) { return result; }
+		var q = 'INSERT INTO room DEFAULT VALUES RETURNING id'; // create room from code
+		return db.query(q).then(function (result) {
+			var q = 'INSERT INTO code (code, room_id) VALUES ($1, $2) RETURNING room_id, id AS code_id';
+			return db.query(q, [data.code, result.rows[0].id]);
 		});
 	}).then(function (result) {
-		emit(null, { roomId: result.rows[0].room_id });
-	}).catch(function (err) {
-		if (err.name === 'Validation') {
-			emit({ error: 'Validation', validation: err.validation });
-		} else if (err.name === 'NotFound') {
-			emit({ error: 'NotFound' });
-		} else {
-			log.error(err);
-			emit({ error: 'Fatal' });
-		}
+		var q = 'INSERT INTO resident (user_id, room_id, code_id) VALUES ($1, $2, $3) RETURNING room_id';
+		return db.query(q, [userId, result.rows[0].room_id, result.rows[0].code_id]).tap(function () {
+			db.emit('rooms'); // FIXME
+		}).catch(function (err) {
+			if (err.constraint === 'resident_unique_index') { return result; } // user is already in this room
+			throw err;
+		});
+	}).then(function (result) {
+		return { roomId: result.rows[0].room_id };
 	});
 });
 
 // Get details about a room
 socket.client.listen('room', function (userId, data, emit, onClose) {
 	var emitRoom = function () {
-		validate({
-			id: { value: Number(data.id), type: 'number' }
-		}).then(function (params) {
+		emit(Bluebird.try(function () {
+			validate(data, 'id', { type: 'number' });
+		}).then(function () {
 			var q = 'SELECT id, name, ' + 
 					'  (SELECT COUNT(*) FROM resident WHERE room_id = $1) AS "residentCount", ' +
 					'  (SELECT code FROM code JOIN resident ON (code_id = code.id) WHERE user_id = $2 AND resident.room_id = $1) AS "userCode", ' +
@@ -82,20 +65,11 @@ socket.client.listen('room', function (userId, data, emit, onClose) {
 					'  (SELECT filename FROM post WHERE room_id = $1 AND filename IS NOT NULL LIMIT 1) AS picture, ' +
 					'  EXISTS(SELECT * FROM resident WHERE room_id = $1 AND user_id = $2) AS "isMember" ' +
 					'FROM room WHERE id = $1';
-			return db.query(q, [params.id, userId]);
+			return db.query(q, [data.id, userId]);
 		}).then(function (result) {
 			if (result.rows.length === 0) { throw { name: 'NotFound' }; }
-			emit(null, result.rows[0]);
-		}).catch(function (err) {
-			if (err.name === 'Validation') {
-				emit({ error: 'Validation', validation: err.validation });
-			} else if (err.name === 'NotFound') {
-				emit({ error: 'NotFound' });
-			} else {
-				log.error(err);
-				emit({ error: 'Fatal' });
-			}
-		});
+			return result.rows[0];
+		}));
 	};
 	db.on('room:' + data.id, emitRoom); // FIXME: this will fire too often
 	emitRoom();
@@ -105,74 +79,38 @@ socket.client.listen('room', function (userId, data, emit, onClose) {
 });
 
 // Change name of room
-socket.client.on('update_room', function (userId, data, emit) {
-	validate({
-		id: { value: Number(data.id), type: 'number' },
-		name: { value: data.name, type: 'string', max: 200 }
-	}).then(function (params) {
-		// TODO check that user is allowed to modify name
-		var q = 'UPDATE room SET name = $2 WHERE id = $1';
-		return db.query(q, [params.id, params.name]);
-	}).then(function (result) {
+socket.client.on('update_room', function (userId, data) {
+	validate(data, 'id', { type: 'number' });
+	validate(data, 'name', { type: 'string', max: 200 });
+	var q = 'UPDATE room SET name = $2 WHERE id = $1'; // TODO check that user is allowed to modify name
+	return db.query(q, [data.id, data.name]).then(function (result) {
 		if (result.rows.length === 0) { throw { name: 'NotFound' }; }
-		emit();
 		db.emit('room:' + data.id);
-	}).catch(function (err) {
-		if (err.name === 'Validation') {
-			emit({ error: 'Validation', validation: err.validation });
-		} else if (err.name === 'NotFound') {
-			emit({ error: 'NotFound' });
-		} else {
-			log.error(err);
-			emit({ error: 'Fatal' });
-		}
+		return null;
 	});
 });
 
 // Join a room
-socket.client.on('join_room', function (userId, data, emit) {
-	validate({
-		id: { value: Number(data.id), type: 'number' }
-	}).then(function (params) {
-		var q = 'INSERT INTO resident (user_id, room_id) VALUES ($1, $2) RETURNING room_id';
-		return db.query(q, [userId, params.id]).then(function (result) {
-			db.emit('room:' + data.id);
-			if (result.rows.length === 0) { throw { name: 'NotFound' }; }
-		}).catch(function (err) {
-			if (err.constraint === 'resident_unique_index') { return; } // user is already in this room
-			throw err;
-		});
-	}).then(function () {
-		emit();
+socket.client.on('join_room', function (userId, data) {
+	validate(data, 'id', { type: 'number' });
+	var q = 'INSERT INTO resident (user_id, room_id) VALUES ($1, $2) RETURNING room_id';
+	return db.query(q, [userId, data.id]).then(function (result) {
+		db.emit('room:' + data.id);
+		if (result.rows.length === 0) { throw { name: 'NotFound' }; }
+		return null;
 	}).catch(function (err) {
-		if (err.name === 'Validation') {
-			emit({ error: 'Validation', validation: err.validation });
-		} else if (err.name === 'NotFound') {
-			emit({ error: 'NotFound' });
-		} else {
-			log.error(err);
-			emit({ error: 'Fatal' });
-		}
+		if (err.constraint === 'resident_unique_index') { return null; } // user is already in this room
+		throw err;
 	});
 });
 
 // Leave a room
-socket.client.on('leave_room', function (userId, data, emit) {
-	validate({
-		id: { value: Number(data.id), type: 'number' }
-	}).then(function (params) {
-		var q = 'DELETE FROM resident WHERE user_id = $1 AND room_id = $2';
-		return db.query(q, [userId, params.id]).then(function () {
-			db.emit('room:' + params.id);
-			emit();
-		});
-	}).catch(function (err) {
-		if (err.name === 'Validation') {
-			emit({ error: 'Validation', validation: err.validation });
-		} else {
-			log.error(err);
-			emit({ error: 'Fatal' });
-		}
+socket.client.on('leave_room', function (userId, data) {
+	validate(data, 'id', { type: 'number' });
+	var q = 'DELETE FROM resident WHERE user_id = $1 AND room_id = $2';
+	return db.query(q, [userId, data.id]).then(function () {
+		db.emit('room:' + data.id);
+		return null;
 	});
 });
 

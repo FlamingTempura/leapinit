@@ -15,7 +15,7 @@
 			<h1 ng-switch-when="match">{{ problem.field | capitalizeFirst }} is invalid.</h1>
 			<h1 ng-switch-when="defined">{{ problem.field | capitalizeFirst }} must be provided.</h1>
 			<h1 ng-switch-when="notEmpty">{{ problem.field | capitalizeFirst }} must be provided.</h1>
-			<h1 ng-switch-default>{{ problem.field | capitalizeFirst }} is incorrected.</h1>
+			<h1 ng-switch-default>{{ problem.field | capitalizeFirst }} is invalid.</h1>
 		</div>
 	</div>
 	<div ng-switch-when="LoginFailure">

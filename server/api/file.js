@@ -16,6 +16,11 @@ var Bluebird = require('bluebird'),
 	}),
 	upload = multer({ storage: uploadStore, limits: { fileSize: 20 * Math.pow(1024, 2) /* 20mb */ } }).single('file');
 
+var pictureFormats = {
+	sm: { width: 256 },
+	lg: { width: 1024 }
+};
+
 router.post('/', function (req, res) {
 	validate({
 		authorization: { value: req.get('Authorization') }
