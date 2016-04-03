@@ -5,7 +5,7 @@ var _ = require('lodash'),
 	pg = Bluebird.promisifyAll(require('pg')),
 	config = require('../config'),
 	EventEmitter = require('events').EventEmitter,
-	log = require('./log').create('DB', 'cyanBright'),
+	log = require('./log')('DB', 'cyanBright'),
 	pooler = require('generic-pool'),
 	crypto = require('crypto');
 
@@ -35,7 +35,9 @@ _.extend(Client.prototype, {
 					log.error(query);
 					//log.error(err);
 					throw err;
-				}).then(resolve).catch(reject);
+				}).then(function (result) {
+					resolve(result.rows);
+				}).catch(reject);
 				onCancel(function () {
 					log.error('TIMEOUT (possible deadlock, closing client): ' + queryFormatted);
 					throw new Error('Query timed out');
@@ -103,16 +105,13 @@ _.extend(db, {
 		}).disposer(function (client) {
 			client.close();
 		});
-	}
-});
-
-['query', 'rows', 'one', 'get'].forEach(function (fn) {
-	db[fn] = function () {
+	},
+	query: function () {
 		var args = arguments;
 		return Bluebird.using(db.connect(), function (client) {
-			return Client.prototype[fn].apply(client, args);
+			return Client.prototype.query.apply(client, args);
 		});
-	};
+	}
 });
 
 module.exports = db;

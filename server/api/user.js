@@ -1,7 +1,7 @@
 'use strict';
 
 var Bluebird = require('bluebird'),
-	log = require('../utils/log').create('Auth', 'yellow'),
+	log = require('../utils/log')('Auth', 'yellow'),
 	db = require('../utils/db'),
 	validate = require('../utils/validate'),
 	socket = require('../utils/socket');
@@ -10,11 +10,11 @@ var Bluebird = require('bluebird'),
 socket.client.on('login', function (userId, data, socket) {
 	validate(data, 'nickname', { type: 'string', max: 1000 });
 	validate(data, 'password', { type: 'string', max: 1000 });
-	log.info('checking username and password...');
+	log.log('checking username and password...');
 	var q = 'SELECT id FROM "user" WHERE username = $1 AND password_hash = crypt($2, password_hash)';
-	return db.query(q, [data.nickname, data.password]).then(function (result) {
-		if (result.rows.length === 0) { throw { name: 'LoginFailure' }; }
-		var toUserId = result.rows[0].id;
+	return db.query(q, [data.nickname, data.password]).get(0).then(function (user) {
+		if (!user) { throw { name: 'LoginFailure' }; }
+		var toUserId = user.id;
 		if (userId === toUserId) { return null; } // already been done
 		return Bluebird.all([ // transfer all data to existing user
 			db.query('UPDATE post SET user_id = $2 WHERE user_id = $1', [userId, toUserId]),
@@ -41,8 +41,8 @@ socket.client.on('update_user', function (userId, data) {
 		promise = db.query(q, [userId, data.nickname, data.password]);
 	} else {
 		q = 'UPDATE "user" SET password_hash =  crypt($2, gen_salt(\'md5\')) WHERE id = $1 AND username IS NOT NULL';
-		promise = db.query(q, [userId, data.password]).catch(function (result) {
-			if (result.rows.length === 0) { throw { name: 'NoUsername' }; }
+		promise = db.query(q, [userId, data.password]).get(0).then(function (user) {
+			if (!user) { throw { name: 'NoUsername' }; }
 		});
 	}
 	promise.then(function () {
@@ -54,9 +54,7 @@ socket.client.on('update_user', function (userId, data) {
 // get user
 socket.client.listen('user', function (userId, data, emit, onClose) {
 	var emitUser = function () {
-		emit(db.query('SELECT id, username FROM "user" WHERE id = $1', [userId]).then(function (result) {
-			return result.rows[0];
-		}));
+		emit(db.query('SELECT id, username FROM "user" WHERE id = $1', [userId]).get(0));
 	};
 	db.on('user:' + userId, emitUser);
 	emitUser();

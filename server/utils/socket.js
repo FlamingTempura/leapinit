@@ -5,7 +5,7 @@ var http = require('http').createServer(),
 	_ = require('lodash'),
 	auth = require('./auth'),
 	validate = require('./validate'),
-	log = require('./log').create('Socket', 'yellow'),
+	log = require('./log')('Socket', 'yellow'),
 	config = require('../config'),
 	Bluebird = require('bluebird');
 
@@ -36,7 +36,7 @@ io.client = {
 				var listenerId = data.listenerId;
 				var emit = function (promise) {
 					promise.then(function (data) {
-						console.log('emitting', data);
+						log.log('emitting', 'listen_' + name, data && data.id ? data.id : '');
 						socket.emit('listen_' + name + ':success#' + listenerId, data);
 					}).catch(function (error) {
 						log.error(error);
@@ -55,7 +55,7 @@ io.client = {
 			socket.on(name, function (data) {
 				var listenerId = data.listenerId;
 				callback(socket.userId, data, socket).then(function (data) {
-					console.log('emitting', data);
+					log.log('emitting', name, data && data.id ? data.id : '');
 					socket.emit(name + ':success#' + listenerId, data);
 				}).catch(function (error) {
 					log.error(error);
@@ -71,24 +71,15 @@ io.on('connection', function (socket) {
 });
 
 var parseError = function (error) {
-	if (error.name === 'NoSuchFile') {
-		return { error: 'NoSuchFile' };
-	} else if (error.name === 'LoginFailure') {
-		return { error: 'LoginFailure' };
-	} else if (error.constraint === 'user_username_key') {
-		return { error: 'UsernameConflict' };
-	} else if (error.name === 'Validation') {
-		return { error: 'Validation', validation: error.validation };
-	} else if (error.name === 'NoUsername') {
-		return { error: 'NoUsername' };
-	} else if (error.name === 'Authentication') {
-		return { error: 'Authentication' };
-	} else if (error.name === 'NotFound') {
-		return { error: 'NotFound' };
-	} else {
-		log.error(error);
-		return { error: 'Fatal' };
-	}
+	if (error.constraint === 'user_username_key') { return { error: 'UsernameConflict' }; }
+	if (error.name === 'Validation'				) { return { error: 'Validation', validation: error.validation }; }
+	if (error.name === 'NoSuchFile'				) { return { error: 'NoSuchFile' }; }
+	if (error.name === 'LoginFailure'			) { return { error: 'LoginFailure' }; }
+	if (error.name === 'NoUsername'				) { return { error: 'NoUsername' }; }
+	if (error.name === 'Authentication'			) { return { error: 'Authentication' }; }
+	if (error.name === 'NotFound'				) { return { error: 'NotFound' }; }
+	log.error(error);
+	return { error: 'Fatal' };
 };
 
 module.exports = io;

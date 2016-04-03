@@ -3,7 +3,7 @@
 var Bluebird = require('bluebird'),
 	db = require('../utils/db'),
 	validate = require('../utils/validate'),
-	log = require('../utils/log').create('Room', 'blue'),
+	log = require('../utils/log')('Room', 'blue'),
 	request = Bluebird.promisifyAll(require('request')),
 	fs = Bluebird.promisifyAll(require('fs')),
 	config = require('../config.js'),
@@ -20,8 +20,8 @@ socket.client.listen('posts', function (userId, data, emit, onClose) {
 				'LIMIT 100';
 		emit(db.query(q, data.type === 'room' ? [data.roomId] :
 				data.type === 'replies' ? [data.postId] :
-				[userId]).then(function (result) {
-			return _.map(result.rows, 'id');
+				[userId]).then(function (rows) {
+			return _.map(rows, 'id');
 		}));
 	};
 	db.on('feed', emitPosts); // FIXME: this will fire too often
@@ -44,9 +44,9 @@ socket.client.listen('post', function (userId, data, emit, onClose) {
 				'JOIN "user" ON ("user".id = user_id) ' +
 				'JOIN "room" ON (room.id = room_id) ' +
 				'WHERE post.id = $2';
-		return emit(db.query(q, [userId, data.id]).then(function (result) {
-			if (result.rows.length === 0) { throw { name: 'NotFound' }; }
-			return result.rows[0];
+		return emit(db.query(q, [userId, data.id]).get(0).then(function (post) {
+			if (!post) { throw { name: 'NotFound' }; }
+			return post;
 		}));
 	};
 	db.on('post:' + data.id, emitPosts);
@@ -69,16 +69,17 @@ socket.client.on('create_post', function (userId, data) {
 	).then(function () {
 		var q = 'INSERT INTO post (user_id, room_id, parent_post_id, message, filename) VALUES ($1, $2, $3, $4, $5) RETURNING id';
 		return db.query(q, [userId, data.roomId, data.parentId, data.message, data.filename]);
-	}).then(function (result) {
+	}).get(0).then(function (post) {
 		db.emit('feed');
 		var q = 'INSERT INTO resident (user_id, room_id) VALUES ($1, $2) RETURNING room_id';
 		return db.query(q, [userId, data.roomId]).then(function () {
 			db.emit('room:' + data.roomId);
+			return post;
 		}).catch(function (err) {
-			if (err.constraint === 'resident_unique_index') { return; } // user is already in this room
+			if (err.constraint === 'resident_unique_index') { return post; } // user is already in this room
 			throw err;
-		}).return(result);
-	}).then(function (result) {
+		});
+	}).then(function (post) {
 		if (!data.latitude) { return null; }
 		log.log('reverse geocoding', data.latitude + ',' + data.longitude);
 		var url = 'http://api.opencagedata.com/geocode/v1/json?query=' + data.latitude + ',' + data.longitude + '&key=' + config.opencageKey;
@@ -87,7 +88,7 @@ socket.client.on('create_post', function (userId, data) {
 				address = results[0].components,
 				q = 'UPDATE post SET location = POINT($2,$3), location_data = $4, country = $5, city = $6 WHERE id = $1';
 			log.log('got address', results);
-			return db.query(q, [result.rows[0].id, data.latitude, data.longitude, JSON.stringify(results), address.country, address.city]);
+			return db.query(q, [post.id, data.latitude, data.longitude, JSON.stringify(results), address.country, address.city]);
 		});
 		return null;
 	});

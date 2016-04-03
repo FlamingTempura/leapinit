@@ -20,7 +20,7 @@ moment.updateLocale('en', {
 });
 
 angular.module('leapinit', ['ngAnimate', 'ui.router'])
-	.constant('config', { serverRoot: 'http://192.168.1.66:9122' })
+	.constant('config', { serverRoot: 'http://localhost:9122' })
 	.config(function ($urlRouterProvider) {
 		$urlRouterProvider.otherwise('/feed');
 	})
@@ -202,7 +202,6 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 		$rootScope.config = config;
 
 		geo.watch();
-		//remote.auth();
 	})
 	.filter('fromNow', function () {
 		return function (value) {

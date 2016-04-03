@@ -3,12 +3,12 @@
 Error.stackTraceLimit = Infinity;
 
 var express = require('express'),
-	bodyParser = require('body-parser'),
+	//bodyParser = require('body-parser'),
 	Bluebird = require('bluebird'),
 	app = express(),
-	hpp = require('hpp'),
+	//hpp = require('hpp'),
 	config = require('./config.js'),
-	log = require('./utils/log').create('REST', 'green');
+	log = require('./utils/log')('REST', 'green');
 
 require('./api');
 
@@ -20,11 +20,11 @@ Bluebird.config({
 
 app.use('/files', express.static('uploads'));
 
-app.use(bodyParser.json({ limit: '50mb' }));
-app.use(hpp({ checkBody: false, checkQuery: true })); // protect against HTTP Parameter Pollution attacks on query
+//app.use(bodyParser.json({ limit: '50mb' }));
+//app.use(hpp({ checkBody: false, checkQuery: true })); // protect against HTTP Parameter Pollution attacks on query
 
-app.use(function (req, res, next) {
-	log.info(req.method, req.url);
+/*app.use(function (req, res, next) {
+	log.log(req.method, req.url);
 	res.set({
 		'Access-Control-Allow-Origin': '*',
 		'Access-Control-Allow-Methods': 'OPTIONS,POST,PUT,GET,PATCH,DELETE',
@@ -41,7 +41,7 @@ app.use(function (req, res, next) {
 		next();
 	}
 });
-
+*/
 app.listen(config.port, /*config.host, */function () {
 	log.log('Server is listening on http://' + config.host + ':' + config.port);
 });

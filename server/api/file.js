@@ -3,7 +3,7 @@
 var Bluebird = require('bluebird'),
 	router = require('express').Router(),
 	validate = require('../utils/validate'),
-	log = require('../utils/log').create('File', 'blue'),
+	log = require('../utils/log')('File', 'blue'),
 	user = require('./user.js'),
 	uuid = require('uuid'),
 	multer = require('multer'),
