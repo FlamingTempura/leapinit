@@ -173,7 +173,7 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 		};
 		return geo;
 	})
-	.run(function (geo, remote, $rootScope, config) {
+	.run(function (geo, remote, $rootScope, config, $log, $state) {
 		Promise.setScheduler(function (cb) {
 			$rootScope.$evalAsync(cb);
 		});
@@ -181,11 +181,22 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 		var urlDepth = function (url) {
 			return _.compact(url.split('?')[0].split('/')).length;
 		};
+
+		var replacingState;
 		$rootScope.$on('$stateChangeStart', function (event, to, toParams, from) {
+			if (!replacingState && urlDepth(to.url) < urlDepth(from.url)) {
+				replacingState = true;
+				event.preventDefault();
+				$state.go(to, toParams, { location: 'replace' });
+			} else {
+				replacingState = false;
+			}
 			angular.element(document.body)
+				.toggleClass('animate-left', urlDepth(to.url) === urlDepth(from.url) && from.name > to.name) // HACK (works because lexicographically feed < rooms < settings)
+				.toggleClass('animate-right', urlDepth(to.url) === urlDepth(from.url) && from.name <= to.name) // HACK
 				.toggleClass('animate-up', urlDepth(to.url) > urlDepth(from.url))
-				.toggleClass('animate-down', urlDepth(to.url) < urlDepth(from.url))
-				.toggleClass('animate-right', urlDepth(to.url) === urlDepth(from.url));
+				.toggleClass('animate-down', urlDepth(to.url) < urlDepth(from.url));
+			
 		});
 
 		$rootScope.config = config;

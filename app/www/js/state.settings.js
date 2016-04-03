@@ -2,9 +2,9 @@
 'use strict';
 
 angular.module('leapinit').config(function ($stateProvider) {
-	$stateProvider.state('settings', {
+	$stateProvider.state('main.settings', {
 		url: '/settings',
-		templateUrl: 'template/state.settings.html',
+		templateUrl: 'template/state.main.settings.html',
 		controller: function ($scope, remote) {
 
 			var userListener = remote.listen('user'),

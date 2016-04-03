@@ -2,9 +2,13 @@
 'use strict';
 
 angular.module('leapinit').config(function ($stateProvider) {
-	$stateProvider.state('feed', {
+	$stateProvider.state('main', {
+		abstract: true,
+		templateUrl: 'template/state.main.html'
+	});
+	$stateProvider.state('main.feed', {
 		url: '/feed',
-		templateUrl: 'template/state.feed.html',
+		templateUrl: 'template/state.main.feed.html',
 		controller: function ($scope, remote) {
 			var listener = remote.listen('posts', { type: 'feed' });
 			listener.on('receive', function (feed) { // feed is just an array of post ids
