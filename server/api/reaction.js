@@ -16,6 +16,14 @@ socket.client.on('create_reaction', function (userId, data, emit) {
 			if (result.rows.length > 0 && result.rows[0].type === params.type) { return; } // tried creating the same reaction, deleting instead
 			var q = 'INSERT INTO reaction (user_id, post_id, type) VALUES ($1, $2, $3)';
 			return db.query(q, [userId, params.postId, params.type]);
+		}).return(params);
+	}).then(function (params) {
+		var q = 'INSERT INTO resident (user_id, room_id) VALUES ($1, (SELECT room_id FROM post WHERE id = $2)) RETURNING room_id';
+		return db.query(q, [userId, params.postId]).then(function (result) {
+			db.emit('room:' + result.rows[0].room_id);
+		}).catch(function (err) {
+			if (err.constraint === 'resident_unique_index') { return; } // user is already in this room
+			throw err;
 		});
 	}).then(function () {
 		emit();

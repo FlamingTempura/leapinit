@@ -7,7 +7,10 @@
 <div ng-if="!room && !error" class="content loading"></div>
 
 <div ng-if="room" class="toolbar-overlay">
-	{{ room.residentCount }} people<span ng-if="room.userCode"> &bullet; Code: {{ room.userCode }}</span>
+	{{ room.residentCount }} people
+	<span ng-if="room.userCode"> &bullet; Code: {{ room.userCode }}</span>
+	<button ng-show="!room.isMember" ng-click="join()">Join</button>
+	<button ng-show="room.isMember" ng-click="leave()">Leave</button>
 </div>
 
 <div ng-if="room" class="header" ng-click="headerActive = true" ng-class="{ active: headerActive }">

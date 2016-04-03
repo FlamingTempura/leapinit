@@ -12,10 +12,12 @@ socket.client.listen('rooms', function (userId, data, emit, onClose) {
 		var q = 'SELECT id, name, created, (SELECT COUNT(*) FROM post WHERE room_id = room.id) AS "unseenCount",' +
 				'  (SELECT COUNT(*) FROM post WHERE room_id = room.id) AS "postCount" ' + 
 				'FROM room ' +
-				(data.type === 'user' ? 'WHERE id IN (SELECT room_id FROM resident WHERE user_id = $1)' :
-					'ORDER BY "postCount" DESC LIMIT 10');
+				(data.type === 'user' ? 
+					'WHERE id IN (SELECT room_id FROM resident WHERE user_id = $1)' :
+					'WHERE id NOT IN (SELECT room_id FROM resident WHERE user_id = $1)' +
+					'ORDER BY "postCount" DESC LIMIT 100');
 
-		db.query(q, data.type === 'user' ? [userId] : []).then(function (result) {
+		db.query(q, [userId]).then(function (result) {
 			emit(null, result.rows);
 		}).catch(function (err) {
 			log.error(err);
@@ -77,7 +79,8 @@ socket.client.listen('room', function (userId, data, emit, onClose) {
 					'  (SELECT COUNT(*) FROM resident WHERE room_id = $1) AS "residentCount", ' +
 					'  (SELECT code FROM code JOIN resident ON (code_id = code.id) WHERE user_id = $2 AND resident.room_id = $1) AS "userCode", ' +
 					'  (SELECT array_agg(code) FROM code WHERE room_id = $1) AS codes, ' +
-					'  (SELECT filename FROM post WHERE room_id = $1 AND filename IS NOT NULL LIMIT 1) AS picture ' +
+					'  (SELECT filename FROM post WHERE room_id = $1 AND filename IS NOT NULL LIMIT 1) AS picture, ' +
+					'  EXISTS(SELECT * FROM resident WHERE room_id = $1 AND user_id = $2) AS "isMember" ' +
 					'FROM room WHERE id = $1';
 			return db.query(q, [params.id, userId]);
 		}).then(function (result) {
@@ -125,3 +128,51 @@ socket.client.on('update_room', function (userId, data, emit) {
 		}
 	});
 });
+
+// Join a room
+socket.client.on('join_room', function (userId, data, emit) {
+	validate({
+		id: { value: Number(data.id), type: 'number' }
+	}).then(function (params) {
+		var q = 'INSERT INTO resident (user_id, room_id) VALUES ($1, $2) RETURNING room_id';
+		return db.query(q, [userId, params.id]).then(function (result) {
+			db.emit('room:' + data.id);
+			if (result.rows.length === 0) { throw { name: 'NotFound' }; }
+		}).catch(function (err) {
+			if (err.constraint === 'resident_unique_index') { return; } // user is already in this room
+			throw err;
+		});
+	}).then(function () {
+		emit();
+	}).catch(function (err) {
+		if (err.name === 'Validation') {
+			emit({ error: 'Validation', validation: err.validation });
+		} else if (err.name === 'NotFound') {
+			emit({ error: 'NotFound' });
+		} else {
+			log.error(err);
+			emit({ error: 'Fatal' });
+		}
+	});
+});
+
+// Leave a room
+socket.client.on('leave_room', function (userId, data, emit) {
+	validate({
+		id: { value: Number(data.id), type: 'number' }
+	}).then(function (params) {
+		var q = 'DELETE FROM resident WHERE user_id = $1 AND room_id = $2';
+		return db.query(q, [userId, params.id]).then(function () {
+			db.emit('room:' + params.id);
+			emit();
+		});
+	}).catch(function (err) {
+		if (err.name === 'Validation') {
+			emit({ error: 'Validation', validation: err.validation });
+		} else {
+			log.error(err);
+			emit({ error: 'Fatal' });
+		}
+	});
+});
+

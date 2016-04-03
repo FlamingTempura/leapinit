@@ -37,7 +37,8 @@ angular.module('leapinit').factory('remote', function ($http, $state, $rootScope
 	};
 */
 
-	var socket = io('http://leapin.it:9123', {
+	var socketUrl = 'http://localhost:9123';//'http://leapin.it:9123';
+	var socket = io(socketUrl, {
 		query: 'token=' + localStorage.getItem('token')
 	});
 

@@ -16,6 +16,11 @@ angular.module('leapinit').config(function ($stateProvider) {
 			$scope.$on('$destroy', function () {
 				listener.destroy();
 			});
+			$scope.dismissedSignup = window.localStorage.getItem('dismissedSignup');
+			$scope.dismissSignup = function () {
+				$scope.dismissedSignup = true;
+				window.localStorage.setItem('dismissedSignup', true);
+			};
 		}
 	});
 });

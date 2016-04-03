@@ -30,7 +30,7 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 			templateUrl: 'template/partial.toolbar.html',
 			replace: true,
 			transclude: true,
-			scope: { title: '=' }
+			scope: { title: '=', room : '='}
 		};
 	})
 	.directive('room', function () {

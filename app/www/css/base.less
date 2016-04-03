@@ -201,12 +201,27 @@ div[ui-view] {
 
 .toolbar-overlay {
 	position: absolute;
-	top: @nav-height * 2.8;
+	top: @nav-height * 2.82;
 	color: @white;
-	left: @padding + 8px;
+	padding-left: @padding + 8px;
+	padding-bottom: @padding / 2;
 	z-index: 80;
 	font-size: 14px;
 	text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.4);
+	left: 0;
+	right: 0;
+	button {
+		position: absolute;
+		bottom: 0;
+		right: 8px;
+		width: 100px;
+		margin: 0;
+		padding: 6px 0;
+		color: white;
+		border-color: white;
+		//text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.4);
+		//box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.4);
+	}
 }
 
 .header {
@@ -325,6 +340,18 @@ div[ui-view] {
 	line-height: 1.4em;
 	border-radius: 2px;
 	min-height: 80px;
+	position: relative;
+	h1 { margin-top: 0; }
+	.close {
+		position: absolute;
+		top: 0;
+		right: 0;
+		padding: @padding;
+		font-size: 20px;
+	}
+	button:last-child {
+		margin-bottom: 4px;
+	}
 }
 
 .error {

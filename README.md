@@ -1,5 +1,3 @@
-create extension citext;
-
 LeapIn.it
 =========
 
@@ -10,12 +8,6 @@ To discover their interests, users are asked to scan barcodes and QR-codes that 
 
 Installation
 ============
-
-
-API keys
---------
-You will need to obtain API keys for the following:
-* [AlchemyAPI](http://www.alchemyapi.com/)
 
 Server
 ------
@@ -28,7 +20,6 @@ Requirements:
 1. Clone repository `git clone git@github.com:FlamingTempura/leapinit.git`
 2. Using a postgresql client (e.g. `sudo -u postgres psql`), create a database and user:
 
-
     ```sql
     CREATE DATABASE leap;
     -- switch to leap database. in psql use "\c leap"
@@ -38,33 +29,10 @@ Requirements:
     GRANT ALL ON DATABASE leap TO leap;
     ```
 
-
-```
-* Edit `config.php`:
-```
-$config = [
-	"database" => [
-		"host" => "127.0.0.1",
-		"port" => null,
-		"name" => "leapinit",
-		"user" => "leapinit",
-		"pass" => "mypassword"
-	],
-];
-```
-* Install libraries.
-```
-composer update
-``` 
-* Create image directories and set permissions:
-```
-mkdir server/media/files/thumbnail server/media/files/sentiment
-chmod 744 server/media/files server/media/files/thumbnail server/media/files/sentiment
-```
-* If server is in subdirectory, edit .htaccess
-```
-RewriteBase /subdirectory/
-```
+* Create databases (see sql directory)
+* Edit `config.js`:
+* Install dependencies: `npm install`
+* run as service `pm2 start server.js`
 
 
 Client

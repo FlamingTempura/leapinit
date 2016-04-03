@@ -12,8 +12,11 @@ angular.module('leapinit').config(function ($stateProvider) {
 			roomListener.on('receive', function (room) {
 				delete $scope.error;
 				$scope.room = room;
+				console.log('got room', room);
+				$scope.$apply();
+				console.log('applied');
 				if (!feedListener) {
-					feedListener = remote.listen('posts', { roomId: $stateParams.id });
+					feedListener = remote.listen('posts', { type: 'room', roomId: $stateParams.id });
 					feedListener.on('receive', function (feed) {
 						delete $scope.error;
 						$scope.feed = feed;
@@ -30,6 +33,13 @@ angular.module('leapinit').config(function ($stateProvider) {
 			});
 
 			$scope.$on('$destroy', roomListener.destroy);
+
+			$scope.join = function () {
+				remote.request('join_room', { id: $stateParams.id });
+			};
+			$scope.leave = function () {
+				remote.request('leave_room', { id: $stateParams.id });
+			};
 			
 			$scope.newPost = {};
 			$scope.createPost = function () {
@@ -40,6 +50,7 @@ angular.module('leapinit').config(function ($stateProvider) {
 				if ($scope.newPost.file) {
 					var formData = new FormData();
 					formData.append('file', $scope.newPost.file);
+					instance.submitFiles($scope.newPost.files)
 					upload = remote.request({
 						url: '/file',
 						method: 'POST',
@@ -53,7 +64,7 @@ angular.module('leapinit').config(function ($stateProvider) {
 				}
 				upload.then(function (file) {
 					return remote.post('/post', {
-						roomId: Number($stateParams.roomId),
+						roomId: Number($stateParams.id),
 						message: $scope.newPost.message,
 						latitude: geo.latitude,
 						longitude: geo.longitude,
@@ -78,8 +89,9 @@ angular.module('leapinit').config(function ($stateProvider) {
 			$scope.newName = {};
 			$scope.setName = function () {
 				delete $scope.newName.error;
-				remote.put('/room/' + $stateParams.roomId, { 'name': $scope.newName.name }).then(function () {
-					refresh();
+				remote.request('update_room', { 
+					id: $stateParams.id,
+					name: $scope.newName.name
 				}).catch(function (err) {
 					$scope.newName.error = err;
 				}).finally(function () {

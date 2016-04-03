@@ -4,14 +4,12 @@
 
 <div class="content" ng-if="feed">
 
-	<!-- <div ng-if="!user.name && !user.dismissedSignup" class="msg">
-		<a ng-click="user.dismissedSignup = true"><span class="fa fa-close"></span></a>
-		<h1>Create a nickname</h1>
-		<p>Leapin.it is more fun with an account</p>
-		<span class="fa fa-users"></span>
-		<button ui-sref="signup">Create a nickname</button>
-		<a ui-sref="signin">I already have an account</a>
-	</div> -->
+	<div ng-if="!user.username && !dismissedSignup" class="card">
+		<a ng-click="dismissSignup()" class="close">&times;</a>
+		<h1>Nickname</h1>
+		<p>You don't yet have a nickname.</p>
+		<button ui-sref="edituser({ signup: true })">Create a nickname</button>
+	</div>
 
 	<post ng-repeat="id in feed" id="id" show-card="true" show-interaction="true"></post>	
 
