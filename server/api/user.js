@@ -13,7 +13,7 @@ socket.client.on('login', function (userId, data, socket) {
 	log.log('checking username and password...');
 	var q = 'SELECT id FROM "user" WHERE username = $1 AND password_hash = crypt($2, password_hash)';
 	return db.query(q, [data.nickname, data.password]).get(0).then(function (user) {
-		if (!user) { throw { name: 'LoginFailure' }; }
+		if (!user) { throw { name: 'ERR_LOGIN_FAILURE' }; }
 		var toUserId = user.id;
 		if (userId === toUserId) { return null; } // already been done
 		return Bluebird.all([ // transfer all data to existing user
@@ -42,7 +42,7 @@ socket.client.on('update_user', function (userId, data) {
 	} else {
 		q = 'UPDATE "user" SET password_hash =  crypt($2, gen_salt(\'md5\')) WHERE id = $1 AND username IS NOT NULL';
 		promise = db.query(q, [userId, data.password]).get(0).then(function (user) {
-			if (!user) { throw { name: 'NoUsername' }; }
+			if (!user) { throw { name: 'ERR_NO_USERNAME' }; }
 		});
 	}
 	promise.then(function () {

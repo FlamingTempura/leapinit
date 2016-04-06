@@ -29,7 +29,7 @@ router.post('/', function (req, res) {
 			return Bluebird.fromCallback(function (callback) {
 				upload(req, res, callback);
 			}).catch(function (err) {
-				if (err.code === 'LIMIT_FILE_SIZE') { throw { name: 'FileTooLarge' }; }
+				if (err.code === 'LIMIT_FILE_SIZE') { throw { name: 'ERR_FILE_TOO_LARGE' }; }
 				throw err;
 			});
 		});
@@ -39,15 +39,12 @@ router.post('/', function (req, res) {
 		log.log('uploaded file', req.file);
 		res.status(201).json({ name: req.file.filename });
 	}).catch(function (err) {
-		if (err.name === 'FileTooLarge') {
-			res.status(400).json({ error: 'FileTooLarge' });
-		} else if (err.name === 'Authentication') {
-			res.status(401).json({ error: 'Authentication' });
-		} else if (err.name === 'Validation') {
-			res.status(400).json({ error: 'Validation', validation: err.validation });
-		} else { // todo: room not exist
-			log.error(err);
-			res.status(500).json({ error: 'Fatal' });
+		if (err.name === 'ERR_FILE_TOO_LARGE') {
+			res.status(400).json({ error: 'ERR_FILE_TOO_LARGE' });
+		} else if (err.name === 'ERR_AUTHENTICATION_FAILED') {
+			res.status(401).json({ error: 'ERR_AUTHENTICATION_FAILED' });
+		} else if (err.name === 'ERR_INVALID_REQUEST') {
+			res.status(400).json({ error: 'ERR_INVALID_REQUEST', validation: err.validation });
 		}
 	});
 });

@@ -9,7 +9,7 @@ module.exports = {
 		$scope.submit = function () {
 			delete $scope.error;
 			if ($scope.password !== $scope.password2) {
-				$scope.error = { error: 'PasswordMismatch' };
+				$scope.error = { error: 'ERR_PASSWORD_MISMATCH' };
 				return;
 			}
 			$scope.loading = true;

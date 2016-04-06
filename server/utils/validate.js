@@ -21,5 +21,5 @@ module.exports = function (data, field, constraints) {
 		if (constraint.name === 'oneOf') { return constraint.expect.indexOf(value) > -1; }
 		if (constraint.name === 'match') { return constraint.expect.test(value); }
 	}).value();
-	if (errors.length > 0) { throw { name: 'Validation', validation: errors }; }
+	if (errors.length > 0) { throw { name: 'ERR_INVALID_REQUEST', validation: errors }; }
 };

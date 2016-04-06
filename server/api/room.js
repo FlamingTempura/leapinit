@@ -66,7 +66,7 @@ socket.client.listen('room', function (userId, data, emit, onClose) {
 					'FROM room WHERE id = $1';
 			return db.query(q, [data.id, userId]);
 		}).get(0).then(function (room) {
-			if (!room) { throw { name: 'NotFound' }; }
+			if (!room) { throw { name: 'ERR_NOT_FOUND' }; }
 			return room;
 		}));
 	};
@@ -83,7 +83,7 @@ socket.client.on('update_room', function (userId, data) {
 	validate(data, 'name', { type: 'string', max: 200 });
 	var q = 'UPDATE room SET name = $2 WHERE id = $1 RETURNING id'; // TODO check that user is allowed to modify name
 	return db.query(q, [data.id, data.name]).get(0).then(function (room) {
-		if (!room) { throw { name: 'NotFound' }; }
+		if (!room) { throw { name: 'ERR_NOT_FOUND' }; }
 		db.emit('room:' + data.id);
 		return null;
 	});
@@ -95,7 +95,7 @@ socket.client.on('join_room', function (userId, data) {
 	var q = 'INSERT INTO resident (user_id, room_id) VALUES ($1, $2) RETURNING room_id';
 	return db.query(q, [userId, data.id]).get(0).then(function (resident) {
 		db.emit('room:' + data.id);
-		if (!resident) { throw { name: 'NotFound' }; }
+		if (!resident) { throw { name: 'ERR_NOT_FOUND' }; }
 		return null;
 	}).catch(function (err) {
 		if (err.constraint === 'resident_unique_index') { return null; } // user is already in this room

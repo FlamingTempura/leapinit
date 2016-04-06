@@ -1,8 +1,8 @@
 
 {
 	errors: {
-		LoginFailure: 'Username or password not found'
-		PasswordMismatch: 'Passwords do not match.'
+		ERR_LOGIN_FAILURE: 'Username or password not found'
+		ERR_PASSWORD_MISMATCH: 'Passwords do not match.'
 		/*if (!$scope.username) {
 						$scope.error = 'Please enter a username.';
 					} else if (!$scope.password) {

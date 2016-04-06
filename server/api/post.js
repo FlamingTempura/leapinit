@@ -45,7 +45,7 @@ socket.client.listen('post', function (userId, data, emit, onClose) {
 				'JOIN "room" ON (room.id = room_id) ' +
 				'WHERE post.id = $2';
 		return emit(db.query(q, [userId, data.id]).get(0).then(function (post) {
-			if (!post) { throw { name: 'NotFound' }; }
+			if (!post) { throw { name: 'ERR_NOT_FOUND' }; }
 			return post;
 		}));
 	};
@@ -64,7 +64,7 @@ socket.client.on('create_post', function (userId, data) {
 	validate(data, 'parentId', { type: 'number', optional: true });
 	validate(data, 'filename', { type: 'string', optional: true, match: /\w{8}-\w{4}-4\w{3}-\w{4}-\w{12}\.\w+/ });
 	return (data.filename ?
-		fs.statAsync('uploads/' + data.filename).catch(function () { throw { name: 'NoSuchFile' }; }) : // check that file exists
+		fs.statAsync('uploads/' + data.filename).catch(function () { throw { name: 'ERR_FILE_NOT_FOUND' }; }) : // check that file exists
 		Bluebird.resolve()
 	).then(function () {
 		var q = 'INSERT INTO post (user_id, room_id, parent_post_id, message, filename) VALUES ($1, $2, $3, $4, $5) RETURNING id';

@@ -71,15 +71,16 @@ io.on('connection', function (socket) {
 });
 
 var parseError = function (error) {
-	if (error.constraint === 'user_username_key') { return { error: 'UsernameConflict' }; }
-	if (error.name === 'Validation'				) { return { error: 'Validation', validation: error.validation }; }
-	if (error.name === 'NoSuchFile'				) { return { error: 'NoSuchFile' }; }
-	if (error.name === 'LoginFailure'			) { return { error: 'LoginFailure' }; }
-	if (error.name === 'NoUsername'				) { return { error: 'NoUsername' }; }
-	if (error.name === 'Authentication'			) { return { error: 'Authentication' }; }
-	if (error.name === 'NotFound'				) { return { error: 'NotFound' }; }
+	if (error.constraint === 'user_username_key'	) { return { error: 'ERR_USERNAME_CONFLICT' }; }
+	if (error.name === 'ERR_INVALID_REQUEST'		) { return { error: 'ERR_INVALID_REQUEST', validation: error.validation }; }
+	if (error.name === 'ERR_FILE_NOT_FOUND'			) { return { error: 'ERR_FILE_NOT_FOUND' }; }
+	if (error.name === 'ERR_LOGIN_FAILURE'			) { return { error: 'ERR_LOGIN_FAILURE' }; }
+	if (error.name === 'ERR_NO_USERNAME'			) { return { error: 'ERR_NO_USERNAME' }; }
+	if (error.name === 'ERR_AUTHENTICATION_FAILED'	) { return { error: 'ERR_AUTHENTICATION_FAILED' }; }
+	if (error.name === 'ERR_NOT_FOUND'				) { return { error: 'ERR_NOT_FOUND' }; }
+	// ERR_FILE_TOO_LARGE, ERR_NO_USERNAME
 	log.error(error);
-	return { error: 'Fatal' };
+	return { error: 'ERR_SERVER_FAILURE' };
 };
 
 module.exports = io;
