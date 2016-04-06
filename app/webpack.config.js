@@ -1,5 +1,7 @@
 'use strict';
 
+var webpack = require('webpack');
+
 module.exports = {
     entry: __dirname + '/src/js/main.js',
     output: {
@@ -14,5 +16,10 @@ module.exports = {
             { test: /\.ttf$/, loader: 'url?name=[name].[ext]&limit=10000&mimetype=application/octet-stream' }
         ]
     },
-    devtool: 'source-map'
+    devtool: 'source-map',
+    plugins: [
+        //new webpack.optimize.UglifyJsPlugin({minimize: true}),
+        //new webpack.optimize.DedupePlugin(),
+        //new webpack.optimize.ngAnnotatePlugin()
+    ]
 };
