@@ -38,6 +38,9 @@
 		</div>
 		<div>{{ score }}</div>
 		<div class="replies" ng-if="showReplies">
+			
+			<error error="repliesError"></error>
+
 			<post ng-repeat="id in replies" id="id"></post>
 
 			<form class="post" ng-click="headerActive = true" ng-class="{ active: headerActive }">

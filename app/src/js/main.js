@@ -120,13 +120,13 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 					$scope.$on('$destroy', listener.destroy);
 
 					if ($scope.showReplies) {
-						var replyListener = remote.listen('posts', { type: 'replies', postId: $scope.post.id });
+						var replyListener = remote.listen('posts', { type: 'replies', postId: Number($scope.id) });
 
 						replyListener.on('receive', function (replies) {
 							$scope.replies = replies;
 						});
-						listener.on('error', function (error) {
-							//$scope.error = error;
+						replyListener.on('error', function (error) {
+							$scope.repliesError = error;
 						});
 
 						$scope.$on('$destroy', replyListener.destroy);
@@ -163,7 +163,7 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 					});
 				};
 
-				var content = angular.element(document).find('.content;'),//element.parents('.content'),
+				var content = document.querySelector('.content'),
 					throttled = false,
 					throttleNext,
 					loadIfAboveFold = function () {
@@ -172,20 +172,19 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 							return;
 						}
 						var isAboveFold = element[0].offsetTop < element.parent()[0].scrollTop + element.parent()[0].clientHeight;
-						console.log(isAboveFold, element[0].offsetTop);
 						if (isAboveFold) {
 							load();
-							content.off('scroll', loadIfAboveFold);
+							content.removeEventListener('scroll', loadIfAboveFold);
 						}
 						setTimeout(function () {
+							if (throttleNext) { loadIfAboveFold(); }
 							throttled = false;
 							throttleNext = false;
-							if (throttleNext) { loadIfAboveFold(); }
 						}, 1000);
 					};
 
 				setTimeout(loadIfAboveFold);
-				content.on('scroll', loadIfAboveFold);
+				content.addEventListener('scroll', loadIfAboveFold);
 
 			}
 		};
