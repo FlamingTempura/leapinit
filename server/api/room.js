@@ -1,9 +1,9 @@
 'use strict';
 
-var db = require('../utils/db'),
-	validate = require('../utils/validate'),
-	log = require('../utils/log')('Room', 'cyan'),
-	socket = require('../utils/socket'),
+var db = require('../util/db'),
+	validate = require('../util/validate'),
+	log = require('../util/log')('Room', 'cyan'),
+	socket = require('../util/socket'),
 	Bluebird = require('bluebird');
 
 // get all rooms relevent to the user in lists (rooms they are in, popular rooms)

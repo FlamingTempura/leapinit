@@ -2,7 +2,7 @@
 
 module.exports = {
 	url: '/scan/select',
-	template: require('../template/state.scan.html'),
+	template: require('./scan.html'),
 	controller: function ($scope, $state, remote) {
 
 		if (typeof window.cordova !== 'undefined') {

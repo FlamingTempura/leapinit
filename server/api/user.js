@@ -1,10 +1,10 @@
 'use strict';
 
 var Bluebird = require('bluebird'),
-	log = require('../utils/log')('Auth', 'yellow'),
-	db = require('../utils/db'),
-	validate = require('../utils/validate'),
-	socket = require('../utils/socket');
+	log = require('../util/log')('Auth', 'yellow'),
+	db = require('../util/db'),
+	validate = require('../util/validate'),
+	socket = require('../util/socket');
 
 // login
 socket.client.on('login', function (userId, data, socket) {

@@ -2,7 +2,7 @@
 
 module.exports = {
 	url: '/room',
-	template: require('../template/state.main.rooms.html'),
+	template: require('./main.rooms.html'),
 	controller: function ($scope, remote) {
 		var userRoomsListener = remote.listen('rooms', { type: 'user' }),
 			popularRoomsListener = remote.listen('rooms', { type: 'popular' });

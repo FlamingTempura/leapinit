@@ -2,7 +2,7 @@
 
 module.exports = {
 	url: '/feed',
-	template: require('../template/state.main.feed.html'),
+	template: require('./main.feed.html'),
 	controller: function ($scope, remote) {
 		var listener = remote.listen('posts', { type: 'feed' });
 		listener.on('receive', function (feed) { // feed is just an array of post ids

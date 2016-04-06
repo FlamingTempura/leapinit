@@ -1,8 +1,8 @@
 'use strict';
 
-var db = require('../utils/db'),
-	validate = require('../utils/validate'),
-	socket = require('../utils/socket');
+var db = require('../util/db'),
+	validate = require('../util/validate'),
+	socket = require('../util/socket');
 
 // toggles (creates/deletes) a reaction from a user towards a posty
 socket.client.on('create_reaction', function (userId, data) {

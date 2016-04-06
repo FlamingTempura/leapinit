@@ -2,14 +2,13 @@
 
 module.exports = {
 	url: '/settings',
-	template: require('../template/state.main.settings.html'),
+	template: require('./main.settings.html'),
 	controller: function ($scope, remote) {
 
 		var userListener = remote.listen('user'),
 			postsListener;
 	
 		userListener.on('receive', function (user) {
-			console.log('got user', user)
 			delete $scope.error;
 			$scope.user = user;
 			if (!postsListener) {
@@ -24,6 +23,7 @@ module.exports = {
 				$scope.$on('$destroy', postsListener.destroy);
 			}
 		});
+		
 		userListener.on('error', function (error) {
 			$scope.error = error;
 		});

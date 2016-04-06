@@ -2,7 +2,7 @@
 
 module.exports = {
 	url: '/room/:id',
-	template: require('../template/state.room.html'),
+	template: require('./room.html'),
 	controller: function ($scope, $stateParams, $q, remote, geo) {
 		var id = Number($stateParams.id),
 			roomListener = remote.listen('room', { id: id }),
@@ -12,7 +12,6 @@ module.exports = {
 			delete $scope.error;
 			$scope.room = room;
 			console.log('got room', room);
-			$scope.$apply();
 			console.log('applied');
 			if (!feedListener) {
 				feedListener = remote.listen('posts', { type: 'room', roomId: id });

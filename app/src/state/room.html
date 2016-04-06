@@ -23,7 +23,7 @@
 
 <div ng-if="room" class="header-blur" ng-show="headerActive" ng-click="headerActive = false"></div>
 
-<div ng-if="room" class="content content-header" ng-class="{ loading: loading }">
+<div ng-show="room" class="content content-header post-scroller" ng-class="{ loading: loading }">
 	<div class="msg msg-error" ng-if="error">{{ error }}</div>
 
 	<div ng-if="!loading && !room.name">

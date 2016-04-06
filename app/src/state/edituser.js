@@ -2,7 +2,7 @@
 
 module.exports = {
 	url: '/user/edit?signup',
-	template: require('../template/state.edituser.html'),
+	template: require('./edituser.html'),
 	controller: function ($scope, $state, $stateParams, remote) {
 		$scope.signup = $stateParams.signup;
 		$scope.form = {};

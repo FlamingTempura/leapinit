@@ -1,6 +1,6 @@
 <div class="content loading" ng-if="!feed && !error"></div>
 
-<div class="content" ng-if="feed">
+<div class="content post-scroller" ng-show="feed">
 
 	<div ng-if="!user.username && !dismissedSignup" class="card">
 		<a ng-click="dismissSignup()" class="close">&times;</a>

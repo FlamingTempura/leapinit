@@ -1,14 +1,13 @@
 'use strict';
 
 var Bluebird = require('bluebird'),
-	db = require('../utils/db'),
-	validate = require('../utils/validate'),
-	log = require('../utils/log')('Room', 'blue'),
+	db = require('../util/db'),
+	validate = require('../util/validate'),
+	log = require('../util/log')('Room', 'blue'),
 	request = Bluebird.promisifyAll(require('request')),
 	fs = Bluebird.promisifyAll(require('fs')),
 	config = require('../config.js'),
-	socket = require('../utils/socket'),
-	_ = require('lodash'),
+	socket = require('../util/socket'),
 	path = require('path'),
 	uuid = require('uuid');
 

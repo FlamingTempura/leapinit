@@ -2,7 +2,7 @@
 
 module.exports = {
 	url: '/room/post/:id',
-	template: require('../template/state.post.html'),
+	template: require('./post.html'),
 	controller: function ($scope, $stateParams) {
 		$scope.id = $stateParams.id;
 	}

@@ -2,5 +2,5 @@
 
 module.exports = {
 	abstract: true,
-	template: require('../template/state.main.html')
+	template: require('./main.html')
 };
