@@ -8,7 +8,9 @@ var Bluebird = require('bluebird'),
 	fs = Bluebird.promisifyAll(require('fs')),
 	config = require('../config.js'),
 	socket = require('../utils/socket'),
-	_ = require('lodash');
+	_ = require('lodash'),
+	path = require('path'),
+	uuid = require('uuid');
 
 socket.client.listen('posts', function (userId, data, emit, onClose) {
 	var emitPosts = function () {
@@ -20,8 +22,8 @@ socket.client.listen('posts', function (userId, data, emit, onClose) {
 				'LIMIT 100';
 		emit(db.query(q, data.type === 'room' ? [data.roomId] :
 				data.type === 'replies' ? [data.postId] :
-				[userId]).then(function (rows) {
-			return _.map(rows, 'id');
+				[userId]).map(function (row) {
+			return row.id;
 		}));
 	};
 	db.on('feed', emitPosts); // FIXME: this will fire too often
@@ -56,19 +58,36 @@ socket.client.listen('post', function (userId, data, emit, onClose) {
 	});
 });
 
-socket.client.on('create_post', function (userId, data) {
+socket.client.on('create_post', function (userId, data, stream) {
 	validate(data, 'roomId', { type: 'number' });
 	validate(data, 'message', { type: 'string' });
 	validate(data, 'latitude', { type: 'number', optional: true });
 	validate(data, 'longitude', { type: 'number', optional: true });
 	validate(data, 'parentId', { type: 'number', optional: true });
-	validate(data, 'filename', { type: 'string', optional: true, match: /\w{8}-\w{4}-4\w{3}-\w{4}-\w{12}\.\w+/ });
+	if (stream) { validate(data, 'filename', { type: 'string', match: /\w{8}-\w{4}-4\w{3}-\w{4}-\w{12}\.\w+/ }); }
 	return (data.filename ?
 		fs.statAsync('uploads/' + data.filename).catch(function () { throw { name: 'ERR_FILE_NOT_FOUND' }; }) : // check that file exists
 		Bluebird.resolve()
 	).then(function () {
+		if (stream) {
+			return new Bluebird(function (resolve, reject) {
+				var filename = 'uploads/' + uuid.v4() + path.extname(data.filename);
+				stream.pipe(fs.createWriteStream(filename)).on('close', function () {
+					resolve(filename);
+				}).on('error', function (err) {
+					reject(err);
+				});
+				// TODO max file size: throw { name: 'ERR_FILE_TOO_LARGE' };
+				// TODO thumbnails
+				/*	var pictureFormats = {
+					sm: { width: 256 },
+					lg: { width: 1024 }
+				};*/
+			});
+		}
+	}).then(function (filename) {
 		var q = 'INSERT INTO post (user_id, room_id, parent_post_id, message, filename) VALUES ($1, $2, $3, $4, $5) RETURNING id';
-		return db.query(q, [userId, data.roomId, data.parentId, data.message, data.filename]);
+		return db.query(q, [userId, data.roomId, data.parentId, data.message, filename]);
 	}).get(0).then(function (post) {
 		db.emit('feed');
 		var q = 'INSERT INTO resident (user_id, room_id) VALUES ($1, $2) RETURNING room_id';

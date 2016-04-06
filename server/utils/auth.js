@@ -5,8 +5,7 @@ var uuid = require('uuid'),
 	db = require('./db'),
 	log = require('./log')('Auth', 'yellow');
 
-// generate a guest user
-var newUser = function () {
+var generateGuestUser = function () {
 	log.log('creating new guest user...');
 	return db.query('INSERT INTO "user" DEFAULT VALUES RETURNING id').get(0).then(function (user) {
 		var userId = user.id,
@@ -27,7 +26,7 @@ var getUserFromToken = function (tokenUuid) {
 			'  AND AGE(CURRENT_TIMESTAMP, last_used) < $2 ' +
 			'RETURNING user_id';
 	return db.query(q, [tokenUuid, config.tokenValidity]).get(0).then(function (token) {
-		if (!token) { return newUser(); } // user has no token (or it has been invalidated) -- create a new user for them
+		if (!token) { return generateGuestUser(); } // user has no token (or it has been invalidated) -- create a new user for them
 		return { id: token.user_id, token: tokenUuid };
 	});
 };

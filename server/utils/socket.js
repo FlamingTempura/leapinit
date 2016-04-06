@@ -1,16 +1,11 @@
 'use strict';
 
-var http = require('http').createServer(),
+var http = require('./http'),
 	io = require('socket.io')(http),
-	_ = require('lodash'),
 	auth = require('./auth'),
 	validate = require('./validate'),
 	log = require('./log')('Socket', 'yellow'),
-	config = require('../config'),
 	Bluebird = require('bluebird');
-
-//http.listen(config.port + 1, config.host);
-http.listen(config.port + 1);
 
 io.use(function (socket, next) {
 	Bluebird.try(function () {
@@ -67,18 +62,12 @@ io.client = {
 };
 
 io.on('connection', function (socket) {
-	_.map(connectCallbacks, function (callback) { callback(socket); });
+	connectCallbacks.map(function (callback) { callback(socket); });
 });
 
 var parseError = function (error) {
 	if (error.constraint === 'user_username_key'	) { return { error: 'ERR_USERNAME_CONFLICT' }; }
-	if (error.name === 'ERR_INVALID_REQUEST'		) { return { error: 'ERR_INVALID_REQUEST', validation: error.validation }; }
-	if (error.name === 'ERR_FILE_NOT_FOUND'			) { return { error: 'ERR_FILE_NOT_FOUND' }; }
-	if (error.name === 'ERR_LOGIN_FAILURE'			) { return { error: 'ERR_LOGIN_FAILURE' }; }
-	if (error.name === 'ERR_NO_USERNAME'			) { return { error: 'ERR_NO_USERNAME' }; }
-	if (error.name === 'ERR_AUTHENTICATION_FAILED'	) { return { error: 'ERR_AUTHENTICATION_FAILED' }; }
-	if (error.name === 'ERR_NOT_FOUND'				) { return { error: 'ERR_NOT_FOUND' }; }
-	// ERR_FILE_TOO_LARGE, ERR_NO_USERNAME
+	if (error.name && error.name.slice(0, 4) === 'ERR_') { return error; } // Leapin.it server errors always begin ERR_
 	log.error(error);
 	return { error: 'ERR_SERVER_FAILURE' };
 };

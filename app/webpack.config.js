@@ -2,6 +2,8 @@
 
 var webpack = require('webpack');
 
+var devMode = true;
+
 module.exports = {
     entry: __dirname + '/src/js/main.js',
     output: {
@@ -16,10 +18,9 @@ module.exports = {
             { test: /\.ttf$/, loader: 'url?name=[name].[ext]&limit=10000&mimetype=application/octet-stream' }
         ]
     },
-    devtool: 'source-map',
-    plugins: [
-        //new webpack.optimize.UglifyJsPlugin({minimize: true}),
-        //new webpack.optimize.DedupePlugin(),
-        //new webpack.optimize.ngAnnotatePlugin()
+    devtool: devMode ? 'source-map' : undefined,
+    plugins: devMode ? [] : [
+        new webpack.optimize.UglifyJsPlugin({ minimize: true, mangle: false }), // mangle breaks angular injections
+        new webpack.optimize.DedupePlugin()
     ]
 };

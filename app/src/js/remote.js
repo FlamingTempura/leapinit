@@ -1,46 +1,11 @@
 'use strict';
 
 var io = require('socket.io-client'),
+	ss = require('socket.io-stream'),
 	angular = require('angular');
 
 module.exports = function ($http, $state, $rootScope, $q, config) {
-/*
-	var request = function (options) {
-		delete $rootScope.offline;
-		// TODO: if 401, deauth
-		options = _.cloneDeep(options) || {};
-		options.url = config.serverRoot + options.url;
-		options.headers = options.headers || {};
-		return new Promise(function (resolve) {
-			if (options.authenticate === false) { return resolve(); }
-			resolve(auth().then(function (token) {
-				options.headers.Authorization ='token ' + token;
-			}));
-		}).then(function () {
-			return $http(options);
-		}).then(function (result) {
-			return result.data;
-		}).catch(function (err) {
-			console.log('fff', err.status)
-			if (err.status === 401) { // token was invalidated
-				console.log('invalidating token')
-				localStorage.removeItem('token');
-				token = undefined;
-				$state.go('feed');
-			}
-			if (err.status <= 0) {
-				$rootScope.offline = true;
-			}
-			throw err.data;
-		});
-	};
-	var post = function (url, data, authenticate) {
-		return request({ method: 'POST', url: url, data: data, authenticate: authenticate });
-	};
-*/
-
-	var socketUrl = 'http://localhost:9123';//'http://leapin.it:9123';
-	var socket = io(socketUrl, {
+	var socket = io(config.serverRoot, {
 		query: 'token=' + localStorage.getItem('token')
 	});
 
@@ -73,10 +38,16 @@ module.exports = function ($http, $state, $rootScope, $q, config) {
 				}
 			};
 		},
-		request: function (name, data) {
+		request: function (name, data, file) {
 			data = angular.copy(data) || {};
 			data.listenerId = Math.random() * 10000000; // TODO: uuid
-			socket.emit(name, data);
+			if (!file) {
+				socket.emit(name, data);
+			} else {
+				var stream = ss.createStream();
+				ss(socket).emit('create_post', stream, data);
+				ss.createBlobReadStream(file).pipe(stream);
+			}
 			return $q(function (resolve, reject) {
 				socket.on(name + ':success#' + data.listenerId, resolve);
 				socket.on(name + ':error#' + data.listenerId, reject);

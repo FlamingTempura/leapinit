@@ -44,32 +44,14 @@ module.exports = {
 		$scope.createPost = function () {
 			delete $scope.newPost.error;
 			$scope.newPost.loading = true;
-			var upload;
-			// upload the file if there is one
-			if ($scope.newPost.file) {
-				var formData = new FormData();
-				formData.append('file', $scope.newPost.file);
-				instance.submitFiles($scope.newPost.files)
-				upload = remote.request({
-					url: '/file',
-					method: 'POST',
-					data: formData,
-					contentType: false,
-					processData: false,
-					headers: { 'Content-Type': undefined }
-				});
-			} else {
-				upload = $q.resolve();
-			}
-			upload.then(function (file) {
-				return remote.request('create_post', {
-					roomId: id,
-					message: $scope.newPost.message,
-					latitude: geo.latitude,
-					longitude: geo.longitude,
-					file: file ? file.name : undefined
-				});
-			}).then(function () {
+			var file = $scope.newPost.file;
+			return remote.request('create_post', {
+				roomId: id,
+				message: $scope.newPost.message,
+				latitude: geo.latitude,
+				longitude: geo.longitude,
+				filename: file && file.name
+			}, file).then(function () {
 				delete $scope.headerActive;
 				$scope.newPost = {};
 			}).catch(function (err) {
