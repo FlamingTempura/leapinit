@@ -1,7 +1,6 @@
 'use strict';
 
 var io = require('socket.io-client'),
-	ss = require('socket.io-stream'),
 	angular = require('angular');
 
 module.exports = function ($http, $state, $rootScope, $q, config) {
@@ -44,9 +43,16 @@ module.exports = function ($http, $state, $rootScope, $q, config) {
 			if (!file) {
 				socket.emit(name, data);
 			} else {
-				var stream = ss.createStream();
-				ss(socket).emit('create_post', stream, data);
-				ss.createBlobReadStream(file).pipe(stream);
+				var fileReader = new FileReader();
+				socket.emit(name, data, file.name);
+				fileReader.onload = function (event) {
+					socket.emit(name + ':data#' + data.listenerId, event.target.result);
+				};
+				socket.on(name + ':more#' + data.listenerId, function (data) {
+					console.log('sending chunk');
+					var slice = file.slice(data.place * data.chunkSize, Math.min((data.place + 1) * data.chunkSize, file.size));
+					fileReader.readAsBinaryString(slice);
+				});
 			}
 			return $q(function (resolve, reject) {
 				socket.on(name + ':success#' + data.listenerId, resolve);

@@ -48,8 +48,7 @@ module.exports = {
 				roomId: id,
 				message: $scope.newPost.message,
 				latitude: geo.latitude,
-				longitude: geo.longitude,
-				filename: file && file.name
+				longitude: geo.longitude
 			}, file).then(function () {
 				delete $scope.headerActive;
 				$scope.newPost = {};

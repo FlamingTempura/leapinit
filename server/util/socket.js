@@ -4,6 +4,7 @@ var http = require('./http'),
 	io = require('socket.io')(http),
 	auth = require('./auth'),
 	validate = require('./validate'),
+	config = require('../config'),
 	log = require('./log')('Socket', 'yellow'),
 	Bluebird = require('bluebird');
 
@@ -47,9 +48,26 @@ io.client = {
 	},
 	on: function (name, callback) {
 		connectCallbacks.push(function (socket) {
-			socket.on(name, function (data) {
-				var listenerId = data.listenerId;
-				callback(socket.userId, data, socket).then(function (data) {
+			socket.on(name, function (data, filename) {
+				(filename ?
+					new Bluebird(function (resolve, reject) {
+						log.log('uploading file', filename);
+						var listenerId = data.listenerId,
+							chunk = -1,
+							nextChunk = function () {
+								log.log('requesting chunk');
+								socket.emit(name + ':more#' + listenerId, { chunk: chunk + 1, chunkSize: config.chunkSize });
+							};
+						socket.on(name + ':data#' + listenerId, function (data) {
+							console.log('GOT DATA', data);
+							nextChunk();
+						});
+						nextChunk();
+					}) :
+					Bluebird.resolve()
+				).then(function () {
+					return callback(socket.userId, data, socket);
+				}).then(function (data) {
 					log.log('emitting', name, data && data.id ? data.id : '');
 					socket.emit(name + ':success#' + listenerId, data);
 				}).catch(function (error) {
@@ -63,10 +81,11 @@ io.client = {
 
 io.on('connection', function (socket) {
 	connectCallbacks.map(function (callback) { callback(socket); });
+	socket.on('error', function (err) { console.error('caught', err); });
 });
 
 var parseError = function (error) {
-	if (error.constraint === 'user_username_key'	) { return { error: 'ERR_USERNAME_CONFLICT' }; }
+	if (error.constraint === 'user_username_key') { return { error: 'ERR_USERNAME_CONFLICT' }; }
 	if (error.name && error.name.slice(0, 4) === 'ERR_') { return error; } // Leapin.it server errors always begin ERR_
 	log.error(error);
 	return { error: 'ERR_SERVER_FAILURE' };

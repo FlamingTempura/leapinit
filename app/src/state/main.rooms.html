@@ -1,6 +1,6 @@
 <div class="content loading" ng-if="!userRooms && !error"></div>
 
-<div class="content" ng-if="userRooms">
+<div class="content" ng-show="userRooms" id="maincontent">
 
 	<h1>Rooms you are in</h1>
 	<room room="room" ng-repeat="room in userRooms"></room>

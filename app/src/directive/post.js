@@ -65,24 +65,24 @@ module.exports = function (remote, geo, config) {
 				});
 			};
 
-			var content = document.querySelector('.post-scroller'),
-				throttled = false,
-				throttleNext,
+			var content = document.querySelector('#maincontent'),
+				throttleTimeout,
+				queued,
 				loadIfAboveFold = function () {
-					if (throttled) {
-						throttleNext = true;
-						return;
+					if (!throttleTimeout) {
+						var isAboveFold = element[0].offsetTop < element.parent()[0].scrollTop + element.parent()[0].clientHeight;
+						if (isAboveFold) {
+							load();
+							content.removeEventListener('scroll', loadIfAboveFold);
+						}
+						throttleTimeout = setTimeout(function () {
+							throttleTimeout = undefined;
+							if (queued) { loadIfAboveFold(); }
+							queued = false;
+						}, 1000);
+					} else {
+						queued = true;
 					}
-					var isAboveFold = element[0].offsetTop < element.parent()[0].scrollTop + element.parent()[0].clientHeight;
-					if (isAboveFold) {
-						load();
-						content.removeEventListener('scroll', loadIfAboveFold);
-					}
-					setTimeout(function () {
-						if (throttleNext) { loadIfAboveFold(); }
-						throttled = false;
-						throttleNext = false;
-					}, 1000);
 				};
 
 			setTimeout(loadIfAboveFold);

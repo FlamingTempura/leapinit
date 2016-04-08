@@ -1,6 +1,6 @@
 <div class="content loading" ng-if="!user && !error"></div>
 
-<div class="content post-scroller" ng-show="user">
+<div class="content" ng-show="user" id="maincontent">
 	<div ng-if="!user.username">
 		<h1>Anonymous</h1>
 		<button ui-sref="edituser({ signup: true })">Create a nickname</button>

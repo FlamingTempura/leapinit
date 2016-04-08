@@ -6,14 +6,14 @@
 
 <div ng-if="!room && !error" class="content loading"></div>
 
-<div ng-if="room" class="toolbar-overlay">
+<div ng-if="room" class="toolbar-overlay" reactive-scroll>
 	{{ room.residentCount }} people
 	<span ng-if="room.userCode"> &bullet; Code: {{ room.userCode }}</span>
 	<button ng-show="!room.isMember" ng-click="join()">Join</button>
 	<button ng-show="room.isMember" ng-click="leave()">Leave</button>
 </div>
 
-<div ng-if="room" class="header" ng-click="headerActive = true" ng-class="{ active: headerActive }">
+<div ng-if="room" class="header" ng-click="headerActive = true" ng-class="{ active: headerActive }" reactive-scroll>
 	<input type="text" ng-model="newPost.message" placeholder="Write something...">
 	<label for="file" class="icon camera-icon"><span class="fa fa-camera"></span></label>
 	<button ng-click="createPost()">Post</button>
@@ -23,7 +23,7 @@
 
 <div ng-if="room" class="header-blur" ng-show="headerActive" ng-click="headerActive = false"></div>
 
-<div ng-show="room" class="content content-header post-scroller" ng-class="{ loading: loading }">
+<div ng-show="room" class="content content-header" ng-class="{ loading: loading }" id="maincontent">
 	<div class="msg msg-error" ng-if="error">{{ error }}</div>
 
 	<div ng-if="!loading && !room.name">

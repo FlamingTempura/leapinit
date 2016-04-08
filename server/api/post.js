@@ -71,6 +71,8 @@ socket.client.on('create_post', function (userId, data, stream) {
 		if (stream) {
 			return new Bluebird(function (resolve, reject) {
 				var filename = 'uploads/' + uuid.v4() + path.extname(data.filename);
+				console.log('got file', filename);
+				console.log('stream', stream);
 				stream.pipe(fs.createWriteStream(filename)).on('close', function () {
 					resolve(filename);
 				}).on('error', function (err) {

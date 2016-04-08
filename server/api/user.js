@@ -7,7 +7,7 @@ var Bluebird = require('bluebird'),
 	socket = require('../util/socket');
 
 // login
-socket.client.on('login', function (userId, data, socket) {
+socket.client.on('login', function (userId, data, stream, socket) {
 	validate(data, 'nickname', { type: 'string', max: 1000 });
 	validate(data, 'password', { type: 'string', max: 1000 });
 	log.log('checking username and password...');
