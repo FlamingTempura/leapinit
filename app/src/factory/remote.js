@@ -49,9 +49,10 @@ module.exports = function ($http, $state, $rootScope, $q, config) {
 					socket.emit(name + ':data#' + data.listenerId, event.target.result);
 				};
 				socket.on(name + ':more#' + data.listenerId, function (data) {
-					console.log('sending chunk');
-					var slice = file.slice(data.place * data.chunkSize, Math.min((data.place + 1) * data.chunkSize, file.size));
-					fileReader.readAsBinaryString(slice);
+					console.log(file.size);
+					var chunk = file.slice(data.start, Math.min((data.start + 1) * data.length, file.size));
+					console.log('sending chunk', data, chunk);
+					fileReader.readAsArrayBuffer(chunk);
 				});
 			}
 			return $q(function (resolve, reject) {

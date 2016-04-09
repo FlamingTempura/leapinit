@@ -63,30 +63,25 @@ socket.client.on('create_post', function (userId, data, stream) {
 	validate(data, 'latitude', { type: 'number', optional: true });
 	validate(data, 'longitude', { type: 'number', optional: true });
 	validate(data, 'parentId', { type: 'number', optional: true });
-	if (stream) { validate(data, 'filename', { type: 'string', match: /\w{8}-\w{4}-4\w{3}-\w{4}-\w{12}\.\w+/ }); }
-	return (data.filename ?
-		fs.statAsync('uploads/' + data.filename).catch(function () { throw { name: 'ERR_FILE_NOT_FOUND' }; }) : // check that file exists
-		Bluebird.resolve()
-	).then(function () {
-		if (stream) {
-			return new Bluebird(function (resolve, reject) {
-				var filename = 'uploads/' + uuid.v4() + path.extname(data.filename);
-				console.log('got file', filename);
-				console.log('stream', stream);
-				stream.pipe(fs.createWriteStream(filename)).on('close', function () {
-					resolve(filename);
-				}).on('error', function (err) {
-					reject(err);
-				});
-				// TODO max file size: throw { name: 'ERR_FILE_TOO_LARGE' };
+	if (stream) { validate(data, 'filename', { type: 'string', match: /.*(\.png|\.jpg|\.jpeg|\.gif)$/ }); }
+	
+	return (stream ?
+		new Bluebird(function (resolve, reject) {
+			var filename = uuid.v4() + path.extname(data.filename);
+			console.log('saving file as', filename);
+			stream.pipe(fs.createWriteStream('uploads/' + filename)).on('close', function () {
+				resolve(filename);
 				// TODO thumbnails
 				/*	var pictureFormats = {
 					sm: { width: 256 },
 					lg: { width: 1024 }
 				};*/
+			}).on('error', function (err) {
+				reject(err);
 			});
-		}
-	}).then(function (filename) {
+		}) :
+		Bluebird.resolve()
+	).then(function (filename) {
 		var q = 'INSERT INTO post (user_id, room_id, parent_post_id, message, filename) VALUES ($1, $2, $3, $4, $5) RETURNING id';
 		return db.query(q, [userId, data.roomId, data.parentId, data.message, filename]);
 	}).get(0).then(function (post) {
@@ -107,7 +102,7 @@ socket.client.on('create_post', function (userId, data, stream) {
 			var results = JSON.parse(response.body).results,
 				address = results[0].components,
 				q = 'UPDATE post SET location = POINT($2,$3), location_data = $4, country = $5, city = $6 WHERE id = $1';
-			log.log('got address', results);
+			//log.log('got address', results);
 			return db.query(q, [post.id, data.latitude, data.longitude, JSON.stringify(results), address.country, address.city]);
 		});
 		return null;

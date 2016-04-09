@@ -6,7 +6,8 @@ var http = require('./http'),
 	validate = require('./validate'),
 	config = require('../config'),
 	log = require('./log')('Socket', 'yellow'),
-	Bluebird = require('bluebird');
+	Bluebird = require('bluebird'),
+	Readable = require('stream').Readable;
 
 io.use(function (socket, next) {
 	Bluebird.try(function () {
@@ -49,25 +50,34 @@ io.client = {
 	on: function (name, callback) {
 		connectCallbacks.push(function (socket) {
 			socket.on(name, function (data, filename) {
-				var listenerId = data.listenerId;
-				(filename ?
-					new Bluebird(function (resolve, reject) {
-						log.log('uploading file', filename);
-						var chunk = -1,
-							nextChunk = function () {
-								log.log('requesting chunk');
-								socket.emit(name + ':more#' + listenerId, { chunk: chunk + 1, chunkSize: config.chunkSize });
-							};
-						socket.on(name + ':data#' + listenerId, function (data) {
-							console.log('GOT DATA', data);
-							nextChunk();
-						});
-						nextChunk();
-					}) :
-					Bluebird.resolve()
-				).then(function () {
-					return callback(socket.userId, data, socket);
-				}).then(function (data) {
+				var listenerId = data.listenerId,
+					stream;
+
+				if (filename) {
+					log.log('uploading file', filename);
+					data.filename = filename;
+					var length = 0;
+					stream = new Readable();
+					stream._read = function () { nextChunk(); };
+					var nextChunk = function () {
+						log.log('requesting chunk');
+						socket.emit(name + ':more#' + listenerId, { start: length, length: config.chunkSize });
+					};
+					socket.on(name + ':data#' + listenerId, function (chunk) {
+						console.log('got chunk length', chunk.length);
+						length += chunk.length;
+						var ready = stream.push(chunk, 'utf8');
+						if (chunk.length < config.chunkSize) {
+							stream.push(null); // signal end of stream
+						} else if (length > config.fileSizeLimit) {
+							stream.emit('error', { name: 'ERR_FILE_TOO_LARGE' });
+						} else if (ready) { nextChunk(); } {
+							//nextChunk();
+						}
+					});
+				}
+
+				return callback(socket.userId, data, stream, socket).then(function (data) {
 					log.log('emitting', name, data && data.id ? data.id : '');
 					socket.emit(name + ':success#' + listenerId, data);
 				}).catch(function (error) {
