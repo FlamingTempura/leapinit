@@ -8,7 +8,7 @@ require('angular-animate');
 require('angular-ui-router');
 
 angular.module('leapinit', ['ngAnimate', 'ui.router'])
-	.constant('config', { serverRoot: 'http://localhost:9122' })
+	.constant('config', { serverRoot: 'https://56f4132f.ngrok.io' })
 	.config(function ($urlRouterProvider) {
 		$urlRouterProvider.otherwise('/feed');
 	})
@@ -37,6 +37,14 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 		$rootScope.config = config;
 
 		geo.watch();
+
+		if (navigator.splashscreen) {
+			navigator.splashscreen.hide();
+		}
+
+		if (window.cordova && window.cordova.platformId === 'android' && window.StatusBar) {
+			window.StatusBar.backgroundColorByHexString('#EB8A00');
+		}
 	})
 	.filter('fromNow', function () {
 		return function (value) {
@@ -73,8 +81,12 @@ requireDirective.keys().forEach(function (name) {
 	angular.module('leapinit').directive(name.replace(/^\.\/(.*)\.js$/, '$1'), requireDirective(name));
 });
 
-document.addEventListener('deviceready', function () {
-	if (cordova.platformId === 'android') {
-		StatusBar.backgroundColorByHexString('#EB8A00');
-	}
-});
+if (window.cordova) {
+	document.addEventListener('deviceready', function () {
+		angular.bootstrap(document, ['leapinit']); // start angular
+	});
+} else {
+	angular.element(document).ready(function() {
+		angular.bootstrap(document, ['leapinit']); // start angular
+	});
+}

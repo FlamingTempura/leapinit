@@ -15,7 +15,8 @@ module.exports = {
             { test: /index\.html$/, loader: 'file?name=[name].[ext]' },
             { test: /\/.*[^x]\.html$/, loader: 'html' }, // HACK file not ending in x excludes index.html
             { test: /\.less$/, loader: 'style!css!less' },
-            { test: /\.ttf$/, loader: 'url?name=[name].[ext]&limit=10000&mimetype=application/octet-stream' }
+            { test: /\.ttf$/, loader: 'url?name=[name].[ext]&limit=10000&mimetype=application/octet-stream' },
+            { test: /\.svg$/, loader: 'url?name=[name].[ext]&limit=10000&mimetype=image/svg+xml' }
         ]
     },
     devtool: devMode ? 'source-map' : undefined,

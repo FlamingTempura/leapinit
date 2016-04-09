@@ -1,4 +1,5 @@
 'use strict';
+var angular = require('angular');
 
 module.exports = function (remote, geo, config) {
 	return {
@@ -43,12 +44,34 @@ module.exports = function (remote, geo, config) {
 				});
 			};
 			$scope.share = function () {
-
+				navigator.screenshot.URI(function(error,res){
+					if (error) { 
+						console.error(error); return;
+					}
+					var image = new Image(),
+						canvas = angular.element('<canvas>')[0],
+						context = canvas.getContext('2d'),
+						bounds = element[0].getBoundingClientRect();
+					console.log('loading screenshot');
+					image.src = res.URI;
+					image.onload = function () {
+						console.log('cropping screenshot');
+						var scaleFactor = image.width / bounds.width;
+						canvas.width = scaleFactor * bounds.width;
+						canvas.height = scaleFactor * bounds.height;
+						context.drawImage(image, scaleFactor * bounds.left, scaleFactor * bounds.top, // crop to just the post part of the screenshot
+							scaleFactor * bounds.width * 0.94, scaleFactor * bounds.height * 0.86,
+							0, 0, scaleFactor * bounds.width, scaleFactor * bounds.height);
+						var dataURI = canvas.toDataURL('image/png');
+						console.log('sharing...');
+						window.plugins.socialsharing.share(null, 'LeapIn.it - the social network for interests', dataURI, 'https://leapin.it');
+					};
+				}, 'jpg', 50);
 			};
 			$scope.openPicture = function () {
 				var url = config.serverRoot + '/files/' + $scope.post.picture;
 				if (window.PhotoViewer) {
-					window.PhotoViewer.show(url);
+					window.PhotoViewer.show(url, undefined, { share: false });
 				} else {
 					window.open(url);
 				}
