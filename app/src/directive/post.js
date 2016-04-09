@@ -37,16 +37,22 @@ module.exports = function (remote, geo, config) {
 			};
 
 			$scope.reaction = function (type) {
+				if (type === 'love') { $scope.loveLoading = true; }
+				if (type === 'hate') { $scope.hateLoading = true; }
 				remote.request('create_reaction', { postId: $scope.post.id, type: type }).catch(function (err) {
 					console.error('error!', err);
 				}).finally(function () {
-					//delete $scope.reactionLoading;
+					delete $scope.loveLoading;
+					delete $scope.hateLoading;
 				});
 			};
 			$scope.share = function () {
+				$scope.shareLoading = true;
 				navigator.screenshot.URI(function(error,res){
 					if (error) { 
-						console.error(error); return;
+						delete $scope.shareLoading;
+						console.error(error);
+						return;
 					}
 					var image = new Image(),
 						canvas = angular.element('<canvas>')[0],
@@ -65,6 +71,7 @@ module.exports = function (remote, geo, config) {
 						var dataURI = canvas.toDataURL('image/png');
 						console.log('sharing...');
 						window.plugins.socialsharing.share(null, 'LeapIn.it - the social network for interests', dataURI, 'https://leapin.it');
+						delete $scope.shareLoading;
 					};
 				}, 'jpg', 50);
 			};

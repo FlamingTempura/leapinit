@@ -49,11 +49,11 @@ io.client = {
 	on: function (name, callback) {
 		connectCallbacks.push(function (socket) {
 			socket.on(name, function (data, filename) {
+				var listenerId = data.listenerId;
 				(filename ?
 					new Bluebird(function (resolve, reject) {
 						log.log('uploading file', filename);
-						var listenerId = data.listenerId,
-							chunk = -1,
+						var chunk = -1,
 							nextChunk = function () {
 								log.log('requesting chunk');
 								socket.emit(name + ':more#' + listenerId, { chunk: chunk + 1, chunkSize: config.chunkSize });

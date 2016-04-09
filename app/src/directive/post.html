@@ -20,11 +20,11 @@
 		<div class="pic" ng-if="post.picture" style="background-image: url('{{ $root.config.serverRoot + '/files/' + post.picture }}');" ui-sref="post({ id: post.id })" ng-click="openPicture()"></div>
 		<div class="below" ng-if="showInteraction">
 			<div class="love" ng-click="reaction('love')" ng-class="{ active: post.userReaction === 'love' }">
-				<div class="hexagon"><span class="fa fa-heart"></span></div>
+				<div class="hexagon" ng-class="{ spin: loveLoading }"><span class="fa fa-heart"></span></div>
 				<div class="count">{{ post.loveCount }} loves</div>
 			</div>
 			<div class="hate" ng-click="reaction('hate')" ng-class="{ active: post.userReaction === 'hate' }">
-				<div class="hexagon"><span class="fa fa-frown-o"></span></div>
+				<div class="hexagon" ng-class="{ spin: hateLoading }"><span class="fa fa-frown-o"></span></div>
 				<div class="count">{{ post.hateCount }} dislikes</div>
 			</div>
 			<div class="reply" ui-sref="post({ id: post.id })">
@@ -32,7 +32,7 @@
 				<div class="count">{{ post.replyCount }} reply</div>
 			</div>
 			<div class="share" ng-click="share()">
-				<div class="hexagon"><span class="fa fa-share-alt"></span></div>
+				<div class="hexagon" ng-class="{ spin: shareLoading }"><span class="fa fa-share-alt"></span></div>
 				<div class="count">Share</div>
 			</div>
 		</div>
