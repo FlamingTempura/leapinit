@@ -7,7 +7,7 @@ var express = require('express'),
 	log = require('./log')('HTTP', 'green');
 
 app.use('/files', express.static('uploads', { maxAge: '30d' }));
-server.listen(config.port); // TODO restrict to config.host
+server.listen(config.port, config.host);
 log.log('Server is listening on http://' + config.host + ':' + config.port);
 
 module.exports = server;
