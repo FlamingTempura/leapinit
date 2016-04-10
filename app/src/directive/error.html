@@ -24,10 +24,16 @@
 	<div ng-switch-when="ERR_USERNAME_CONFLICT">
 		<h1>That nickname is already in use</h1>
 	</div>
+	<div ng-switch-when="ERR_FILE_TOO_LARGE">
+		<h1>The file is too large</h1>
+	</div>
+	<div ng-switch-when="ERR_SERVER_FAILURE">
+		<h1>There was a problem with the server.</h1>
+	</div>
 	<div ng-switch-default>
 		<h1>Error: {{ error.error }}</h1>
 		<div>Details:</div>
 		<pre>{{ error }}</pre>
 	</div>
-	<!-- ERR_FILE_TOO_LARGE, ERR_NO_USERNAME, ERR_FILE_NOT_FOUND -->
+	<!-- ERR_NO_USERNAME -->
 </div>

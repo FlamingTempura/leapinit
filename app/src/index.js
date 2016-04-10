@@ -64,7 +64,7 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 	});
 
 var requireState = require.context('./state', false, /.*\.js/),
-	requireFactory = require.context('./factory', false, /.*\.js/),
+	requireService = require.context('./service', false, /.*\.js/),
 	requireDirective = require.context('./directive', false, /.*\.js/);
 
 requireState.keys().forEach(function (name) {
@@ -73,12 +73,14 @@ requireState.keys().forEach(function (name) {
 	});
 });
 
-requireFactory.keys().forEach(function (name) {
-	angular.module('leapinit').factory(name.replace(/^\.\/(.*)\.js$/, '$1'), requireFactory(name));
+requireService.keys().forEach(function (name) {
+	angular.module('leapinit').service(name.replace(/^\.\/(.*)\.js$/, '$1'), requireService(name));
 });
 
 requireDirective.keys().forEach(function (name) {
-	angular.module('leapinit').directive(name.replace(/^\.\/(.*)\.js$/, '$1'), requireDirective(name));
+	angular.module('leapinit').directive(name.replace(/^\.\/(.*)\.js$/, '$1'), function () {
+		return requireDirective(name);
+	});
 });
 
 if (window.cordova) {
