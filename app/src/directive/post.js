@@ -119,6 +119,8 @@ module.exports = {
 			};
 
 		setTimeout(loadIfAboveFold);
+		setTimeout(loadIfAboveFold, 200);
+		setTimeout(loadIfAboveFold, 1200);
 		content.addEventListener('scroll', loadIfAboveFold);
 
 	}
