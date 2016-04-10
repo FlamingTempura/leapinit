@@ -10,14 +10,12 @@ var db = require('../util/db'),
 socket.client.listen('rooms', function (userId, data, emit, onClose) {
 	var emitRooms = function () {
 		log.log('getting rooms for user', userId);
-		var q = 'SELECT id, name, created, (SELECT COUNT(*) FROM post WHERE room_id = room.id) AS "unseenCount",' +
-				'  (SELECT COUNT(*) FROM post WHERE room_id = room.id) AS "postCount" ' + 
-				'FROM room ' +
+		var q = 'SELECT id, (SELECT COUNT(*) FROM post WHERE room_id = room.id) AS "postCount" FROM room ' +
 				(data.type === 'user' ? 
 					'WHERE id IN (SELECT room_id FROM resident WHERE user_id = $1)' :
 					'WHERE id NOT IN (SELECT room_id FROM resident WHERE user_id = $1)' +
 					'ORDER BY "postCount" DESC LIMIT 100');
-		emit(db.query(q, [userId]));
+		emit(db.query(q, [userId]).map(function (row) { return row.id; }));
 	};
 	db.on('room', emitRooms); // FIXME: this will fire too often
 	emitRooms();
@@ -57,7 +55,9 @@ socket.client.listen('room', function (userId, data, emit, onClose) {
 		emit(Bluebird.try(function () {
 			validate(data, 'id', { type: 'number' });
 		}).then(function () {
-			var q = 'SELECT id, name, ' + 
+			var q = 'SELECT id, name, created, ' + 
+					'  (SELECT COUNT(*) FROM post WHERE room_id = room.id) AS "unseenCount",' +
+					'  (SELECT COUNT(*) FROM post WHERE room_id = room.id) AS "postCount", ' +
 					'  (SELECT COUNT(*) FROM resident WHERE room_id = $1) AS "residentCount", ' +
 					'  (SELECT code FROM code JOIN resident ON (code_id = code.id) WHERE user_id = $2 AND resident.room_id = $1) AS "userCode", ' +
 					'  (SELECT array_agg(code) FROM code WHERE room_id = $1) AS codes, ' +

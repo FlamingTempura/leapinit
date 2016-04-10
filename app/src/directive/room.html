@@ -1,5 +1,5 @@
-<a href="#/room/{{ room.id }}" class="room"><!-- TODO: leave room -->
-	<div class="icon"><span class="fa fa-shopping-bag"></span></div>
+<a href="#/room/{{ room.id }}" class="room">
+	<div class="icon" style="background-image: url('{{ $root.config.serverRoot + '/files/' + room.picture + '-small.png' }}');"></div>
 	<div class="name">{{ room.name }}</div>
 	<div ng-if="room.unseenCount > 0"><div class="label">{{ room.unseenCount }}</div></div>
 </a>

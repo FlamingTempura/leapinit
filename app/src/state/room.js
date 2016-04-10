@@ -11,8 +11,6 @@ module.exports = {
 		roomListener.on('receive', function (room) {
 			delete $scope.error;
 			$scope.room = room;
-			console.log('got room', room);
-			console.log('applied');
 			if (!feedListener) {
 				feedListener = remote.listen('posts', { type: 'room', roomId: id });
 				feedListener.on('receive', function (feed) {

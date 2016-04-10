@@ -9,7 +9,8 @@ var Bluebird = require('bluebird'),
 	config = require('../config.js'),
 	socket = require('../util/socket'),
 	path = require('path'),
-	uuid = require('uuid');
+	uuid = require('uuid'),
+	gm = require('gm');
 
 socket.client.listen('posts', function (userId, data, emit, onClose) {
 	var emitPosts = function () {
@@ -21,9 +22,7 @@ socket.client.listen('posts', function (userId, data, emit, onClose) {
 				'LIMIT 100';
 		emit(db.query(q, data.type === 'room' ? [data.roomId] :
 				data.type === 'replies' ? [data.postId] :
-				[userId]).map(function (row) {
-			return row.id;
-		}));
+				[userId]).map(function (row) { return row.id; }));
 	};
 	db.on('feed', emitPosts); // FIXME: this will fire too often
 	emitPosts();
@@ -57,6 +56,60 @@ socket.client.listen('post', function (userId, data, emit, onClose) {
 	});
 });
 
+var pictureFormats = {
+	small: function (source, dest) {
+		return new Bluebird(function (resolve, reject) {
+			gm(source)
+				.filter('hamming')
+				.gravity('Center')
+				.resize(96, 96, '^')
+				.extent(96, 96)
+				.noProfile() // remove EXIF info
+				.write(dest, function (err) {
+					if (err) { return reject(err); }
+					resolve();
+				});
+		});
+	},
+	big: function (source, dest) {
+		return new Bluebird(function (resolve, reject) {
+			gm(source)
+				.filter('hamming')
+				.gravity('Center')
+				.resize(1024, null, '>')
+				.extent(1024, 1024, '>')
+				.noProfile() // remove EXIF info
+				.write(dest, function (err) {
+					if (err) { return reject(err); }
+					resolve();
+				});
+		});
+	}
+};
+
+var generateThumbnails = function () { // go through each uploaded image and create thumbnails if they haven't been created already
+	return fs.readdirAsync('uploads').then(function (files) {
+		files = files.filter(function (file) {
+			return file.match(/^\w{8}-\w{4}-4\w{3}-\w{4}-\w{12}\.\w+$/); // check this is an original file (name is uuid)
+		});
+		return Bluebird.map(files, function (file) {
+			return Bluebird.map(Object.keys(pictureFormats), function (name) { // TODO: check files aren't already made
+				return fs.statAsync('uploads/' + file + '-' + name + '.png').catch(function () {
+					log.log('gm[' + name + ']:', file);
+					return pictureFormats[name]('uploads/' + file, 'uploads/' + file + '-' + name + '.png').catch(function (err) {
+						if (err && err.message === 'Stream yields empty buffer') { // image type unsupported
+							log.log('gm: not supported ' + file);
+						} else  {
+							log.log('gm: error' + err.message.trim());
+						}
+					});
+				});
+			});
+		});
+	});
+};
+generateThumbnails();
+
 socket.client.on('create_post', function (userId, data, stream) {
 	validate(data, 'roomId', { type: 'number' });
 	validate(data, 'message', { type: 'string' });
@@ -71,11 +124,7 @@ socket.client.on('create_post', function (userId, data, stream) {
 			console.log('saving file as', filename);
 			stream.pipe(fs.createWriteStream('uploads/' + filename)).on('close', function () {
 				resolve(filename);
-				// TODO thumbnails
-				/*	var pictureFormats = {
-					sm: { width: 256 },
-					lg: { width: 1024 }
-				};*/
+				generateThumbnails();
 			}).on('error', function (err) {
 				reject(err);
 			});
