@@ -1,0 +1,11 @@
+<toolbar title="signup ? 'Create a nickname' : 'Change password'"></toolbar>
+
+<form class="content" ng-submit="submit()">
+	<p ng-if="signup">Create a nickname so others can see who you are</p>
+	<p ng-if="!signup">Change your password</p>
+	<input ng-model="form.nickname" type="text" placeholder="Nickname" ng-disabled="loading" ng-if="signup">
+	<input ng-model="form.password" type="password" placeholder="Password" ng-disabled="loading">
+	<input ng-model="form.password2" type="password" placeholder="Confirm password" ng-disabled="loading">
+	<input type="submit" ng-disabled="loading" value="{{ signup ? 'Create' : 'Change' }}">
+	<error error="error"></error>
+</form>

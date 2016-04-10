@@ -1,14 +1,16 @@
 'use strict';
 
 var Bluebird = require('bluebird'),
-	db = require('../utils/db'),
-	validate = require('../utils/validate'),
-	log = require('../utils/log').create('Room', 'blue'),
+	db = require('../util/db'),
+	validate = require('../util/validate'),
+	log = require('../util/log')('Room', 'blue'),
 	request = Bluebird.promisifyAll(require('request')),
 	fs = Bluebird.promisifyAll(require('fs')),
 	config = require('../config.js'),
-	socket = require('../utils/socket'),
-	_ = require('lodash');
+	socket = require('../util/socket'),
+	path = require('path'),
+	uuid = require('uuid'),
+	gm = require('gm');
 
 socket.client.listen('posts', function (userId, data, emit, onClose) {
 	var emitPosts = function () {
@@ -18,28 +20,19 @@ socket.client.listen('posts', function (userId, data, emit, onClose) {
 				 data.type === 'replies' ? 'WHERE parent_post_id = $1  ORDER BY post.created ASC ' :
 				 /* feed */           'WHERE parent_post_id IS NULL AND room_id IN (SELECT room_id FROM resident WHERE user_id = $1) ORDER BY post.created DESC ') +
 				'LIMIT 100';
-		return db.query(q, data.type === 'room' ? [data.roomId] :
-						   data.type === 'replies' ? [data.postId] :
-						   [userId]).then(function (result) {
-			emit(null, _.map(result.rows, 'id'));
-		}).catch(function (err) {
-			if (err.name === 'Authentication') {
-				emit({ error: 'Authentication' });
-			} else { // todo: room not exist
-				log.error(err);
-				emit({ error: 'Fatal' });
-			}
-		});
+		emit(db.query(q, data.type === 'room' ? [data.roomId] :
+				data.type === 'replies' ? [data.postId] :
+				[userId]).map(function (row) { return row.id; }));
 	};
 	db.on('feed', emitPosts); // FIXME: this will fire too often
 	emitPosts();
 	onClose(function () {
-		db.off('feed', emitPosts);
+		db.removeListener('feed', emitPosts);
 	});
 });
 
 socket.client.listen('post', function (userId, data, emit, onClose) {
-	var emitPosts = function () {
+	var emitPost = function () {
 		var q = 'SELECT post.id, "user".username, room.id AS "roomId", room.name AS "roomName", message, ' + 
 				'  location[0] AS latitude, location[1] AS longitude,city, country, post.created, ' + 
 				'  filename AS picture, ' +
@@ -51,69 +44,117 @@ socket.client.listen('post', function (userId, data, emit, onClose) {
 				'JOIN "user" ON ("user".id = user_id) ' +
 				'JOIN "room" ON (room.id = room_id) ' +
 				'WHERE post.id = $2';
-		return db.query(q, [userId, data.id]).then(function (result) {
-			if (result.rows.length === 0) { throw { name: 'NotFound' }; }
-			emit(null, result.rows[0]);
-		}).catch(function (err) {
-			if (err.name === 'NotFound') {
-				emit({ error: 'NotFound' });
-			} else {
-				log.error(err);
-				emit({ error: 'Fatal' });
-			}
-		});
+		return emit(db.query(q, [userId, data.id]).get(0).then(function (post) {
+			if (!post) { throw { name: 'ERR_NOT_FOUND' }; }
+			return post;
+		}));
 	};
-	db.on('post:' + data.id, emitPosts);
-	emitPosts();
+	db.on('post:' + data.id, emitPost);
+	emitPost();
 	onClose(function () {
-		db.off('post:' + data.id, emitPosts);
+		db.removeListener('post:' + data.id, emitPost);
 	});
 });
 
-socket.client.on('create_post', function (userId, data, emit) {
-	validate({
-		roomId: { value: data.roomId, type: 'number' },
-		message: { value: data.message },
-		latitude: { value: data.latitude, type: 'number', optional: true },
-		longitude: { value: data.longitude, type: 'number', optional: true },
-		parentId: { value: data.parentId, type: 'number', optional: true },
-		filename: { value: data.file, type: 'string', optional: true, match: /\w{8}-\w{4}-4\w{3}-\w{4}-\w{12}\.\w+/ }
-	}).then(function (params) {
-		var checkFile;
-		if (params.filename) {
-			checkFile = fs.statAsync('uploads/' + params.filename).catch(function () { // check that file exists
-				throw { name: 'NoSuchFile' };
-			});
-		} else {
-			checkFile = Bluebird.resolve();
-		}
-		return checkFile.then(function () {
-			var q = 'INSERT INTO post (user_id, room_id, parent_post_id, message, filename) VALUES ($1, $2, $3, $4, $5) RETURNING id';
-			return db.query(q, [userId, params.roomId, params.parentId, params.message, params.filename]);
-		}).then(function (result) {
-			if (params.latitude && params.longitude) {
-				log.log('reverse geocoding', params.latitude + ',' + params.longitude);
-				var url = 'http://api.opencagedata.com/geocode/v1/json?query=' + params.latitude + ',' + params.longitude + '&key=' + config.opencageKey;
-				request.getAsync(url).then(function (response) {
-					var data = JSON.parse(response.body);
-					var q = 'UPDATE post SET location = POINT($2,$3), location_data = $4, country = $5, city = $6 WHERE id = $1';
-					log.log('got address', data);
-					var address = data.results[0].components;
-					return db.query(q, [result.rows[0].id, params.latitude, params.longitude, JSON.stringify(data.results), address.country, address.city]);
+var pictureFormats = {
+	small: function (source, dest) {
+		return new Bluebird(function (resolve, reject) {
+			gm(source)
+				.filter('hamming')
+				.gravity('Center')
+				.resize(96, 96, '^')
+				.extent(96, 96)
+				.noProfile() // remove EXIF info
+				.write(dest, function (err) {
+					if (err) { return reject(err); }
+					resolve();
 				});
-			}
 		});
-	}).then(function () {
-		emit();
+	},
+	big: function (source, dest) {
+		return new Bluebird(function (resolve, reject) {
+			gm(source)
+				.filter('hamming')
+				.gravity('Center')
+				.resize(1024, null, '>')
+				.extent(1024, 1024, '>')
+				.noProfile() // remove EXIF info
+				.write(dest, function (err) {
+					if (err) { return reject(err); }
+					resolve();
+				});
+		});
+	}
+};
+
+var generateThumbnails = function () { // go through each uploaded image and create thumbnails if they haven't been created already
+	return fs.readdirAsync('uploads').then(function (files) {
+		files = files.filter(function (file) {
+			return file.match(/^\w{8}-\w{4}-4\w{3}-\w{4}-\w{12}\.\w+$/); // check this is an original file (name is uuid)
+		});
+		return Bluebird.map(files, function (file) {
+			return Bluebird.map(Object.keys(pictureFormats), function (name) { // TODO: check files aren't already made
+				return fs.statAsync('uploads/' + file + '-' + name + '.png').catch(function () {
+					log.log('gm[' + name + ']:', file);
+					return pictureFormats[name]('uploads/' + file, 'uploads/' + file + '-' + name + '.png').catch(function (err) {
+						if (err && err.message === 'Stream yields empty buffer') { // image type unsupported
+							log.log('gm: not supported ' + file);
+						} else  {
+							log.log('gm: error' + err.message.trim());
+						}
+					});
+				});
+			});
+		});
+	});
+};
+generateThumbnails();
+
+socket.client.on('create_post', function (userId, data, stream) {
+	validate(data, {
+		roomId: { type: 'number' },
+		message: { type: 'string' },
+		latitude: { type: 'number', optional: true },
+		longitude: { type: 'number', optional: true },
+		parentId: { type: 'number', optional: true },
+		filename: { type: 'string', match: /.*(\.png|\.jpg|\.jpeg|\.gif)$/, optional: !stream }
+	});
+	return (stream ?
+		new Bluebird(function (resolve, reject) {
+			var filename = uuid.v4() + path.extname(data.filename);
+			console.log('saving file as', filename);
+			stream.pipe(fs.createWriteStream('uploads/' + filename)).on('close', function () {
+				resolve(filename);
+				generateThumbnails();
+			}).on('error', function (err) {
+				reject(err);
+			});
+		}) :
+		Bluebird.resolve()
+	).then(function (filename) {
+		var q = 'INSERT INTO post (user_id, room_id, parent_post_id, message, filename) VALUES ($1, $2, $3, $4, $5) RETURNING id';
+		return db.query(q, [userId, data.roomId, data.parentId, data.message, filename]);
+	}).get(0).then(function (post) {
 		db.emit('feed');
-	}).catch(function (err) {
-		if (err.name === 'NoSuchFile') {
-			emit({ error: 'NoSuchFile' });
-		} else if (err.name === 'Validation') {
-			emit({ error: 'Validation', validation: err.validation });
-		} else { // todo: room not exist
-			log.error(err);
-			emit({ error: 'Fatal' });
-		}
+		var q = 'INSERT INTO resident (user_id, room_id) VALUES ($1, $2) RETURNING room_id';
+		return db.query(q, [userId, data.roomId]).then(function () {
+			db.emit('room:' + data.roomId);
+			return post;
+		}).catch(function (err) {
+			if (err.constraint === 'resident_unique_index') { return post; } // user is already in this room
+			throw err;
+		});
+	}).then(function (post) {
+		if (!data.latitude) { return null; }
+		log.log('reverse geocoding', data.latitude + ',' + data.longitude);
+		var url = 'http://api.opencagedata.com/geocode/v1/json?query=' + data.latitude + ',' + data.longitude + '&key=' + config.opencageKey;
+		request.getAsync(url).then(function (response) {
+			var results = JSON.parse(response.body).results,
+				address = results[0].components,
+				q = 'UPDATE post SET location = POINT($2,$3), location_data = $4, country = $5, city = $6 WHERE id = $1';
+			//log.log('got address', results);
+			return db.query(q, [post.id, data.latitude, data.longitude, JSON.stringify(results), address.country, address.city]);
+		});
+		return null;
 	});
 });

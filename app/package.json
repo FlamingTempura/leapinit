@@ -1,0 +1,32 @@
+{
+  "name": "leapin.it-client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webpack.config.js",
+  "devDependencies": {
+    "cordova-icon": "^0.7.0",
+    "cordova-splash": "^0.6.0",
+    "css-loader": "^0.23.1",
+    "expose-loader": "^0.7.1",
+    "file-loader": "^0.8.5",
+    "html-loader": "^0.4.3",
+    "less": "^2.6.1",
+    "less-loader": "^2.2.3",
+    "style-loader": "^0.13.1",
+    "url-loader": "^0.5.7",
+    "webpack": "^1.12.14"
+  },
+  "dependencies": {
+    "angular": "^1.5.3",
+    "angular-animate": "^1.5.3",
+    "angular-ui-router": "^0.2.18",
+    "font-awesome": "^4.5.0",
+    "socket.io-client": "^1.4.5"
+  },
+  "scripts": {
+    "splash": "./node_modules/cordova-splash/bin/cordova-splash",
+    "icon": "./node_modules/cordova-icon/bin/cordova-icon"
+  },
+  "author": "",
+  "license": "ISC"
+}

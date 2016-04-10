@@ -1,0 +1,54 @@
+<div ng-class="{ loading: !post && !error }">
+	
+	<error error="error"></error>
+
+	<h2 ng-if="post && showRoom" ui-sref="room(::{ id: post.roomId })">Posted in <strong>{{ ::post.roomName }}</strong>:</h2>
+
+	<div ng-show="post" class="post" ng-class="::{ card: showCard }">
+		<div class="above">
+			<span class="user" ng-if="::post.username">{{ ::post.username }}</span>
+			<div class="right">
+				<span class="location" ng-if="::post.distance">
+					<span class="fa fa-map-marker"></span> {{ ::(post.distance | number : 1) }}mi &nbsp;
+				</span>
+				<span class="created">
+					<span class="fa fa-clock-o"></span> {{ post.created | fromNow }}
+				</span>
+			</div>
+		</div>
+		<div class="message" ui-sref="post(::{ id: post.id })">{{ ::post.message }}</div>
+		<div class="pic" ng-if="::post.picture" style="background-image: url('{{ ::$root.config.serverRoot + '/files/' + post.picture + '-big.png' }}');" ui-sref="post(::{ id: post.id })" ng-click="openPicture()"></div>
+		<div class="below" ng-if="::showInteraction">
+			<div class="love" ng-click="reaction('love')" ng-class="{ active: post.userReaction === 'love' }">
+				<div class="hexagon" ng-class="{ spin: loveLoading }"><span class="fa fa-heart"></span></div>
+				<div class="count">{{ post.loveCount }} loves</div>
+			</div>
+			<div class="hate" ng-click="reaction('hate')" ng-class="{ active: post.userReaction === 'hate' }">
+				<div class="hexagon" ng-class="{ spin: hateLoading }"><span class="fa fa-frown-o"></span></div>
+				<div class="count">{{ post.hateCount }} dislikes</div>
+			</div>
+			<div class="reply" ui-sref="post(::{ id: post.id })">
+				<div class="hexagon"><span class="fa fa-comments"></span></div>
+				<div class="count">{{ post.replyCount }} reply</div>
+			</div>
+			<div class="share" ng-click="share()">
+				<div class="hexagon" ng-class="{ spin: shareLoading }"><span class="fa fa-share-alt"></span></div>
+				<div class="count">Share</div>
+			</div>
+		</div>
+		<div class="replies" ng-if="::showReplies">
+			
+			<error error="repliesError"></error>
+
+			<post ng-repeat="id in replies" id="::id"></post>
+
+			<form class="post" ng-click="headerActive = true" ng-class="{ active: headerActive }">
+				<input type="text" ng-model="newReply.message" placeholder="Write a reply...">
+				<button ng-click="postReply()">Post</button>
+				<error error="newReply.error">{{ newReply.error }}</error>
+			</form>
+
+		</div>
+	</div>
+
+</div>

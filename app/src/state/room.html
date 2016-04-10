@@ -1,0 +1,46 @@
+<toolbar ng-if="!room" title="'Room'"></toolbar>
+
+<toolbar ng-if="room" title="room.name" class="toolbar-fade" style="background-image: url('{{ config.serverRoot + '/files/' + room.picture + '-big.png' }}');">
+	<!-- <a ui-sref="room-settings({ roomId: room.id })" class="icon"><span class="fa fa-cog"></span></a> --> <!-- admin only codes, delete, name -->
+</toolbar>
+
+<div ng-if="!room && !error" class="content loading"></div>
+
+<div ng-if="room" class="toolbar-overlay" reactive-scroll>
+	{{ room.residentCount }} people
+	<span ng-if="room.userCode"> &bullet; Code: {{ room.userCode }}</span>
+	<button ng-show="!room.isMember" ng-click="join()">Join</button>
+	<button ng-show="room.isMember" ng-click="leave()">Leave</button>
+</div>
+
+<div ng-if="room" class="header" ng-click="headerActive = true" ng-class="{ active: headerActive }" reactive-scroll>
+	<input type="text" ng-model="newPost.message" placeholder="Write something...">
+	<label for="file" class="icon camera-icon"><span class="fa fa-camera"></span></label>
+	<button ng-click="createPost()">Post</button>
+	<input type="file" name="file" id="file" on-select-file="selectFile">
+	<img class="preview" ng-src="{{ newPost.fileURL }}" ng-if="newPost.fileURL">
+</div>
+
+<div ng-if="room" class="header-blur" ng-show="headerActive" ng-click="headerActive = false"></div>
+
+<div ng-show="room" class="content content-header" ng-class="{ loading: loading }" id="maincontent">
+	<div class="msg msg-error" ng-if="error">{{ error }}</div>
+
+	<div ng-if="!loading && !room.name">
+		<p><strong>You are the first person in this room!</strong></p>
+		<p>What you want to name this room?</p>
+		<form ng-submit="setName()">
+			<input type="text" placeholder="e.g., big planes" ng-model="newName.name">
+			<button type="submit">OK</button>
+			<div class="msg msg-error" ng-if="newName.error">{{ newName.error }}</div>
+		</form>
+	</div>
+		
+	<div ng-if="!loading && room.name && !feed.length">
+		<p><strong>There are no posts in this room.</strong></p>
+	</div>
+
+	<post ng-repeat="id in feed" id="id" show-card="true" show-interaction="true"></post>
+</div>
+
+<error error="error" class="content"></error>

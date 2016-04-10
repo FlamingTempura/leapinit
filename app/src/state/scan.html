@@ -1,0 +1,11 @@
+<toolbar title="'Scan'"></toolbar>
+
+<div class="content content-nav-top content-nav-bottom">
+	<form ng-submit="scan(code)" ng-show="showForm">
+		<p>Enter the barcode value below.</p>
+		<input ng-model="code" type="text" name="inputCode" ng-disabled="loading">
+		<button type="submit" ng-disabled="loading">Scan</button>
+	</form>
+
+	<error error="error"></error>
+</div>

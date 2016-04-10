@@ -1,0 +1,17 @@
+<div class="content loading" ng-if="!userRooms && !error"></div>
+
+<div class="content" ng-show="userRooms" id="maincontent">
+
+	<h1>Rooms you are in</h1>
+	<room room="room" ng-repeat="id in userRooms" id="id"></room>
+	<div ng-if="!userRooms.length" class="msg msg-info">
+		<p><strong>You are not in any rooms.</strong></p>
+		<p>Join rooms by scanning barcodes</p>
+	</div>
+
+	<h1>Popular rooms</h1>
+	<room room="room" ng-repeat="id in popularRooms" id="id"></room>
+
+</div>
+
+<error error="error"></error>
