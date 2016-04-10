@@ -8,7 +8,10 @@ require('angular-animate');
 require('angular-ui-router');
 
 angular.module('leapinit', ['ngAnimate', 'ui.router'])
-	.constant('config', { serverRoot: 'https://56f4132f.ngrok.io' })
+	.constant('config', {
+		host: 'https://leapin.it', /*'https://56f4132f.ngrok.io'*/
+		path: '/api/'
+	})
 	.config(function ($urlRouterProvider) {
 		$urlRouterProvider.otherwise('/feed');
 	})

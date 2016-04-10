@@ -4,7 +4,8 @@ var io = require('socket.io-client'),
 	angular = require('angular');
 
 module.exports = function ($http, $state, $rootScope, $q, config) {
-	var socket = io(config.serverRoot, {
+	var socket = io(config.host, {
+		path: config.path + '/socket.io',
 		query: 'token=' + localStorage.getItem('token'),
 		transports: ['websocket']
 	});

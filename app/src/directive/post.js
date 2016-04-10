@@ -79,7 +79,7 @@ module.exports = {
 			}, 'jpg', 50);
 		};
 		$scope.openPicture = function () {
-			var url = config.serverRoot + '/files/' + $scope.post.picture;
+			var url = $root.config.host + $root.config.path + '/files/' + $scope.post.picture;
 			if (window.PhotoViewer) {
 				window.PhotoViewer.show(url, undefined, { share: false });
 			} else {
