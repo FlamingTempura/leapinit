@@ -1,108 +1,74 @@
-LeapIn.it
-=========
+# LeapIn.it
 
 LeapIn.it is a social network designed for mobile devices which encourages people to form groups based on their interests.
 
 To discover their interests, users are asked to scan barcodes and QR-codes that appear on items of interet. Each goes to a unique room in which other people have posted rich media relating to that item. A user may become a resident of the room, which allows them to access and contribute content within it.
 
-
-Installation
-============
-
-
-API keys
---------
-You will need to obtain API keys for the following:
-* [AlchemyAPI](http://www.alchemyapi.com/)
-* [Faroo](http://www.faroo.com/)
-
-Server
-------
+## Server
 
 Requirements:
-* Apache 2
-* PHP 5 with php-gd
-* MySQL
-* [Composer](https://getcomposer.org/download/)
+* Nginx
+* Node.js with npm
+* Postgresql
 
-Steps:
-* Enable mod_rewrite and mod_headers:
-```
-sudo a2enmod rewrite
-sudo a2enmod headers
-sudo apache2ctl restart
-```
-* Create a database and user.
-```
-sudo mysql -u root -p
-CREATE DATABASE leapinit;
-CREATE USER 'leapinit'@'localhost' IDENTIFIED BY 'mypassword';
-GRANT ALL PRIVILEGES ON leapinit.* TO 'leapinit'@'localhost';
-exit
-```
-* Edit `config.php`:
-```
-$config = [
-	"database" => [
-		"host" => "127.0.0.1",
-		"port" => null,
-		"name" => "leapinit",
-		"user" => "leapinit",
-		"pass" => "mypassword"
-	],
-	"server" => [
-		"url" => "http://mywebsite.com/subdirectory/"
-	],
-	"apis" => [
-		"alchemyapi" => "alchemy api key"
-	]
-];
-```
-* Install libraries.
-```
-composer update
-``` 
-* Create image directories and set permissions:
-```
-mkdir server/media/files/thumbnail server/media/files/sentiment
-chmod 744 server/media/files server/media/files/thumbnail server/media/files/sentiment
-```
-* If server is in subdirectory, edit .htaccess
-```
-RewriteBase /subdirectory/
-```
+1. Clone repository `git clone git@github.com:FlamingTempura/leapinit.git`
+2. Using a postgresql client (e.g. `sudo -u postgres psql`), create a database and user:
+
+    ```sql
+    CREATE DATABASE leap;
+    -- switch to leap database. in psql use "\c leap"
+    CREATE EXTENSION pgcrypto;
+    CREATE EXTENSION citext;
+    CREATE USER leap WITH LOGIN PASSWORD 'blahblahblah';
+    GRANT ALL ON DATABASE leap TO leap;
+    ```
+
+* Create databases (see sql directory)
+* Edit `config.js`:
+* Install dependencies: `npm install`
+* run as service `pm2 start server.js`
 
 
-Client
-------
-
-Install the required libraries using bower. Get bower using npm.
-
-```
-npm -g install bower
-bower install
-```
-
-Edit app/www/config.json and enter the server url.
+## Client
 
 The LeapIn.it client is web-based, and may be hosted using a web server, or deployed as part of a Apache Cordova package for Android and iPhone apps.
 
-_Web server method_
+Uses webpack
 
-A simple web server can be launched using python:
+### Releasing
 
+x86 and armv7 must have different versions.
 ```
-cd /path/to/leapinit/app/www
-python -m SimpleHTTPServer 8080
+jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ~/leapinit/app/keys/key.keystore android-armv7-release-unsigned.apk com.teamorion.leapinit
+zipalign -v 4 android-armv7-release-unsigned.apk armv7.apk
+
+jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ~/leapinit/app/keys/key.keystore android-x86-release-unsigned.apk com.teamorion.leapinit
+zipalign -v 4 android-x86-release-unsigned.apk x86.apk
 ```
 
-The client can now be accessed in a web browser by going to `http://127.0.0.1:8080`.
+Note: lowered to sdk 22 for now - new permissions management were causing barcode scanner to crash
 
+## TODO
 
-_Apache Cordova method_
+* rooms in your area
+* languages
+* flagging
+* push notifications
+* avatar
+* list of posts you've liked
+* back buttons doesn't completely work (occasional duplicates in history require multiple back presses)
+* room rename
+* rename only available to admins of groups
+* server: "default" rooms (rooms which every user is made a resident of by default)
+* server: add randomness to lat/lng for privacy	
+* privacy policy
+* delete post
+* back button out of room leads to scan :(
+* testing (base fake data on tweets?)
+* bootstrapping room data from database of barcodes to product names and images
+* room from location (city, suburb, 500m radius?)
 
-Cordova can be used to package the client into Android and iPhone apps. For this, you will need nodejs and npm (further information [available here](http://cordova.apache.org/docs/en/3.4.0/guide_cli_index.md.html#The%20Command-Line%20Interface)).
-
-```
-npm -g install cordova
-```
+Monetization
+* advertising
+* selling barcode data
+ - barcode -> product name / picture

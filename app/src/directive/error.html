@@ -1,0 +1,40 @@
+<div ng-if="error" class="error" ng-switch="error.name">
+	<div ng-switch-when="ERR_NOT_FOUND">
+		<h1>Not found</h1>
+		<button onclick="window.history.go(-1)">Go back</button>
+	</div>
+	<div ng-switch-when="ERR_PASSWORD_MISMATCH">
+		<h1>Passwords do not match</h1>
+	</div>
+	<div ng-switch-when="ERR_INVALID_REQUEST">
+		<div ng-repeat="problem in error.validation" ng-switch="problem.name">
+			<h1 ng-switch-when="defined">{{ problem.field | capitalizeFirst }} must be provided.</h1>
+			<h1 ng-switch-when="min">{{ problem.field | capitalizeFirst }} should be at least {{ problem.expect }} characters.</h1>
+			<h1 ng-switch-when="max">{{ problem.field | capitalizeFirst }} should be at most {{ problem.expect }} characters.</h1>
+			<h1 ng-switch-when="type">{{ problem.field | capitalizeFirst }} is invalid.</h1>
+			<h1 ng-switch-when="match">{{ problem.field | capitalizeFirst }} is invalid.</h1>
+			<h1 ng-switch-default>{{ problem.field | capitalizeFirst }} is invalid.</h1>
+		</div>
+	</div>
+	<div ng-switch-when="ERR_LOGIN_FAILURE">
+		<h1>Nickname or password incorrect</h1>
+	</div>
+	<div ng-switch-when="ERR_USERNAME_CONFLICT">
+		<h1>That nickname is already in use</h1>
+	</div>
+	<div ng-switch-when="ERR_FILE_TOO_LARGE">
+		<h1>The file is too large</h1>
+	</div>
+	<div ng-switch-when="ERR_SERVER_FAILURE">
+		<h1>There was a problem with the server.</h1>
+	</div>
+	<div ng-switch-when="ERR_TIMED_OUT">
+		<h1>There was a problem connecting to the server.</h1>
+	</div>
+	<div ng-switch-default>
+		<h1>Error: {{ error.name }}</h1>
+		<div>Details:</div>
+		<pre>{{ error }}</pre>
+	</div>
+	<!-- ERR_NO_USERNAME -->
+</div>

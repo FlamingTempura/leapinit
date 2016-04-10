@@ -1,9 +1,0 @@
-<div ng-if="post.fetching" class="loading loading-light"></div>
-
-<ul class="posts" ng-if="!error && !post.fetching">
-	<li class="post" ng-include="'templates/post.html'"></li>
-</ul>
-
-<div class="msg msg-error" ng-if="error">
-	{{ error }}
-</div>
