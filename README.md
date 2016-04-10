@@ -6,12 +6,20 @@ To discover their interests, users are asked to scan barcodes and QR-codes that 
 
 ## Server
 
-Requirements:
+The LeapIn.it server is built on node.js with PostgreSQL database.
+
+### Requirements
+
 * Nginx
 * Node.js with npm
 * Postgresql
+* graphicsmagick
+* pm2 (`sudo npm install -g pm2`)
+
+### Installation
 
 1. Clone repository `git clone git@github.com:FlamingTempura/leapinit.git`
+2. 
 2. Using a postgresql client (e.g. `sudo -u postgres psql`), create a database and user:
 
     ```sql
@@ -23,28 +31,37 @@ Requirements:
     GRANT ALL ON DATABASE leap TO leap;
     ```
 
-* Create databases (see sql directory)
-* Edit `config.js`:
-* Install dependencies: `npm install`
-* run as service `pm2 start server.js`
+3. Import tables from sql directory
+4. Configure the server in `config.js`
+5. Install dependencies: `npm install`
+6. Start the server as service `pm2 start server.js`
 
 
-## Client
+## App
 
-The LeapIn.it client is web-based, and may be hosted using a web server, or deployed as part of a Apache Cordova package for Android and iPhone apps.
+The LeapIn.it app is web-based and can be built for web or for Android/iOS. Webpack is used to compile javascript and styles and Apache Cordova is used to bundle this as an app.
 
-Uses webpack
+### Requirements
 
-### Releasing
+* graphicsmagick or imagemagick
+* cordova (`sudo npm install -g cordova`)
+* android sdk
 
-x86 and armv7 must have different versions.
-```
-jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ~/leapinit/app/keys/key.keystore android-armv7-release-unsigned.apk com.teamorion.leapinit
-zipalign -v 4 android-armv7-release-unsigned.apk armv7.apk
+### Building
 
-jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ~/leapinit/app/keys/key.keystore android-x86-release-unsigned.apk com.teamorion.leapinit
-zipalign -v 4 android-x86-release-unsigned.apk x86.apk
-```
+1. Clone repository `git clone git@github.com:FlamingTempura/leapinit.git`
+2. Go to app directory: `cd app`
+3. Install dependencies: `npm install`
+4. Build using webpack: `npm run build` (alternatively `npm run watch` for automatic builds). Built html/js will be in app/www. This can be served via http for testing in desktop browser.
+5. Build using cordova:
+	* Run on plugged in android device: `cordova run android`
+	* Create build for release: `cordova build android --release` (don't forget to increment version in config.xml)
+6. (release only) Sign and align apk (requires the leapin.it keystore & password):
+	
+	```bash
+	jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ~/leapinit/app/keys/key.keystore android-armv7-release-unsigned.apk com.teamorion.leapinit
+	zipalign -v 4 android-armv7-release-unsigned.apk armv7.apk
+	```
 
 Note: lowered to sdk 22 for now - new permissions management were causing barcode scanner to crash
 
