@@ -364,10 +364,6 @@ div[ui-view] {
 	flex-direction: row;
 	align-items: center;
 	margin-bottom: @padding;
-	.icon {
-		background: #333;
-		background-size: 100% 100%;
-	}
 	.name {
 		flex-grow: 1;
 		margin-left: 14px;
@@ -473,6 +469,21 @@ div[ui-view] {
 		color: #aaa;
 		margin-top: 10px;
 		font-size: 15px;
+	}
+}
+.hexagon-mask {
+	position: relative;
+	background-color: @orange;
+	background-size: 100% 100%;
+	&::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-image: url('../img/hexagon-mask.svg');
+		background-size: 100% 100%;
 	}
 }
 
