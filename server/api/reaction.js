@@ -6,8 +6,10 @@ var db = require('../util/db'),
 
 // toggles (creates/deletes) a reaction from a user towards a posty
 socket.client.on('create_reaction', function (userId, data) {
-	validate(data, 'postId', { type: 'number' });
-	validate(data, 'type', { type: 'string' });
+	validate(data, {
+		postId: { type: 'number' },
+		type: { type: 'string' }
+	});
 	var q = 'DELETE FROM reaction WHERE user_id = $1 AND post_id = $2 RETURNING type'; // delete existing reaction of this type from this user to this post
 	return db.query(q, [userId, data.postId]).get(0).then(function (deletedReaction) {
 		if (deletedReaction && deletedReaction.type === data.type) { return; } // tried creating the same reaction, deleting instead

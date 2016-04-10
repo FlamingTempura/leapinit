@@ -8,13 +8,14 @@ module.exports = {
 		$scope.form = {};
 		$scope.submit = function () {
 			delete $scope.error;
-			if ($scope.password !== $scope.password2) {
-				$scope.error = { error: 'ERR_PASSWORD_MISMATCH' };
+			if ($scope.form.password !== $scope.form.password2) {
+				$scope.error = { name: 'ERR_PASSWORD_MISMATCH' };
 				return;
 			}
 			$scope.loading = true;
 			remote.request('update_user', {
-				nickname: $scope.signup ? $scope.form.nickname : undefined,
+				signup: !!$stateParams.signup,
+				nickname: $scope.form.nickname,
 				password: $scope.form.password
 			}).then(function () {
 				window.history.go(-1);

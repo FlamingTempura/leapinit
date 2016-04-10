@@ -32,7 +32,7 @@ socket.client.listen('posts', function (userId, data, emit, onClose) {
 });
 
 socket.client.listen('post', function (userId, data, emit, onClose) {
-	var emitPosts = function () {
+	var emitPost = function () {
 		var q = 'SELECT post.id, "user".username, room.id AS "roomId", room.name AS "roomName", message, ' + 
 				'  location[0] AS latitude, location[1] AS longitude,city, country, post.created, ' + 
 				'  filename AS picture, ' +
@@ -49,10 +49,10 @@ socket.client.listen('post', function (userId, data, emit, onClose) {
 			return post;
 		}));
 	};
-	db.on('post:' + data.id, emitPosts);
-	emitPosts();
+	db.on('post:' + data.id, emitPost);
+	emitPost();
 	onClose(function () {
-		db.removeListener('post:' + data.id, emitPosts);
+		db.removeListener('post:' + data.id, emitPost);
 	});
 });
 
@@ -111,13 +111,14 @@ var generateThumbnails = function () { // go through each uploaded image and cre
 generateThumbnails();
 
 socket.client.on('create_post', function (userId, data, stream) {
-	validate(data, 'roomId', { type: 'number' });
-	validate(data, 'message', { type: 'string' });
-	validate(data, 'latitude', { type: 'number', optional: true });
-	validate(data, 'longitude', { type: 'number', optional: true });
-	validate(data, 'parentId', { type: 'number', optional: true });
-	if (stream) { validate(data, 'filename', { type: 'string', match: /.*(\.png|\.jpg|\.jpeg|\.gif)$/ }); }
-	
+	validate(data, {
+		roomId: { type: 'number' },
+		message: { type: 'string' },
+		latitude: { type: 'number', optional: true },
+		longitude: { type: 'number', optional: true },
+		parentId: { type: 'number', optional: true },
+		filename: { type: 'string', match: /.*(\.png|\.jpg|\.jpeg|\.gif)$/, optional: !stream }
+	});
 	return (stream ?
 		new Bluebird(function (resolve, reject) {
 			var filename = uuid.v4() + path.extname(data.filename);

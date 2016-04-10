@@ -1,23 +1,21 @@
 'use strict';
 
-module.exports = function (data, field, constraints) {
-	var value = data[field],
-		optional = constraints.optional;
-	if (optional && typeof value === 'undefined') { return; }
-	var errors = Object.keys(constraints).map(function (name) {
-		return { field: field, expect: constraints[name], name: name };
-	}).concat([
-		{ name: 'notEmpty' },
-		{ name: 'defined' }
-	]).filter(function (constraint) {
-		if (constraint.name === 'optional') { return false; }
-		if (constraint.name === 'defined') { return typeof value === 'undefined'; }
-		if (constraint.name === 'notEmpty') { return value === ''; }
-		if (constraint.name === 'type') { return typeof value !== constraint.expect; }
-		if (constraint.name === 'min') { return typeof value !== 'string' || value.length < constraint.expect; }
-		if (constraint.name === 'max') { return typeof value !== 'string' || value.length > constraint.expect; }
-		if (constraint.name === 'oneOf') { return constraint.expect.indexOf(value) === -1; }
-		if (constraint.name === 'match') { return !constraint.expect.test(value); }
+module.exports = function (data, schema) {
+	var errors = [];
+	Object.keys(schema).forEach(function (field) {
+		var constraints = schema[field],
+			value = data[field];
+		if (!constraints.optional) { constraints.defined = true; }
+		Object.keys(constraints).map(function (name) {
+			var expect = constraints[name];
+			if (name === 'defined' && (typeof value === 'undefined' || value === 'string' && value.trim().length === 0) ||
+				name === 'type'    && typeof value !== 'undefined' && typeof value !== expect ||
+				name === 'min'     && typeof value === 'string' && value.length < expect ||
+				name === 'max'     && typeof value === 'string' && value.length > expect ||
+				name === 'match'   && (typeof value !== 'string' || !value.match(expect))) {
+					errors.push({ field: field, expect: expect, name: name });
+			}
+		});
 	});
 	if (errors.length > 0) { throw { name: 'ERR_INVALID_REQUEST', validation: errors }; }
 };

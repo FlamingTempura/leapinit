@@ -2,7 +2,7 @@
 
 module.exports = {
 	url: '/user/signin',
-	templateUrl: require('./signin.html'),
+	template: require('./signin.html'),
 	controller: function ($scope, $state, remote) {
 		$scope.submit = function () {
 			delete $scope.error;

@@ -2,8 +2,8 @@
 
 <form class="content" ng-submit="submit()">
 	<p>Enter your existing nickname and password.</p>
-	<input type="text" ng-model="nickname" placeholder="Nickname" ng-disabled="loading" required>
-	<input type="password" ng-model="password" placeholder="Password" ng-disabled="loading" required>
-	<input type="submit" ng-class="{ loading: loading }" ng-disabled="loading" value="Continue">
+	<input type="text" ng-model="nickname" placeholder="Nickname" ng-disabled="loading">
+	<input type="password" ng-model="password" placeholder="Password" ng-disabled="loading">
+	<input type="submit" ng-disabled="loading" value="Continue">
 	<error error="error"></error>
 </form>

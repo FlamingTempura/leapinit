@@ -55,10 +55,15 @@ module.exports = function ($http, $state, $rootScope, $q, config) {
 				fileReader.readAsArrayBuffer(chunk);
 			});
 		}
+		var timeout;
 		return $q(function (resolve, reject) {
 			socket.on(name + ':success#' + data.listenerId, resolve);
 			socket.on(name + ':error#' + data.listenerId, reject);
+			timeout = setTimeout(function () {
+				reject({ name: 'ERR_TIMED_OUT' });
+			}, 20000);
 		}).finally(function () {
+			clearTimeout(timeout);
 			socket.removeListener(name + ':success#' + data.listenerId);
 			socket.removeListener(name + ':error#' + data.listenerId);
 		});

@@ -11,7 +11,7 @@ var http = require('./http'),
 
 io.use(function (socket, next) {
 	Bluebird.try(function () {
-		validate(socket.handshake.query, 'token', { type: 'string', max: 100000 });
+		validate(socket.handshake.query, { token: { type: 'string', max: 100000 } });
 	}).then(function () {
 		return auth.getUserFromToken(socket.handshake.query.token);
 	}).then(function (user) {
@@ -87,7 +87,9 @@ io.client = {
 					socket.on(name + ':data#' + listenerId, receiveChunk);
 				}
 
-				return callback(socket.userId, data, stream, socket).then(function (data) {
+				return Bluebird.try(function () {
+					callback(socket.userId, data, stream, socket);
+				}).then(function (data) {
 					log.log('emitting', name, data && data.id ? data.id : '');
 					socket.emit(name + ':success#' + listenerId, data);
 				}).catch(function (error) {

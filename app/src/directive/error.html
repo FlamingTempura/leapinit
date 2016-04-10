@@ -1,4 +1,4 @@
-<div ng-if="error" class="error" ng-switch="error.error">
+<div ng-if="error" class="error" ng-switch="error.name">
 	<div ng-switch-when="ERR_NOT_FOUND">
 		<h1>Not found</h1>
 		<button onclick="window.history.go(-1)">Go back</button>
@@ -7,14 +7,12 @@
 		<h1>Passwords do not match</h1>
 	</div>
 	<div ng-switch-when="ERR_INVALID_REQUEST">
-		<div ng-repeat="problem in error.validation" ng-switch="problem.constraint">
+		<div ng-repeat="problem in error.validation" ng-switch="problem.name">
+			<h1 ng-switch-when="defined">{{ problem.field | capitalizeFirst }} must be provided.</h1>
 			<h1 ng-switch-when="min">{{ problem.field | capitalizeFirst }} should be a at least {{ problem.expect }} characters.</h1>
 			<h1 ng-switch-when="max">{{ problem.field | capitalizeFirst }} should be a at most {{ problem.expect }} characters.</h1>
 			<h1 ng-switch-when="type">{{ problem.field | capitalizeFirst }} is invalid.</h1>
-			<h1 ng-switch-when="oneOf">{{ problem.field | capitalizeFirst }} must be one of the following: {{ problem.expect }}.</h1>
 			<h1 ng-switch-when="match">{{ problem.field | capitalizeFirst }} is invalid.</h1>
-			<h1 ng-switch-when="defined">{{ problem.field | capitalizeFirst }} must be provided.</h1>
-			<h1 ng-switch-when="notEmpty">{{ problem.field | capitalizeFirst }} must be provided.</h1>
 			<h1 ng-switch-default>{{ problem.field | capitalizeFirst }} is invalid.</h1>
 		</div>
 	</div>
@@ -30,8 +28,11 @@
 	<div ng-switch-when="ERR_SERVER_FAILURE">
 		<h1>There was a problem with the server.</h1>
 	</div>
+	<div ng-switch-when="ERR_TIMED_OUT">
+		<h1>There was a problem connecting to the server.</h1>
+	</div>
 	<div ng-switch-default>
-		<h1>Error: {{ error.error }}</h1>
+		<h1>Error: {{ error.name }}</h1>
 		<div>Details:</div>
 		<pre>{{ error }}</pre>
 	</div>

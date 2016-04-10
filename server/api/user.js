@@ -8,8 +8,10 @@ var Bluebird = require('bluebird'),
 
 // login
 socket.client.on('login', function (userId, data, stream, socket) {
-	validate(data, 'nickname', { type: 'string', max: 1000 });
-	validate(data, 'password', { type: 'string', max: 1000 });
+	validate(data, {
+		nickname: { type: 'string', max: 1000 },
+		password: { type: 'string', max: 1000 }
+	});
 	log.log('checking username and password...');
 	var q = 'SELECT id FROM "user" WHERE username = $1 AND password_hash = crypt($2, password_hash)';
 	return db.query(q, [data.nickname, data.password]).get(0).then(function (user) {
@@ -33,10 +35,12 @@ socket.client.on('login', function (userId, data, stream, socket) {
 
 // change username or password (subsequently converting from a guest account)
 socket.client.on('update_user', function (userId, data) {
-	validate(data, 'nickname', { type: 'string', min: 3, max: 1000, optional: true });
-	validate(data, 'password', { type: 'string', min: 6, max: 1000 });
+	validate(data, {
+		nickname: { type: 'string', min: 3, max: 1000, optional: !data.signup },
+		password: { type: 'string', min: 6, max: 1000 }
+	});
 	var q, promise;
-	if (data.nickname) {
+	if (data.signup) {
 		q = 'UPDATE "user" SET username = $2, password_hash =  crypt($3, gen_salt(\'md5\')) WHERE id = $1';
 		promise = db.query(q, [userId, data.nickname, data.password]);
 	} else {

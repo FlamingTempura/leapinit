@@ -26,7 +26,7 @@ socket.client.listen('rooms', function (userId, data, emit, onClose) {
 
 // Get the room for a code (or create it if it doesn't exist)
 socket.client.on('room_from_code', function (userId, data) {
-	validate(data, 'code', { type: 'string', min: 2 });
+	validate(data, { code: { type: 'string', min: 2 } });
 	var q = 'SELECT code.id, room_id FROM code JOIN room ON (room.id = room_id) WHERE code = $1';
 	return db.query(q, [data.code]).get(0).then(function (code) {
 		if (code) { return code; }
@@ -53,7 +53,7 @@ socket.client.on('room_from_code', function (userId, data) {
 socket.client.listen('room', function (userId, data, emit, onClose) {
 	var emitRoom = function () {
 		emit(Bluebird.try(function () {
-			validate(data, 'id', { type: 'number' });
+			validate(data, { id: { type: 'number' } });
 		}).then(function () {
 			var q = 'SELECT id, name, created, ' + 
 					'  (SELECT COUNT(*) FROM post WHERE room_id = room.id) AS "unseenCount",' +
@@ -79,8 +79,10 @@ socket.client.listen('room', function (userId, data, emit, onClose) {
 
 // Change name of room
 socket.client.on('update_room', function (userId, data) {
-	validate(data, 'id', { type: 'number' });
-	validate(data, 'name', { type: 'string', max: 200 });
+	validate(data, {
+		id: { type: 'number' },
+		name: { type: 'string', max: 200 }
+	});
 	var q = 'UPDATE room SET name = $2 WHERE id = $1 RETURNING id'; // TODO check that user is allowed to modify name
 	return db.query(q, [data.id, data.name]).get(0).then(function (room) {
 		if (!room) { throw { name: 'ERR_NOT_FOUND' }; }
@@ -91,7 +93,7 @@ socket.client.on('update_room', function (userId, data) {
 
 // Join a room
 socket.client.on('join_room', function (userId, data) {
-	validate(data, 'id', { type: 'number' });
+	validate(data, { id: { type: 'number' } });
 	var q = 'INSERT INTO resident (user_id, room_id) VALUES ($1, $2) RETURNING room_id';
 	return db.query(q, [userId, data.id]).get(0).then(function (resident) {
 		db.emit('room:' + data.id);
@@ -105,7 +107,7 @@ socket.client.on('join_room', function (userId, data) {
 
 // Leave a room
 socket.client.on('leave_room', function (userId, data) {
-	validate(data, 'id', { type: 'number' });
+	validate(data, { id: { type: 'number' } });
 	var q = 'DELETE FROM resident WHERE user_id = $1 AND room_id = $2';
 	return db.query(q, [userId, data.id]).then(function () {
 		db.emit('room:' + data.id);
