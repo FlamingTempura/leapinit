@@ -88,7 +88,7 @@ io.client = {
 				}
 
 				return Bluebird.try(function () {
-					callback(socket.userId, data, stream, socket);
+					return callback(socket.userId, data, stream, socket);
 				}).then(function (data) {
 					log.log('emitting', name, data && data.id ? data.id : '');
 					socket.emit(name + ':success#' + listenerId, data);

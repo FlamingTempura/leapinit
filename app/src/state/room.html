@@ -1,6 +1,6 @@
 <toolbar ng-if="!room" title="'Room'"></toolbar>
 
-<toolbar ng-if="room" title="room.name || 'New room'" class="toolbar-fade" style="background-image: url('{{ config.serverRoot + '/files/' + room.picture + '-circle.png' }}');">
+<toolbar ng-if="room" title="room.name" class="toolbar-fade" style="background-image: url('{{ config.serverRoot + '/files/' + room.picture + '-big.png' }}');">
 	<!-- <a ui-sref="room-settings({ roomId: room.id })" class="icon"><span class="fa fa-cog"></span></a> --> <!-- admin only codes, delete, name -->
 </toolbar>
 

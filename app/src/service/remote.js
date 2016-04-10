@@ -5,7 +5,8 @@ var io = require('socket.io-client'),
 
 module.exports = function ($http, $state, $rootScope, $q, config) {
 	var socket = io(config.serverRoot, {
-		query: 'token=' + localStorage.getItem('token')
+		query: 'token=' + localStorage.getItem('token'),
+		transports: ['websocket']
 	});
 
 	socket.on('token', function (token) {

@@ -24,7 +24,7 @@ module.exports = {
 			delete $scope.error;
 			$scope.loading = true;
 			remote.request('room_from_code', { code: code }).then(function (data) {
-				$state.go('room', { roomId: data.roomId });
+				$state.go('room', { id: data.roomId });
 			}).catch(function (err) {
 				$scope.error = err;
 			}).finally(function () {
