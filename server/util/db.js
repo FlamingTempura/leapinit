@@ -42,7 +42,7 @@ Client.prototype.query = function (query, values) {
 			that.close();
 			promise.cancel();
 		}
-	}, 120000); // 2 mins
+	}, 20000);
 	return promise;
 };
 
