@@ -14,6 +14,7 @@ var Bluebird = require('bluebird'),
 
 socket.client.listen('posts', function (userId, data, emit, onClose) {
 	var emitPosts = function () {
+		console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!EMIT')
 		var q = 'SELECT post.id FROM post ' +
 				(data.type === 'room'    ? 'WHERE parent_post_id IS NULL AND room_id = $1 ORDER BY post.created DESC ' :
 				 data.type === 'user'    ? 'WHERE parent_post_id IS NULL AND user_id = $1 ORDER BY post.created DESC ' :

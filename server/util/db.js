@@ -23,7 +23,7 @@ Client.prototype.query = function (query, values) {
 	var that = this,
 		queryFormatted = query.replace(/\s+/g, ' '),
 		promise = new Bluebird(function (resolve, reject, onCancel) {
-			log.log(query.replace(/\s+/g, ' '));
+			//log.log(query.replace(/\s+/g, ' '));
 			that._client.queryAsync(query, values).catch(function (err) {
 				err.query = query;
 				log.error(query);

@@ -12,7 +12,7 @@ module.exports = function (data, schema) {
 				name === 'type'    && typeof value !== 'undefined' && typeof value !== expect ||
 				name === 'min'     && typeof value === 'string' && value.length < expect ||
 				name === 'max'     && typeof value === 'string' && value.length > expect ||
-				name === 'match'   && (typeof value !== 'string' || !value.match(expect))) {
+				name === 'match'   && typeof value !== 'undefined' && (typeof value !== 'string' || !value.match(expect))) {
 					errors.push({ field: field, expect: expect, name: name });
 			}
 		});

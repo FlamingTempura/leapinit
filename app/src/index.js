@@ -46,7 +46,7 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 			if (window.cordova && window.cordova.platformId === 'android' && window.StatusBar) {
 				window.StatusBar.backgroundColorByHexString('#EB8A00');
 			}
-		}, 1000);
+		}, 5000);
 
 	})
 	.filter('fromNow', function () {
