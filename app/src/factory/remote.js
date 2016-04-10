@@ -32,8 +32,8 @@ module.exports = function ($http, $state, $rootScope, $q, config) {
 				},
 				destroy: function () {
 					socket.emit('unlisten:' + name, data);
-					socket.off('listen_' + name + ':success#' + data.listenerId);
-					socket.off('listen_' + name + ':error#' + data.listenerId);
+					socket.removeListener('listen_' + name + ':success#' + data.listenerId);
+					socket.removeListener('listen_' + name + ':error#' + data.listenerId);
 				}
 			};
 		},
@@ -59,8 +59,8 @@ module.exports = function ($http, $state, $rootScope, $q, config) {
 				socket.on(name + ':success#' + data.listenerId, resolve);
 				socket.on(name + ':error#' + data.listenerId, reject);
 			}).finally(function () {
-				socket.off(name + ':success#' + data.listenerId);
-				socket.off(name + ':error#' + data.listenerId);
+				socket.removeListener(name + ':success#' + data.listenerId);
+				socket.removeListener(name + ':error#' + data.listenerId);
 			});
 		}
 	};

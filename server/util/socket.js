@@ -24,11 +24,11 @@ io.use(function (socket, next) {
 	});
 });
 
-var connectCallbacks = [];
+io.sockets.setMaxListeners(15);
 
 io.client = {
 	listen: function (name, callback) {
-		connectCallbacks.push(function (socket) {
+		io.on('connection', function (socket) {
 			socket.on('listen:' + name, function (data) {
 				var listenerId = data.listenerId;
 				var emit = function (promise) {
@@ -40,15 +40,23 @@ io.client = {
 						socket.emit('listen_' + name + ':error#' + listenerId, parseError(error));
 					});
 				};
+				var _close;
 				var onClose = function (close) {
-					socket.on('unlisten:' + name + '#' + listenerId, close);
+					_close = close;
 				};
+				var close = function () {
+					if (_close) { _close(); }
+					socket.removeListener('disconnect', close);
+					socket.removeListener('unlisten:' + name + '#' + listenerId, close);
+				};
+				socket.on('disconnect', close);
+				socket.on('unlisten:' + name + '#' + listenerId, close);
 				callback(socket.userId, data, emit, onClose);
 			});
 		});
 	},
 	on: function (name, callback) {
-		connectCallbacks.push(function (socket) {
+		io.on('connection', function (socket) {
 			socket.on(name, function (data, filename) {
 				var listenerId = data.listenerId,
 					stream;
@@ -63,18 +71,20 @@ io.client = {
 						log.log('requesting chunk');
 						socket.emit(name + ':more#' + listenerId, { start: length, length: config.chunkSize });
 					};
-					socket.on(name + ':data#' + listenerId, function (chunk) {
+					var receiveChunk = function (chunk) {
 						console.log('got chunk length', chunk.length);
 						length += chunk.length;
 						var ready = stream.push(chunk, 'utf8');
 						if (chunk.length < config.chunkSize) {
 							stream.push(null); // signal end of stream
+							socket.removeListener(name + ':data#' + listenerId, receiveChunk);
 						} else if (length > config.fileSizeLimit) {
 							stream.emit('error', { name: 'ERR_FILE_TOO_LARGE' });
 						} else if (ready) { nextChunk(); } {
 							//nextChunk();
 						}
-					});
+					};
+					socket.on(name + ':data#' + listenerId, receiveChunk);
 				}
 
 				return callback(socket.userId, data, stream, socket).then(function (data) {
@@ -89,8 +99,7 @@ io.client = {
 	}
 };
 
-io.on('connection', function (socket) {
-	connectCallbacks.map(function (callback) { callback(socket); });
+io.on('connection', function (socket) {	
 	socket.on('error', function (err) { console.error('caught', err); });
 });
 

@@ -59,7 +59,7 @@ socket.client.listen('user', function (userId, data, emit, onClose) {
 	db.on('user:' + userId, emitUser);
 	emitUser();
 	onClose(function () {
-		db.off('user:' + userId, emitUser);
+		db.removeListener('user:' + userId, emitUser);
 	});
 });
 

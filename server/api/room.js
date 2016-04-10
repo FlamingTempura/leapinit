@@ -20,7 +20,7 @@ socket.client.listen('rooms', function (userId, data, emit, onClose) {
 	db.on('room', emitRooms); // FIXME: this will fire too often
 	emitRooms();
 	onClose(function () {
-		db.off('room', emitRooms);
+		db.removeListener('room', emitRooms);
 	});
 });
 
@@ -73,7 +73,7 @@ socket.client.listen('room', function (userId, data, emit, onClose) {
 	db.on('room:' + data.id, emitRoom); // FIXME: this will fire too often
 	emitRoom();
 	onClose(function () {
-		db.off('room:' + data.id, emitRoom);
+		db.removeListener('room:' + data.id, emitRoom);
 	});
 });
 

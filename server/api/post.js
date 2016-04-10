@@ -27,7 +27,7 @@ socket.client.listen('posts', function (userId, data, emit, onClose) {
 	db.on('feed', emitPosts); // FIXME: this will fire too often
 	emitPosts();
 	onClose(function () {
-		db.off('feed', emitPosts);
+		db.removeListener('feed', emitPosts);
 	});
 });
 
@@ -52,7 +52,7 @@ socket.client.listen('post', function (userId, data, emit, onClose) {
 	db.on('post:' + data.id, emitPosts);
 	emitPosts();
 	onClose(function () {
-		db.off('post:' + data.id, emitPosts);
+		db.removeListener('post:' + data.id, emitPosts);
 	});
 });
 
