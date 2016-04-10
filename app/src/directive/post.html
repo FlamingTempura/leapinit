@@ -17,7 +17,7 @@
 			</div>
 		</div>
 		<div class="message" ui-sref="post(::{ id: post.id })">{{ ::post.message }}</div>
-		<div class="pic" ng-if="::post.picture" style="background-image: url('{{ ::$root.config.host + $root.config.path + '/files/' + post.picture + '-big.png' }}');" ui-sref="post(::{ id: post.id })" ng-click="openPicture()"></div>
+		<div class="pic" ng-if="::post.picture" style="background-image: url('{{ ::$root.config.host + $root.config.path + 'files/' + post.picture + '-big.png' }}');" ui-sref="post(::{ id: post.id })" ng-click="openPicture()"></div>
 		<div class="below" ng-if="::showInteraction">
 			<div class="love" ng-click="reaction('love')" ng-class="{ active: post.userReaction === 'love' }">
 				<div class="hexagon" ng-class="{ spin: loveLoading }"><span class="fa fa-heart"></span></div>

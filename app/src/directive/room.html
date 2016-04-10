@@ -1,5 +1,5 @@
 <a href="#/room/{{ room.id }}" class="room">
-	<div class="icon hexagon-mask" style="background-image: {{ room.picture ? 'url(\'' + $root.config.host + $root.config.path + '/files/' + room.picture + '-small.png\')' : 'none' }};"></div>
+	<div class="icon hexagon-mask" style="background-image: {{ room.picture ? 'url(\'' + $root.config.host + $root.config.path + 'files/' + room.picture + '-small.png\')' : 'none' }};"></div>
 	<div class="name">{{ room.name }}</div>
 	<div ng-if="room.unseenCount > 0"><div class="label">{{ room.unseenCount }}</div></div>
 </a>

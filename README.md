@@ -38,33 +38,17 @@ Requirements:
 Client
 ------
 
-Install the required libraries using bower. Get bower using npm.
-
-```
-npm -g install bower
-bower install
-```
-
-Edit app/www/config.json and enter the server url.
-
 The LeapIn.it client is web-based, and may be hosted using a web server, or deployed as part of a Apache Cordova package for Android and iPhone apps.
 
-_Web server method_
+Uses webpack
 
-A simple web server can be launched using python:
+__Releasing__
 
+x86 and armv7 must have different versions.
 ```
-cd /path/to/leapinit/app/www
-python -m SimpleHTTPServer 8080
-```
+jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ~/leapinit/app/keys/key.keystore android-armv7-release-unsigned.apk com.teamorion.leapinit
+zipalign -v 4 android-armv7-release-unsigned.apk armv7.apk
 
-The client can now be accessed in a web browser by going to `http://127.0.0.1:8080`.
-
-
-_Apache Cordova method_
-
-Cordova can be used to package the client into Android and iPhone apps. For this, you will need nodejs and npm (further information [available here](http://cordova.apache.org/docs/en/3.4.0/guide_cli_index.md.html#The%20Command-Line%20Interface)).
-
-```
-npm -g install cordova
+jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ~/leapinit/app/keys/key.keystore android-x86-release-unsigned.apk com.teamorion.leapinit
+zipalign -v 4 android-x86-release-unsigned.apk x86.apk
 ```

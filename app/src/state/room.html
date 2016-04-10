@@ -1,6 +1,6 @@
 <toolbar ng-if="!room" title="'Room'"></toolbar>
 
-<toolbar ng-if="room" title="room.name" class="toolbar-fade" style="background-image: url('{{ $root.config.host + $root.config.path + '/files/' + room.picture + '-big.png' }}');">
+<toolbar ng-if="room" title="room.name" class="toolbar-fade" style="background-image: url('{{ $root.config.host + $root.config.path + 'files/' + room.picture + '-big.png' }}');">
 	<!-- <a ui-sref="room-settings({ roomId: room.id })" class="icon"><span class="fa fa-cog"></span></a> --> <!-- admin only codes, delete, name -->
 </toolbar>
 
@@ -26,7 +26,7 @@
 <div ng-show="room" class="content content-header" ng-class="{ loading: loading }" id="maincontent">
 	<div class="msg msg-error" ng-if="error">{{ error }}</div>
 
-	<div ng-if="!loading && !room.name">
+	<div ng-if="!loading && room.name === 'New room'">
 		<p><strong>You are the first person in this room!</strong></p>
 		<p>What you want to name this room?</p>
 		<form ng-submit="setName()">
@@ -36,7 +36,7 @@
 		</form>
 	</div>
 		
-	<div ng-if="!loading && room.name && !feed.length">
+	<div ng-if="!loading && !feed.length">
 		<p><strong>There are no posts in this room.</strong></p>
 	</div>
 
