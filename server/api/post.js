@@ -94,7 +94,7 @@ var generateThumbnails = function () { // go through each uploaded image and cre
 			return file.match(/^\w{8}-\w{4}-4\w{3}-\w{4}-\w{12}\.\w+$/); // check this is an original file (name is uuid)
 		});
 		return Bluebird.map(files, function (file) {
-			return Bluebird.map(Object.keys(pictureFormats), function (name) { // TODO: check files aren't already made
+			return Bluebird.map(Object.keys(pictureFormats), function (name) {
 				return fs.statAsync('uploads/' + file + '-' + name + '.png').catch(function () {
 					log.log('gm[' + name + ']:', file);
 					return pictureFormats[name]('uploads/' + file, 'uploads/' + file + '-' + name + '.png').catch(function (err) {

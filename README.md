@@ -50,6 +50,7 @@ Note: lowered to sdk 22 for now - new permissions management were causing barcod
 
 ## TODO
 
+* honeycomb
 * rooms in your area
 * languages
 * flagging
@@ -67,6 +68,9 @@ Note: lowered to sdk 22 for now - new permissions management were causing barcod
 * testing (base fake data on tweets?)
 * bootstrapping room data from database of barcodes to product names and images
 * room from location (city, suburb, 500m radius?)
+* reply input should be blanked after reply
+* replies don't load
+* website
 
 Monetization
 * advertising
