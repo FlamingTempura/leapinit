@@ -19,7 +19,7 @@ The LeapIn.it server is built on node.js with PostgreSQL database.
 ### Installation
 
 1. Clone repository `git clone git@github.com:FlamingTempura/leapinit.git`
-2. 
+2. Go to server directory: `cd server`
 2. Using a postgresql client (e.g. `sudo -u postgres psql`), create a database and user:
 
     ```sql
