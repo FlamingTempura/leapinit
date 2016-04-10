@@ -6,6 +6,9 @@ module.exports = function () {
 		template: require('./toolbar.html'),
 		replace: true,
 		transclude: true,
-		scope: { title: '=', room : '='}
+		scope: { title: '=?' },
+		link: function ($scope) {
+			$scope.showTitle = !!$scope.title;
+		}
 	};
 };

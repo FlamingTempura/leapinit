@@ -6,8 +6,12 @@ module.exports = function (remote, geo, config) {
 		restrict: 'E',
 		replace: true,
 		template: require('./post.html'),
-		scope: { id: '=', showReplies: '=', showRoom: '=', showCard: '=', showInteraction: '=' },
+		scope: { id: '=', showReplies: '=?', showRoom: '=?', showCard: '=?', showInteraction: '=?' },
 		link: function ($scope, element) {
+			$scope.showReplies = !!$scope.showReplies;
+			$scope.showRoom = !!$scope.showRoom;
+			$scope.showCard = !!$scope.showCard;
+			$scope.showInteraction = !!$scope.showInteraction;
 			var load = function () {
 				var listener = remote.listen('post', { id: Number($scope.id) });
 			
