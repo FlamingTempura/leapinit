@@ -102,6 +102,7 @@ io.client = {
 };
 
 io.on('connection', function (socket) {	
+	socket.setMaxListeners(0); // HACK
 	socket.on('error', function (err) { console.error('caught', err); });
 });
 

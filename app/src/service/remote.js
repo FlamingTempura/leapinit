@@ -31,7 +31,7 @@ module.exports = function ($http, $state, $rootScope, $q, config) {
 				callbacks[event].push(callback);
 			},
 			destroy: function () {
-				socket.emit('unlisten:' + name, data);
+				socket.emit('unlisten:' + name + '#' + data.listenerId);
 				socket.removeListener('listen_' + name + ':success#' + data.listenerId);
 				socket.removeListener('listen_' + name + ':error#' + data.listenerId);
 			}

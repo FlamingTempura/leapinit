@@ -42,14 +42,17 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 			navigator.splashscreen.hide();
 		}
 
-		if (window.cordova && window.cordova.platformId === 'android' && window.StatusBar) {
-			window.StatusBar.backgroundColorByHexString('#EB8A00');
-		}
+		setTimeout(function () { // doesn't seem to work without timeout
+			if (window.cordova && window.cordova.platformId === 'android' && window.StatusBar) {
+				window.StatusBar.backgroundColorByHexString('#EB8A00');
+			}
+		}, 1000);
+
 	})
 	.filter('fromNow', function () {
 		return function (value) {
-			var diff = Math.floor(Date.now() - new Date(value).getTime()) / 1000; // difference in seconds
-			return diff < 60 ? diff + 's' :
+			var diff = (Date.now() - new Date(value).getTime()) / 1000; // difference in seconds
+			return diff < 60 ? Math.floor(diff) + 's' :
 				   diff < 60 * 60 ? Math.floor(diff / 60) + 'm' :
 				   diff < 60 * 60 * 24 ? Math.floor(diff / 60 / 60) + 'h' :
 				   diff < 60 * 60 * 24 * 7 ? Math.floor(diff / 60 / 60 / 24) + 'd' :

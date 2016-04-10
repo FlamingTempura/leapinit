@@ -6,7 +6,7 @@ var express = require('express'),
 	config = require('../config'),
 	log = require('./log')('HTTP', 'green');
 
-app.use('/files', express.static('uploads'));
+app.use('/files', express.static('uploads', { maxAge: '30d' }));
 server.listen(config.port); // TODO restrict to config.host
 log.log('Server is listening on http://' + config.host + ':' + config.port);
 

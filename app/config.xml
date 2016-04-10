@@ -20,7 +20,8 @@
     <preference name="SplashScreen" value="screen" />
     <preference name="SplashMaintainAspectRatio" value="false" />
     <preference name="SplashShowOnlyFirstTime" value="false" />
-    <preference name="FadeSplashScreen" value="false" />
+    <preference name="FadeSplashScreen" value="true" />
+    <preference name="FadeSplashScreenDuration" value="600"/>
     <preference name="ShowSplashScreenSpinner" value="false" />
     <engine name="android" spec="~5.1.1" />
     <platform name="android">
@@ -38,4 +39,5 @@
     <plugin name="com.darktalker.cordova.screenshot" spec="https://github.com/gitawego/cordova-screenshot.git" />
     <plugin name="cordova-plugin-x-socialsharing" spec="~5.0.12" />
     <plugin name="cordova-plugin-crosswalk-webview" spec="https://github.com/crosswalk-project/cordova-plugin-crosswalk-webview" />
+    <plugin name="com.internrocket.plugins.statusbarcolor" spec="https://github.com/internrocket/cordova-plugin-StatusBarColor.git" />
 </widget>

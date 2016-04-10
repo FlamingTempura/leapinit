@@ -36,14 +36,11 @@
 		</form>
 	</div>
 		
-	<div ng-if="room.name && !feed.length">
+	<div ng-if="!loading && room.name && !feed.length">
 		<p><strong>There are no posts in this room.</strong></p>
-		<p>Why not add something by tapping <i class="fa fa-plus"></i> above?</p>
 	</div>
 
 	<post ng-repeat="id in feed" id="id" show-card="true" show-interaction="true"></post>
-
-	<div ng-if="feed.length" class="end"></div>
 </div>
 
 <error error="error" class="content"></error>
