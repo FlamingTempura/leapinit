@@ -1,13 +1,13 @@
-<div class="content loading" ng-if="!user && !error"></div>
+<div class="content" ng-class="{ loading: !user && !error }" id="maincontent">
+	<error error="error"></error>
 
-<div class="content" ng-show="user" id="maincontent">
-	<div ng-if="!user.username">
+	<div ng-if="user && !user.username">
 		<h1>Anonymous</h1>
 		<button ui-sref="edituser({ signup: true })">Create a nickname</button>
 		<button ui-sref="signin">Use existing nickname</button>
 	</div>
 
-	<div ng-if="user.username">
+	<div ng-if="user && user.username">
 		<h1>{{ user.username }}</h1>
 		<button ui-sref="edituser" class="item">Change password</button>
 	</div>
@@ -18,14 +18,12 @@
 
 	<!-- <a ui-sref="" class="item">Version</a> -->
 
-	<h1>Your posts</h1>
+	<h1 ng-if="posts">Your posts</h1>
 
 	<post ng-repeat="id in posts" id="id" show-card="true" show-interaction="true"></post>
 
-	<div ng-if="!posts.length" class="msg">
+	<div ng-if="posts.length === 0" class="msg">
 		<p>You haven't made any posts.</p>
 	</div> 
 	
 </div>
-
-<error error="error"></error>

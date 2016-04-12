@@ -4,8 +4,6 @@
 	<!-- <a ui-sref="room-settings({ roomId: room.id })" class="icon"><span class="fa fa-cog"></span></a> --> <!-- admin only codes, delete, name -->
 </toolbar>
 
-<div ng-if="!room && !error" class="content loading"></div>
-
 <div ng-if="room" class="toolbar-overlay" reactive-scroll>
 	{{ room.residentCount }} people
 	<span ng-if="room.userCode"> &bullet; Code: {{ room.userCode }}</span>
@@ -23,10 +21,10 @@
 
 <div ng-if="room" class="header-blur" ng-show="headerActive" ng-click="headerActive = false"></div>
 
-<div ng-show="room" class="content content-header" ng-class="{ loading: loading }" id="maincontent">
-	<div class="msg msg-error" ng-if="error">{{ error }}</div>
+<div class="content" ng-class="{ loading: !room && !error, 'content-header': room }" id="maincontent">
+	<error error="error"></error>
 
-	<div ng-if="!loading && room.name === 'New room'">
+	<div ng-if="room && room.name === 'New room'">
 		<p><strong>You are the first person in this room!</strong></p>
 		<p>What you want to name this room?</p>
 		<form ng-submit="setName()">
@@ -36,11 +34,9 @@
 		</form>
 	</div>
 		
-	<div ng-if="!loading && !feed.length">
+	<div ng-if="feed.length === 0">
 		<p><strong>There are no posts in this room.</strong></p>
 	</div>
 
 	<post ng-repeat="id in feed" id="id" show-card="true" show-interaction="true"></post>
 </div>
-
-<error error="error" class="content"></error>

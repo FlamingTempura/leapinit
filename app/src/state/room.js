@@ -66,13 +66,14 @@ module.exports = {
 		$scope.newName = {};
 		$scope.setName = function () {
 			delete $scope.newName.error;
+			$scope.newName.loading = true;
 			remote.request('update_room', { 
 				id: id,
 				name: $scope.newName.name
 			}).catch(function (err) {
 				$scope.newName.error = err;
 			}).finally(function () {
-				$scope.loading = false;
+				$scope.newName.loading = false;
 			});
 		};
 

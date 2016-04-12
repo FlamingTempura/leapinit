@@ -5,9 +5,13 @@ var io = require('socket.io-client'),
 
 module.exports = function ($http, $state, $rootScope, $q, config) {
 	var socket = io(config.host, {
-		path: config.path + '/socket.io',
+		path: config.path + '/socket.io+',
 		query: 'token=' + localStorage.getItem('token'),
 		transports: ['websocket']
+	});
+
+	socket.on('error', function () {
+
 	});
 
 	socket.on('token', function (token) {
@@ -26,6 +30,14 @@ module.exports = function ($http, $state, $rootScope, $q, config) {
 		socket.emit('listen:' + name, data);
 		socket.on('listen_' + name + ':success#' + data.listenerId, function (data) { trigger('receive', data); });
 		socket.on('listen_' + name + ':error#' + data.listenerId, function (data) { trigger('error', data); });
+		var disconnect = function () {
+			console.log('not connected');
+			trigger('error', { name: 'ERR_DISCONNECTED' });
+		};
+		var checkConnect = setTimeout(function () {
+			if (!socket.connected) { disconnect(); }
+		}, 1000);
+		socket.on('disconnect', disconnect);
 		return {
 			on: function (event, callback) {
 				if (!callbacks.hasOwnProperty(event)) { callbacks[event] = []; }
@@ -35,6 +47,8 @@ module.exports = function ($http, $state, $rootScope, $q, config) {
 				socket.emit('unlisten:' + name + '#' + data.listenerId);
 				socket.removeListener('listen_' + name + ':success#' + data.listenerId);
 				socket.removeListener('listen_' + name + ':error#' + data.listenerId);
+				socket.removeListener('disconnect', disconnect);
+				clearTimeout(checkConnect);
 			}
 		};
 	};

@@ -11,6 +11,7 @@ module.exports = {
 			$scope.feed = feed;
 		});
 		feedListener.on('error', function (error) {
+			console.log('GOT ERROR', error);
 			$scope.error = error;
 		});
 		userListener.on('receive', function (user) {

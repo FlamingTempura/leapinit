@@ -31,6 +31,9 @@
 	<div ng-switch-when="ERR_TIMED_OUT">
 		<h1>There was a problem connecting to the server.</h1>
 	</div>
+	<div ng-switch-when="ERR_DISCONNECTED">
+		<h1>There was a problem connecting to the server.</h1>
+	</div>
 	<div ng-switch-default>
 		<h1>Error: {{ error.name }}</h1>
 		<div>Details:</div>

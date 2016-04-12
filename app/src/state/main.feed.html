@@ -1,8 +1,7 @@
-<div class="content loading" ng-if="!feed && !error"></div>
+<div class="content" ng-class="{ loading: !feed && !error }" id="maincontent">
+	<error error="error"></error>
 
-<div class="content" ng-show="feed" id="maincontent">
-
-	<div ng-if="!user.username && !dismissedSignup" class="card">
+	<div ng-if="user && !user.username && !dismissedSignup" class="card">
 		<a ng-click="dismissSignup()" class="close">&times;</a>
 		<h1>Nickname</h1>
 		<p>You don't yet have a nickname.</p>
@@ -11,11 +10,8 @@
 
 	<post ng-repeat="id in feed" id="id" show-card="true" show-interaction="true"></post>	
 
-	<div ng-if="!feed.length" class="msg">
+	<div ng-if="feed.length == 0" class="msg">
 		<h1>There are no posts to display in your feed!</h1>
 		<p>Press the scan button above to scan a barcode and start recieving posts.</p>
 	</div>
-	
 </div>
-
-<error error="error"></error>
