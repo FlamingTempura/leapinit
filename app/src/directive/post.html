@@ -1,6 +1,6 @@
 <div ng-class="{ loading: !post && !error }">
 	
-	<error error="error"></error>
+	<error value="error"></error>
 
 	<h2 ng-if="post && showRoom" ui-sref="room(::{ id: post.roomId })">Posted in <strong>{{ ::post.roomName }}</strong>:</h2>
 
@@ -38,14 +38,14 @@
 		</div>
 		<div class="replies" ng-if="::showReplies">
 			
-			<error error="repliesError"></error>
+			<error value="repliesError"></error>
 
 			<post ng-repeat="id in replies" id="::id"></post>
 
 			<form class="post" ng-click="headerActive = true" ng-class="{ active: headerActive }">
 				<input type="text" ng-model="newReply.message" placeholder="Write a reply...">
 				<button ng-click="postReply()">Post</button>
-				<error error="newReply.error">{{ newReply.error }}</error>
+				<error value="newReply.error">{{ newReply.error }}</error>
 			</form>
 
 		</div>

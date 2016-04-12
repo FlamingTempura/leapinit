@@ -3,6 +3,6 @@
 module.exports = {
 	restrict: 'E',
 	replace: true,
-	scope: { error: '=' },
+	scope: { error: '=value' },
 	template: require('./error.html')
 };

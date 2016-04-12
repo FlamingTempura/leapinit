@@ -65,8 +65,11 @@ button, input[type=button], input[type=submit] {
 	text-transform: uppercase;
 	&[disabled] {
 		border: 1px solid #ccc;
-		color: #ccc
 	}
+}
+
+[disabled] {
+	color: #ccc !important;
 }
 
 input[type=submit] {
@@ -259,6 +262,9 @@ div[ui-view] {
 		max-height: 36px;
 		top: 48px;
 		left: 20px;
+	}
+	.error {
+		padding: 0 @padding 4px;
 	}
 }
 
@@ -469,4 +475,21 @@ div[ui-view] {
 @keyframes spin {
 	from { transform: rotate(0deg); }
 	to { transform: rotate(360deg); }
+}
+
+.fade.ng-hide {
+  opacity: 0;
+}
+
+.fade.ng-hide-remove,
+.fade.ng-hide-add {
+  display: block !important;
+}
+
+.fade.ng-hide-remove {
+  transition: all ease-in-out 300ms;
+}
+
+.fade.ng-hide-add {
+  transition: all ease-in-out 300ms;
 }

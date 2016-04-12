@@ -11,18 +11,19 @@
 	<button ng-show="room.isMember" ng-click="leave()">Leave</button>
 </div>
 
-<div ng-if="room" class="header" ng-click="headerActive = true" ng-class="{ active: headerActive }" reactive-scroll>
-	<input type="text" ng-model="newPost.message" placeholder="Write something...">
+<div ng-if="room" class="header" ng-click="newPost.show = true" ng-class="{ active: newPost.show }" reactive-scroll>
+	<input type="text" ng-model="newPost.message" placeholder="Write something..." ng-disabled="newPost.loading">
 	<label for="file" class="icon camera-icon"><span class="fa fa-camera"></span></label>
-	<button ng-click="createPost()">Post</button>
-	<input type="file" name="file" id="file" on-select-file="selectFile">
+	<button ng-click="createPost()" ng-disabled="newPost.loading">Post</button>
+	<input type="file" name="file" id="file" on-select-file="selectFile"  ng-disabled="newPost.loading">
 	<img class="preview" ng-src="{{ newPost.fileURL }}" ng-if="newPost.fileURL">
+	<error value="newPost.error"></error>
 </div>
 
-<div ng-if="room" class="header-blur" ng-show="headerActive" ng-click="headerActive = false"></div>
+<div ng-if="room" class="header-blur fade" ng-show="newPost.show" ng-click="newPost.show = false"></div>
 
 <div class="content" ng-class="{ loading: !room && !error, 'content-header': room }" id="maincontent">
-	<error error="error"></error>
+	<error value="error"></error>
 
 	<div ng-if="room && room.name === 'New room'">
 		<p><strong>You are the first person in this room!</strong></p>

@@ -1,4 +1,4 @@
-<div ng-if="error" class="error" ng-switch="error.name">
+<div class="error" ng-show="error" ng-switch="error.name">
 	<div ng-switch-when="ERR_NOT_FOUND">
 		<h1>Not found</h1>
 		<button onclick="window.history.go(-1)">Go back</button>
@@ -27,9 +27,6 @@
 	</div>
 	<div ng-switch-when="ERR_SERVER_FAILURE">
 		<h1>There was a problem with the server.</h1>
-	</div>
-	<div ng-switch-when="ERR_TIMED_OUT">
-		<h1>There was a problem connecting to the server.</h1>
 	</div>
 	<div ng-switch-when="ERR_DISCONNECTED">
 		<h1>There was a problem connecting to the server.</h1>

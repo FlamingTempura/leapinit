@@ -1,5 +1,5 @@
 <div class="content" ng-class="{ loading: !userRooms && !error }" id="maincontent">
-	<error error="error"></error>
+	<error value="error"></error>
 
 	<h1 ng-if="userRooms">Rooms you are in</h1>
 	<room room="room" ng-repeat="id in userRooms" id="id"></room>

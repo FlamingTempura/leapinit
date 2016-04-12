@@ -64,30 +64,26 @@ module.exports = function ($http, $state, $rootScope, $q, config) {
 	this.request = function (name, data, file) {
 		data = angular.copy(data) || {};
 		data.listenerId = Date.now() + '-' + Math.random() * 10000000; // random id
-		if (!file) {
-			socket.emit(name, data);
-		} else {
-			var fileReader = new FileReader();
-			socket.emit(name, data, file.name);
-			fileReader.onload = function (event) {
-				socket.emit(name + ':data#' + data.listenerId, event.target.result);
-			};
-			socket.on(name + ':more#' + data.listenerId, function (data) {
-				console.log(file.size);
-				var chunk = file.slice(data.start, Math.min((data.start + 1) * data.length, file.size));
-				console.log('sending chunk', data, chunk);
-				fileReader.readAsArrayBuffer(chunk);
-			});
-		}
-		var timeout;
 		return $q(function (resolve, reject) {
+			if (!socket.connected) { return reject({ name: 'ERR_DISCONNECTED' }); }
+			if (!file) {
+				socket.emit(name, data);
+			} else {
+				var fileReader = new FileReader();
+				socket.emit(name, data, file.name);
+				fileReader.onload = function (event) {
+					socket.emit(name + ':data#' + data.listenerId, event.target.result);
+				};
+				socket.on(name + ':more#' + data.listenerId, function (data) {
+					console.log(file.size);
+					var chunk = file.slice(data.start, Math.min((data.start + 1) * data.length, file.size));
+					console.log('sending chunk', data, chunk);
+					fileReader.readAsArrayBuffer(chunk);
+				});
+			}
 			socket.on(name + ':success#' + data.listenerId, resolve);
 			socket.on(name + ':error#' + data.listenerId, reject);
-			timeout = setTimeout(function () {
-				reject({ name: 'ERR_TIMED_OUT' });
-			}, 20000);
 		}).finally(function () {
-			clearTimeout(timeout);
 			socket.removeListener(name + ':success#' + data.listenerId);
 			socket.removeListener(name + ':error#' + data.listenerId);
 		});

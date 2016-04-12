@@ -49,9 +49,10 @@ module.exports = {
 				latitude: geo.latitude,
 				longitude: geo.longitude
 			}, file).then(function () {
-				delete $scope.headerActive;
+				delete $scope.newPost.show;
 				$scope.newPost = {};
 			}).catch(function (err) {
+				console.warn('post error', err);
 				$scope.newPost.error = err;
 			}).finally(function () {
 				delete $scope.newPost.loading;

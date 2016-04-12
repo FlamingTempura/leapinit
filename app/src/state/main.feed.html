@@ -1,5 +1,5 @@
 <div class="content" ng-class="{ loading: !feed && !error }" id="maincontent">
-	<error error="error"></error>
+	<error value="error"></error>
 
 	<div ng-if="user && !user.username && !dismissedSignup" class="card">
 		<a ng-click="dismissSignup()" class="close">&times;</a>
