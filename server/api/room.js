@@ -10,7 +10,7 @@ var db = require('../util/db'),
 socket.client.listen('rooms', function (userId, data, emit, onClose) {
 	var emitRooms = function () {
 		log.log('getting rooms for user', userId);
-		var q = 'SELECT id, (SELECT COUNT(*) FROM post WHERE room_id = room.id) AS "postCount" FROM room ' +
+		var q = 'SELECT id, (SELECT COUNT(*) FROM post WHERE room_id = room.id AND parent_post_id IS NULL) AS "postCount" FROM room ' +
 				(data.type === 'user' ? 
 					'WHERE id IN (SELECT room_id FROM resident WHERE user_id = $1) ' :
 					'WHERE id NOT IN (SELECT room_id FROM resident WHERE user_id = $1) ') +
