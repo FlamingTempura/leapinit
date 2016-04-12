@@ -8,6 +8,8 @@ module.exports = {
 			userListener = remote.listen('user');
 		
 		feedListener.on('receive', function (feed) { // feed is just an array of post ids
+			console.log('GOT FEED');
+			delete $scope.error;
 			$scope.feed = feed;
 		});
 		feedListener.on('error', function (error) {

@@ -5,7 +5,7 @@ var io = require('socket.io-client'),
 
 module.exports = function ($http, $state, $rootScope, $q, config) {
 	var socket = io(config.host, {
-		path: config.path + '/socket.io+',
+		path: config.path + 'socket.io',
 		query: 'token=' + localStorage.getItem('token'),
 		transports: ['websocket']
 	});
@@ -20,35 +20,43 @@ module.exports = function ($http, $state, $rootScope, $q, config) {
 	});
 
 	this.listen = function (name, data) {
+		data = angular.copy(data) || {};
+		data.listenerId = Date.now() + '-' + Math.random() * 10000000; // random id
+
 		var callbacks = {},
 			trigger = function (event, data) {
 				angular.forEach(callbacks && callbacks[event], function (callback) { callback(data); });
 				$rootScope.$apply();
-			};
-		data = angular.copy(data) || {};
-		data.listenerId = Date.now() + '-' + Math.random() * 10000000; // random id
-		socket.emit('listen:' + name, data);
+			},
+			startListener = function () {
+				socket.emit('listen:' + name, data);
+			},
+			disconnected = function () {
+				trigger('error', { name: 'ERR_DISCONNECTED' });
+			},
+			checkConnect = setTimeout(function () {
+				if (!socket.connected) { disconnected(); }
+			}, 3000);
+
+		socket.on('connect', startListener);
+		socket.on('disconnect', disconnected);
 		socket.on('listen_' + name + ':success#' + data.listenerId, function (data) { trigger('receive', data); });
 		socket.on('listen_' + name + ':error#' + data.listenerId, function (data) { trigger('error', data); });
-		var disconnect = function () {
-			console.log('not connected');
-			trigger('error', { name: 'ERR_DISCONNECTED' });
-		};
-		var checkConnect = setTimeout(function () {
-			if (!socket.connected) { disconnect(); }
-		}, 1000);
-		socket.on('disconnect', disconnect);
+
+		startListener();
+
 		return {
 			on: function (event, callback) {
 				if (!callbacks.hasOwnProperty(event)) { callbacks[event] = []; }
 				callbacks[event].push(callback);
 			},
 			destroy: function () {
+				clearTimeout(checkConnect);
 				socket.emit('unlisten:' + name + '#' + data.listenerId);
+				socket.removeListener('connect', startListener);
+				socket.removeListener('disconnect', disconnected);
 				socket.removeListener('listen_' + name + ':success#' + data.listenerId);
 				socket.removeListener('listen_' + name + ':error#' + data.listenerId);
-				socket.removeListener('disconnect', disconnect);
-				clearTimeout(checkConnect);
 			}
 		};
 	};
