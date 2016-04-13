@@ -8,7 +8,7 @@
 	</div>
 	<div ng-switch-when="ERR_INVALID_REQUEST">
 		<div ng-repeat="problem in error.validation" ng-switch="problem.name">
-			<h1 ng-switch-when="defined">{{ problem.field | capitalizeFirst }} must be provided.</h1>
+			<h1 ng-switch-when="defined">You must enter a {{ problem.field | capitalizeFirst }}.</h1>
 			<h1 ng-switch-when="min">{{ problem.field | capitalizeFirst }} should be at least {{ problem.expect }} characters.</h1>
 			<h1 ng-switch-when="max">{{ problem.field | capitalizeFirst }} should be at most {{ problem.expect }} characters.</h1>
 			<h1 ng-switch-when="type">{{ problem.field | capitalizeFirst }} is invalid.</h1>

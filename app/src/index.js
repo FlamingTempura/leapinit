@@ -9,6 +9,7 @@ require('angular-ui-router');
 
 angular.module('leapinit', ['ngAnimate', 'ui.router'])
 	.constant('config', {
+		googleProjectNumber: 734895379283,
 		/*host: 'https://leapin.it',
 		path: '/api/'*/
 		host: 'https://56f4132f.ngrok.io',
@@ -48,8 +49,17 @@ angular.module('leapinit', ['ngAnimate', 'ui.router'])
 		}
 
 		setTimeout(function () { // doesn't seem to work without timeout
-			if (window.cordova && window.cordova.platformId === 'android' && window.StatusBar) {
+			if (window.StatusBar && window.cordova.platformId === 'android') {
 				window.StatusBar.backgroundColorByHexString('#EB8A00');
+			}
+
+			if (window.PushNotification) {
+				window.PushNotification.init({
+					android: { senderID: config.googleProjectNumber }
+				}).on('registration', function (data) {
+					console.log('HELLO!', data);
+					remote.request('new_google_registration_id', { registrationId: data.registrationId }); // google cloud messenger registration id
+				});
 			}
 		}, 5000);
 

@@ -2,7 +2,8 @@
 
 var db = require('../util/db'),
 	validate = require('../util/validate'),
-	socket = require('../util/socket');
+	socket = require('../util/socket'),
+	messaging = require('../util/messaging');
 
 // toggles (creates/deletes) a reaction from a user towards a posty
 socket.client.on('create_reaction', function (userId, data) {
@@ -16,11 +17,14 @@ socket.client.on('create_reaction', function (userId, data) {
 		var q = 'INSERT INTO reaction (user_id, post_id, type) VALUES ($1, $2, $3)';
 		return db.query(q, [userId, data.postId, data.type]).then(function () {
 			db.emit('post:' + data.postId);
+			messaging.publish('/topics/react_to_post_' + data.postId, 'Somebody reacted to your post', data.type);
+			messaging.subscribe(userId, '/topics/reply_to_post_' + data.postId);
 		});
 	}).then(function () {
 		var q = 'INSERT INTO resident (user_id, room_id) VALUES ($1, (SELECT room_id FROM post WHERE id = $2)) RETURNING room_id';
 		return db.query(q, [userId, data.postId]).get(0).then(function (resident) {
 			db.emit('room:' + resident.room_id);
+			messaging.subscribe(userId, '/topics/new_post_in_room_' + resident.room_id);
 			return null;
 		}).catch(function (err) {
 			if (err.constraint === 'resident_unique_index') { return null; } // user is already in this room

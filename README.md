@@ -67,6 +67,7 @@ Note: lowered to sdk 22 for now - new permissions management were causing barcod
 
 ## TODO
 
+* localStorage failing - potentially use indexed (pouchdb, lokijs)
 * honeycomb
 * rooms in your area
 * languages

@@ -4,7 +4,8 @@ var db = require('../util/db'),
 	validate = require('../util/validate'),
 	log = require('../util/log')('Room', 'cyan'),
 	socket = require('../util/socket'),
-	Bluebird = require('bluebird');
+	Bluebird = require('bluebird'),
+	messaging = require('../util/messaging');
 
 // get all rooms relevent to the user in lists (rooms they are in, popular rooms)
 socket.client.listen('rooms', function (userId, data, emit, onClose) {
@@ -98,6 +99,7 @@ socket.client.on('join_room', function (userId, data) {
 	var q = 'INSERT INTO resident (user_id, room_id) VALUES ($1, $2) RETURNING room_id';
 	return db.query(q, [userId, data.id]).get(0).then(function (resident) {
 		db.emit('room:' + data.id);
+		messaging.subscribe(userId, '/topics/new_post_in_room_' + data.id);
 		if (!resident) { throw { name: 'ERR_NOT_FOUND' }; }
 		return null;
 	}).catch(function (err) {

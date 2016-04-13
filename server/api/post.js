@@ -10,7 +10,8 @@ var Bluebird = require('bluebird'),
 	socket = require('../util/socket'),
 	path = require('path'),
 	uuid = require('uuid'),
-	gm = require('gm');
+	gm = require('gm'),
+	messaging = require('../util/messaging');
 
 socket.client.listen('posts', function (userId, data, emit, onClose) {
 	var emitPosts = function () {
@@ -137,9 +138,19 @@ socket.client.on('create_post', function (userId, data, stream) {
 		return db.query(q, [userId, data.roomId, data.parentId, data.message, filename]);
 	}).get(0).then(function (post) {
 		db.emit('feed');
-		var q = 'INSERT INTO resident (user_id, room_id) VALUES ($1, $2) RETURNING room_id';
+		messaging.subscribe(userId, '/topics/reply_to_post_' + post.id);
+		if (data.parentId) {
+			messaging.publish('/topics/reply_to_post_' + data.parentId, 'New reply', data.message);
+		} else {
+			db.query('SELECT name FROM room WHERE id = $1', [data.roomId]).get(0).then(function (room) {
+				messaging.publish('/topics/new_post_in_room_' + data.roomId, room.name, data.message);
+				messaging.subscribe(userId, '/topics/react_to_post_' + post.id);
+			});
+		}
+		var q = 'INSERT INTO resident (user_id, room_id) VALUES ($1, $2)';
 		return db.query(q, [userId, data.roomId]).then(function () {
 			db.emit('room:' + data.roomId);
+			messaging.subscribe(userId, '/topics/new_post_in_room_' + data.roomId);
 			return post;
 		}).catch(function (err) {
 			if (err.constraint === 'resident_unique_index') { return post; } // user is already in this room

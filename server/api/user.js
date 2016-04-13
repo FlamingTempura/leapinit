@@ -4,7 +4,8 @@ var Bluebird = require('bluebird'),
 	log = require('../util/log')('Auth', 'yellow'),
 	db = require('../util/db'),
 	validate = require('../util/validate'),
-	socket = require('../util/socket');
+	socket = require('../util/socket'),
+	messaging = require('../util/messaging');
 
 // login
 socket.client.on('login', function (userId, data, stream, socket) {
@@ -67,3 +68,9 @@ socket.client.listen('user', function (userId, data, emit, onClose) {
 	});
 });
 
+socket.client.on('new_google_registration_id', function (userId, data) {
+	validate(data, {
+		registrationId: { type: 'string', min: 3, max: 1000 }
+	});
+	return messaging.register(userId, data.registrationId);
+});
