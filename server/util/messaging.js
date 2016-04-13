@@ -36,7 +36,7 @@ module.exports = {
 	subscribe: function (userId, topic) {
 		log.log('subscribing', userId, topic);
 		return db.query('SELECT token FROM registration_token WHERE user_id = $1', [userId]).then(function (rows) {
-			log.log('subscribing tokens:', rows);
+			if (rows.length === 0) { return; } // no registration tokens
 			return request.postAsync({
 				url: 'https://iid.googleapis.com/iid/v1:batchAdd',
 				json: true,

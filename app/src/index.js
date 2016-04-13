@@ -10,10 +10,10 @@ require('angular-ui-router');
 angular.module('leapinit', ['ngAnimate', 'ui.router'])
 	.constant('config', {
 		googleProjectNumber: 734895379283,
-		/*host: 'https://leapin.it',
-		path: '/api/'*/
-		host: 'https://56f4132f.ngrok.io',
-		path: '/'
+		host: 'https://leapin.it',
+		path: '/api/'
+		//host: 'https://56f4132f.ngrok.io',
+		//path: '/'
 	})
 	.config(function ($urlRouterProvider) {
 		$urlRouterProvider.otherwise('/feed');
